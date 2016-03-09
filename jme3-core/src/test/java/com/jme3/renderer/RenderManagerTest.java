@@ -1,5 +1,16 @@
 package com.jme3.renderer;
 
+import com.jme3.app.BasicProfiler;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.DesktopAssetManager;
+import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
+import com.jme3.material.TechniqueDef;
+import com.jme3.profile.AppProfiler;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.scene.Geometry;
+import com.jme3.texture.FrameBuffer;
+
 import junit.framework.TestCase;
 
 /**
@@ -16,7 +27,12 @@ import junit.framework.TestCase;
  */
 public class RenderManagerTest extends TestCase {
 	private RenderManager renderManager;
+	private Renderer renderer;
 	private Camera camera;
+	private int camHeight = 5;
+	private int camWidth = 10;
+	private ViewPort viewport;
+	private String viewName;
 
 	/**
 	 * Construct new test instance
@@ -37,9 +53,11 @@ public class RenderManagerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		Renderer renderer = null;
-		camera = new Camera();
+		renderer = new RendererImpl();		
+		camera = new Camera(camWidth, camHeight);
 		renderManager = new RenderManager(renderer);
+		viewName = "viewName";
+		viewport = new ViewPort(viewName, camera);
 	}
 
 	/**
@@ -192,19 +210,196 @@ public class RenderManagerTest extends TestCase {
 		ViewPort viewport = null;
 		assertFalse(renderManager.removePostView(viewport));
 	}
-
-	/**
-	 * Run the void render(float, boolean) method test
-	 */
-	public void testRender() {
-		fail("Newly generated method - fix or disable");
-		// add test code here
-		float tpf = 0.0F;
-		boolean mainFrameBufferActive = false;
-		// This class does not have a public, no argument constructor,
-		// so the render() method can not be tested
-		assertTrue(false);
+	
+	public void testNotifyReshapeWhileNoViewports() {
+		int w = 0;
+		int h = 0;
+		renderManager.notifyReshape(w, h);
 	}
+	
+	public void testReshapePreviewPorts() {
+		String viewName = "preview";
+		renderManager.createPreView(viewName, camera);
+		int w = 15;
+		int h = 20;
+		renderManager.notifyReshape(w, h);
+		assertEquals(w, camera.getWidth());
+		assertEquals(h, camera.getHeight());
+	}
+	
+	public void testReshapePostviewPorts() {
+		String viewName = "preview";
+		renderManager.createPostView(viewName, camera);
+		int w = 25;
+		int h = 30;
+		renderManager.notifyReshape(w, h);
+		assertEquals(w, camera.getWidth());
+		assertEquals(h, camera.getHeight());
+	}
+	
+	public void testReshapeViewPorts() {
+		String viewName = "preview";
+		renderManager.createMainView(viewName, camera);
+		int w = 15;
+		int h = 20;
+		renderManager.notifyReshape(w, h);
+		assertEquals(w, camera.getWidth());
+		assertEquals(h, camera.getHeight());
+	}
+	
+	public void testReshapeWitOuputFrameBufferMainView() {
+		String viewName = "preview";
+		ViewPort viewport = renderManager.createMainView(viewName, camera);
+		FrameBuffer bufferOut = setupFrameBuffer();
+		viewport.setOutputFrameBuffer(bufferOut);
+		int w = 15;
+		int h = 20;		
+		renderManager.notifyReshape(w, h);
+		assertEquals(camWidth, camera.getWidth());
+		assertEquals(camHeight, camera.getHeight());
+	}
+	
+	public void testReshapeWitOuputFrameBufferPreView() {
+		String viewName = "preview";
+		ViewPort viewport = renderManager.createPreView(viewName, camera);
+		FrameBuffer bufferOut = setupFrameBuffer();
+		viewport.setOutputFrameBuffer(bufferOut);
+		int w = 15;
+		int h = 20;		
+		renderManager.notifyReshape(w, h);
+		assertEquals(camWidth, camera.getWidth());
+		assertEquals(camHeight, camera.getHeight());
+	}
+	
+	public void testReshapeWitOuputFrameBufferPostView() {
+		String viewName = "preview";
+		ViewPort viewport = renderManager.createPostView(viewName, camera);
+		FrameBuffer bufferOut = setupFrameBuffer();
+		viewport.setOutputFrameBuffer(bufferOut);
+		int w = 15;
+		int h = 20;		
+		renderManager.notifyReshape(w, h);
+		assertEquals(camWidth, camera.getWidth());
+		assertEquals(camHeight, camera.getHeight());
+	}
+	
+	public void testReshapeWithSceneprocessors() {
+		String viewName = "preview";
+		ViewPort viewport = renderManager.createPreView(viewName, camera);
+		SceneProcessorImpl processor = new SceneProcessorImpl();
+		viewport.addProcessor(processor);
+		int w = 15;
+		int h = 20;		
+		renderManager.notifyReshape(w, h);
+		assertEquals(w, camera.getWidth());
+		assertEquals(h, camera.getHeight());
+	}
+		
+	/**
+	 * Helper function for testing notifyReshape
+	 * @return framebuffer
+	 */
+	private FrameBuffer setupFrameBuffer() {
+		int frameWidth = 10;
+		int frameHeight = 15;
+		int samples = 2;
+		FrameBuffer bufferOut = new FrameBuffer(frameWidth, frameHeight, samples);
+		return bufferOut;
+	}
+	
+	public void testFlushQueue() {
+		renderManager.flushQueue(viewport);
+	}
+	
+	public void testRenderViewPortQueuesForSky() {
+		AppProfiler prof = new BasicProfiler();
+		boolean flush = false;
+		renderManager.setAppProfiler(prof);
+		
+		Geometry g = setupGeometry();
+		viewport.getQueue().addToQueue(g, Bucket.Sky);
+		
+		renderManager.renderViewPortQueues(viewport, flush);
+		float expectedStart = 0;
+		float expectedEnd = 1;
+		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
+		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
+	}
+	
+	public void testRenderViewPortQueuesForTransparant() {
+		AppProfiler prof = new BasicProfiler();
+		boolean flush = false;
+		renderManager.setAppProfiler(prof);
+		
+		Geometry g = setupGeometry();
+		viewport.getQueue().addToQueue(g, Bucket.Transparent);
+		
+		renderManager.renderViewPortQueues(viewport, flush);
+		float expectedStart = 0;
+		float expectedEnd = 0;
+		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
+		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
+	}
+	
+	public void testRenderViewPortQueuesForMutipleGeo() {
+		boolean flush = false;
+		
+		Geometry g1 = setupGeometry();
+		viewport.getQueue().addToQueue(g1, Bucket.Transparent);
+		Geometry g2 = setupGeometry();
+		viewport.getQueue().addToQueue(g2, Bucket.Gui);
+		Geometry g3 = setupGeometry();
+		viewport.getQueue().addToQueue(g3, Bucket.Sky);
+		
+		renderManager.renderViewPortQueues(viewport, flush);
+		float expectedStart = 0;
+		float expectedEnd = 1;
+		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
+		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
+	}
+	
+	public void testRenderViewPortQueuesForTransparantWithoutProf() {
+		boolean flush = false;
+		Geometry g = setupGeometry();
+		viewport.getQueue().addToQueue(g, Bucket.Transparent);
+		
+		renderManager.renderViewPortQueues(viewport, flush);
+		float expectedStart = 0;
+		float expectedEnd = 0;
+		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
+		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
+	}
+	
+	public void testRenderViewPortQueuesForGUI() {
+		AppProfiler prof = new BasicProfiler();
+		boolean flush = false;
+		renderManager.setAppProfiler(prof);
+		
+		Geometry g = setupGeometry();
+		viewport.getQueue().addToQueue(g, Bucket.Gui);
+		
+		renderManager.renderViewPortQueues(viewport, flush);		
+		float expectedStart = 0;
+		float expectedEnd = 1;
+		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
+		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
+	}
+	
+	private Geometry setupGeometry() {
+		String geoName = "geoName";
+		Geometry g = new Geometry(geoName);
+		
+		String matName = "wood";
+		AssetManager assetManager = new DesktopAssetManager();
+		MaterialDef matdef = new MaterialDef(assetManager, matName);
+		
+		TechniqueDef def = new TechniqueDef("Default");
+		matdef.addTechniqueDef(def);
+		Material material = new Material(matdef);
+		g.setMaterial(material);
+		return g;
+	}
+
 }
 
 /*
