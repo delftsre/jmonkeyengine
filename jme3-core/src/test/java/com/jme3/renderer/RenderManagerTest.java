@@ -1,14 +1,14 @@
 package com.jme3.renderer;
 
+import org.mockito.Mockito;
+
 import com.jme3.app.BasicProfiler;
-import com.jme3.asset.AssetManager;
-import com.jme3.asset.DesktopAssetManager;
 import com.jme3.material.Material;
-import com.jme3.material.MaterialDef;
-import com.jme3.material.TechniqueDef;
+import com.jme3.post.SceneProcessor;
 import com.jme3.profile.AppProfiler;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.texture.FrameBuffer;
 
 import junit.framework.TestCase;
@@ -53,7 +53,7 @@ public class RenderManagerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		renderer = new RendererImpl();		
+		renderer = new RendererImpl();
 		camera = new Camera(camWidth, camHeight);
 		renderManager = new RenderManager(renderer);
 		viewName = "viewName";
@@ -152,7 +152,7 @@ public class RenderManagerTest extends TestCase {
 		boolean removed = renderManager.removeMainView(viewName);
 		assertTrue(removed);
 	}
-	
+
 	public void testRemoveMainPortObject() {
 		ViewPort viewport = null;
 		boolean removed = renderManager.removeMainView(viewport);
@@ -210,13 +210,13 @@ public class RenderManagerTest extends TestCase {
 		ViewPort viewport = null;
 		assertFalse(renderManager.removePostView(viewport));
 	}
-	
+
 	public void testNotifyReshapeWhileNoViewports() {
 		int w = 0;
 		int h = 0;
 		renderManager.notifyReshape(w, h);
 	}
-	
+
 	public void testReshapePreviewPorts() {
 		String viewName = "preview";
 		renderManager.createPreView(viewName, camera);
@@ -226,7 +226,7 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(w, camera.getWidth());
 		assertEquals(h, camera.getHeight());
 	}
-	
+
 	public void testReshapePostviewPorts() {
 		String viewName = "preview";
 		renderManager.createPostView(viewName, camera);
@@ -236,7 +236,7 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(w, camera.getWidth());
 		assertEquals(h, camera.getHeight());
 	}
-	
+
 	public void testReshapeViewPorts() {
 		String viewName = "preview";
 		renderManager.createMainView(viewName, camera);
@@ -246,57 +246,58 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(w, camera.getWidth());
 		assertEquals(h, camera.getHeight());
 	}
-	
+
 	public void testReshapeWitOuputFrameBufferMainView() {
 		String viewName = "preview";
 		ViewPort viewport = renderManager.createMainView(viewName, camera);
 		FrameBuffer bufferOut = setupFrameBuffer();
 		viewport.setOutputFrameBuffer(bufferOut);
 		int w = 15;
-		int h = 20;		
+		int h = 20;
 		renderManager.notifyReshape(w, h);
 		assertEquals(camWidth, camera.getWidth());
 		assertEquals(camHeight, camera.getHeight());
 	}
-	
+
 	public void testReshapeWitOuputFrameBufferPreView() {
 		String viewName = "preview";
 		ViewPort viewport = renderManager.createPreView(viewName, camera);
 		FrameBuffer bufferOut = setupFrameBuffer();
 		viewport.setOutputFrameBuffer(bufferOut);
 		int w = 15;
-		int h = 20;		
+		int h = 20;
 		renderManager.notifyReshape(w, h);
 		assertEquals(camWidth, camera.getWidth());
 		assertEquals(camHeight, camera.getHeight());
 	}
-	
+
 	public void testReshapeWitOuputFrameBufferPostView() {
 		String viewName = "preview";
 		ViewPort viewport = renderManager.createPostView(viewName, camera);
 		FrameBuffer bufferOut = setupFrameBuffer();
 		viewport.setOutputFrameBuffer(bufferOut);
 		int w = 15;
-		int h = 20;		
+		int h = 20;
 		renderManager.notifyReshape(w, h);
 		assertEquals(camWidth, camera.getWidth());
 		assertEquals(camHeight, camera.getHeight());
 	}
-	
+
 	public void testReshapeWithSceneprocessors() {
 		String viewName = "preview";
 		ViewPort viewport = renderManager.createPreView(viewName, camera);
 		SceneProcessorImpl processor = new SceneProcessorImpl();
 		viewport.addProcessor(processor);
 		int w = 15;
-		int h = 20;		
+		int h = 20;
 		renderManager.notifyReshape(w, h);
 		assertEquals(w, camera.getWidth());
 		assertEquals(h, camera.getHeight());
 	}
-		
+
 	/**
 	 * Helper function for testing notifyReshape
+	 * 
 	 * @return framebuffer
 	 */
 	private FrameBuffer setupFrameBuffer() {
@@ -306,98 +307,184 @@ public class RenderManagerTest extends TestCase {
 		FrameBuffer bufferOut = new FrameBuffer(frameWidth, frameHeight, samples);
 		return bufferOut;
 	}
-	
+
 	public void testFlushQueue() {
 		renderManager.flushQueue(viewport);
 	}
-	
+
 	public void testRenderViewPortQueuesForSky() {
-		AppProfiler prof = new BasicProfiler();
+		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		boolean flush = false;
 		renderManager.setAppProfiler(prof);
-		
+
 		Geometry g = setupGeometry();
 		viewport.getQueue().addToQueue(g, Bucket.Sky);
-		
+
 		renderManager.renderViewPortQueues(viewport, flush);
 		float expectedStart = 0;
 		float expectedEnd = 1;
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
-	
+
 	public void testRenderViewPortQueuesForTransparant() {
-		AppProfiler prof = new BasicProfiler();
+		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		boolean flush = false;
 		renderManager.setAppProfiler(prof);
-		
+
 		Geometry g = setupGeometry();
 		viewport.getQueue().addToQueue(g, Bucket.Transparent);
-		
+
 		renderManager.renderViewPortQueues(viewport, flush);
 		float expectedStart = 0;
 		float expectedEnd = 0;
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
-	
+
 	public void testRenderViewPortQueuesForMutipleGeo() {
 		boolean flush = false;
-		
+
 		Geometry g1 = setupGeometry();
 		viewport.getQueue().addToQueue(g1, Bucket.Transparent);
 		Geometry g2 = setupGeometry();
 		viewport.getQueue().addToQueue(g2, Bucket.Gui);
 		Geometry g3 = setupGeometry();
 		viewport.getQueue().addToQueue(g3, Bucket.Sky);
-		
+
 		renderManager.renderViewPortQueues(viewport, flush);
 		float expectedStart = 0;
 		float expectedEnd = 1;
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
-	
+
 	public void testRenderViewPortQueuesForTransparantWithoutProf() {
 		boolean flush = false;
 		Geometry g = setupGeometry();
 		viewport.getQueue().addToQueue(g, Bucket.Transparent);
-		
+
 		renderManager.renderViewPortQueues(viewport, flush);
 		float expectedStart = 0;
 		float expectedEnd = 0;
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
-	
+
 	public void testRenderViewPortQueuesForGUI() {
-		AppProfiler prof = new BasicProfiler();
+		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		boolean flush = false;
 		renderManager.setAppProfiler(prof);
-		
+
 		Geometry g = setupGeometry();
 		viewport.getQueue().addToQueue(g, Bucket.Gui);
-		
-		renderManager.renderViewPortQueues(viewport, flush);		
+
+		renderManager.renderViewPortQueues(viewport, flush);
 		float expectedStart = 0;
 		float expectedEnd = 1;
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
-	
+
 	private Geometry setupGeometry() {
 		String geoName = "geoName";
 		Geometry g = new Geometry(geoName);
-		
-		String matName = "wood";
-		AssetManager assetManager = new DesktopAssetManager();
-		MaterialDef matdef = new MaterialDef(assetManager, matName);
-		
-		TechniqueDef def = new TechniqueDef("Default");
-		matdef.addTechniqueDef(def);
-		Material material = new Material(matdef);
+		/*
+		 * String matName = "wood"; AssetManager assetManager = new
+		 * DesktopAssetManager(); MaterialDef matdef = new
+		 * MaterialDef(assetManager, matName); TechniqueDef def = new
+		 * TechniqueDef("Default"); matdef.addTechniqueDef(def); Material
+		 * material = new Material(matdef);
+		 */
+
+		Material material = Mockito.mock(Material.class);
 		g.setMaterial(material);
 		return g;
+	}
+
+	public void testRenderViewPortRawEmpty() {
+		renderManager.renderViewPortRaw(viewport);
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Gui));
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Sky));
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Translucent));
+	}
+
+	public void testRenderViewPortRaw() {
+		Spatial scene = Mockito.mock(Spatial.class);
+		viewport.attachScene(scene);
+		renderManager.renderViewPortRaw(viewport);
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Gui));
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Sky));
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Translucent));
+	}
+
+	public void testRenderViewPortWithAppProfiler() {
+		float tpf = 60;
+		AppProfiler prof = Mockito.mock(BasicProfiler.class);
+		renderManager.setAppProfiler(prof);
+		renderManager.renderViewPort(viewport, tpf);
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Gui));
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Sky));
+		assertTrue(viewport.queue.isQueueEmpty(Bucket.Translucent));
+	}
+
+	public void testDisabledViewportRendererViewport() {
+		float tpf = 60;
+		viewport.setEnabled(false);
+		Spatial scene = Mockito.mock(Spatial.class);
+		viewport.attachScene(scene);
+		renderManager.renderViewPort(viewport, tpf);
+		int actualSceneSize = viewport.getScenes().size();
+		int expectedSize = 1;
+		assertEquals(expectedSize, actualSceneSize);
+	}
+
+	public void testEnabledViewportRendererViewport() {
+		float tpf = 60;
+
+		renderManager.renderViewPort(viewport, tpf);
+		int actualSceneSize = viewport.getScenes().size();
+		int expectedSize = 0;
+		assertEquals(expectedSize, actualSceneSize);
+	}
+
+	public void testViewPortRendererWithSceneProcessors() {
+		float tpf = 60;
+		boolean clearDepth = true;
+		boolean clearColor = true;
+		AppProfiler prof = null;
+		renderManager.setAppProfiler(prof);
+		SceneProcessor processor = Mockito.mock(SceneProcessor.class);
+		viewport.addProcessor(processor);
+		viewport.setClearDepth(clearDepth);
+		viewport.setClearColor(clearColor);
+
+		renderManager.renderViewPort(viewport, tpf);
+		int actualSceneSize = viewport.getScenes().size();
+		int expectedSize = 0;
+		assertEquals(expectedSize, actualSceneSize);
+	}
+
+	public void testViewPortRendererWithClearStencil() {
+		float tpf = 60;
+		boolean clearStencil = true;
+		viewport.setClearStencil(clearStencil);
+
+		renderManager.renderViewPort(viewport, tpf);
+		int actualSceneSize = viewport.getScenes().size();
+		int expectedSize = 0;
+		assertEquals(expectedSize, actualSceneSize);
+	}
+
+	public void testViewPortRendererWithClearColor() {
+		float tpf = 60;
+		boolean clearColor = true;
+		viewport.setClearColor(clearColor);
+
+		renderManager.renderViewPort(viewport, tpf);
+		int actualSceneSize = viewport.getScenes().size();
+		int expectedSize = 0;
+		assertEquals(expectedSize, actualSceneSize);
 	}
 
 }
