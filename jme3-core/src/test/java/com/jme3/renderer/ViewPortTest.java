@@ -1,8 +1,5 @@
 package com.jme3.renderer;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
