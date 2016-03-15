@@ -1,14 +1,25 @@
 package com.jme3.renderer;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import com.jme3.app.BasicProfiler;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.DesktopAssetManager;
+import com.jme3.light.LightFilter;
 import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
+import com.jme3.material.RenderState;
+import com.jme3.material.TechniqueDef;
 import com.jme3.post.SceneProcessor;
 import com.jme3.profile.AppProfiler;
+import com.jme3.renderer.queue.GeometryList;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.system.NullRenderer;
+import com.jme3.system.Timer;
 import com.jme3.texture.FrameBuffer;
 
 import junit.framework.TestCase;
@@ -106,6 +117,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testRemoveNonExisitingPreViewPort() {
 		String viewName = "camView";
+		renderManager.createPreView("aview", camera);
 		boolean removed = renderManager.removePreView(viewName);
 		assertFalse(removed);
 	}
@@ -161,6 +173,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testRemoveNonExisitingMainPort() {
 		String viewName = "camView";
+		renderManager.createMainView("aview", camera);
 		boolean removed = renderManager.removeMainView(viewName);
 		assertFalse(removed);
 	}
@@ -186,11 +199,32 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(viewport, retreivedPort);
 	}
 
+	public void testGetNonExistingPostViewPort() {
+		String viewName = "postView";
+		ViewPort viewport = renderManager.createPostView("aview", camera);
+		assertNotNull(viewport);
+		ViewPort retreivedPort = renderManager.getPostView(viewName);
+		assertNull(retreivedPort);
+	}
+
+	public void testGetViews() {
+		assertNotNull(renderManager.getPostViews());
+		assertNotNull(renderManager.getPreViews());
+		assertNotNull(renderManager.getMainViews());
+	}
+
 	public void testRemovePostView() {
 		String viewName = "postView";
 		renderManager.createPostView(viewName, camera);
 		boolean removed = renderManager.removePostView(viewName);
 		assertTrue(removed);
+	}
+
+	public void testRemoveNonExistingPostView() {
+		String viewName = "postView";
+		renderManager.createPostView("aview", camera);
+		boolean removed = renderManager.removePostView(viewName);
+		assertFalse(removed);
 	}
 
 	public void testRemovePostViewByObject() {
@@ -317,7 +351,7 @@ public class RenderManagerTest extends TestCase {
 		boolean flush = false;
 		renderManager.setAppProfiler(prof);
 
-		Geometry g = setupGeometry();
+		Geometry g = setupGeometry("g1");
 		viewport.getQueue().addToQueue(g, Bucket.Sky);
 
 		renderManager.renderViewPortQueues(viewport, flush);
@@ -331,8 +365,10 @@ public class RenderManagerTest extends TestCase {
 		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		boolean flush = false;
 		renderManager.setAppProfiler(prof);
+		boolean handleTranslucentBucket = false;
+		renderManager.setHandleTranslucentBucket(handleTranslucentBucket);
 
-		Geometry g = setupGeometry();
+		Geometry g = setupGeometry("g1");
 		viewport.getQueue().addToQueue(g, Bucket.Transparent);
 
 		renderManager.renderViewPortQueues(viewport, flush);
@@ -341,15 +377,39 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
+	
+	public void testRenderTraslucentQueues() {
+		boolean handleTranslucentBucket = true;
+		renderManager.setHandleTranslucentBucket(handleTranslucentBucket);
+
+		Geometry g = setupGeometry("g1");
+		viewport.getQueue().addToQueue(g, Bucket.Translucent);
+
+		renderManager.renderTranslucentQueue(viewport);
+		boolean empty = viewport.getQueue().isQueueEmpty(Bucket.Translucent);
+		assertTrue(empty);
+	}
+	
+	public void testDoNotRenderTranslucentQueues() {
+		boolean handleTranslucentBucket = false;
+		renderManager.setHandleTranslucentBucket(handleTranslucentBucket);
+		
+		Geometry g = setupGeometry("g1");
+		viewport.getQueue().addToQueue(g, Bucket.Translucent);
+		
+		renderManager.renderTranslucentQueue(viewport);
+		boolean empty = viewport.getQueue().isQueueEmpty(Bucket.Translucent);
+		assertFalse(empty);
+	}
 
 	public void testRenderViewPortQueuesForMutipleGeo() {
 		boolean flush = false;
 
-		Geometry g1 = setupGeometry();
+		Geometry g1 = setupGeometry("g1");
 		viewport.getQueue().addToQueue(g1, Bucket.Transparent);
-		Geometry g2 = setupGeometry();
+		Geometry g2 = setupGeometry("g2");
 		viewport.getQueue().addToQueue(g2, Bucket.Gui);
-		Geometry g3 = setupGeometry();
+		Geometry g3 = setupGeometry("g3");
 		viewport.getQueue().addToQueue(g3, Bucket.Sky);
 
 		renderManager.renderViewPortQueues(viewport, flush);
@@ -358,10 +418,85 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(expectedStart, ((RendererImpl) renderer).getStart());
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
+	
+	public void testRender() {		
+		Camera cam = new Camera(1, 1);
+		FrameBuffer out = setupFrameBuffer();
+		renderManager.createMainView(viewName, cam).setOutputFrameBuffer(out);
+		renderManager.createPostView(viewName, cam).setOutputFrameBuffer(out);
+		renderManager.createPreView(viewName, cam).setOutputFrameBuffer(out);
+
+		float tpf = 10;
+		boolean mainFrameBufferActive = true;
+		
+		Timer timer = Mockito.mock(Timer.class);
+		renderManager.setTimer(timer);
+		
+		renderManager.render(tpf, mainFrameBufferActive);
+		assertEquals(1, renderManager.getPreViews().size());
+		assertEquals(1, renderManager.getPostViews().size());
+		assertEquals(1, renderManager.getMainViews().size());
+	}
+	
+	public void testRenderWithoutOutputBufferAndMainFrameBufferActive() {
+		Camera cam = Mockito.mock(Camera.class);
+		renderManager.createMainView(viewName, cam);
+		renderManager.createPostView(viewName, cam);
+		renderManager.createPreView(viewName, cam);
+		
+		AppProfiler prof = Mockito.mock(BasicProfiler.class);
+		renderManager.setAppProfiler(prof);
+
+		float tpf = 10;
+		boolean mainFrameBufferActive = false;
+		
+		Timer timer = Mockito.mock(Timer.class);
+		renderManager.setTimer(timer);
+		
+		renderManager.render(tpf, mainFrameBufferActive);
+		assertEquals(1, renderManager.getPreViews().size());
+		assertEquals(1, renderManager.getPostViews().size());
+		assertEquals(1, renderManager.getMainViews().size());
+	}
+	
+	public void testRenderofNullRenderer() {
+		renderer = new NullRenderer();
+		renderManager = new RenderManager(renderer);
+
+		float tpf = 10;
+		boolean mainFrameBufferActive = false;		
+		
+		renderManager.render(tpf, mainFrameBufferActive);
+		assertEquals(0, renderManager.getPreViews().size());
+		assertEquals(0, renderManager.getPostViews().size());
+		assertEquals(0, renderManager.getMainViews().size());
+	}
+	
+	public void testRenderWithMainFrameBufferActive() {
+		Camera cam = new Camera(1, 1);
+		renderManager.createMainView(viewName, cam);
+		renderManager.createPostView(viewName, cam);
+		renderManager.createPreView(viewName, cam);
+		
+		AppProfiler prof = Mockito.mock(BasicProfiler.class);
+		renderManager.setAppProfiler(prof);
+
+		float tpf = 10;
+		boolean mainFrameBufferActive = true;
+		
+		Timer timer = Mockito.mock(Timer.class);
+		renderManager.setTimer(timer);
+		
+		renderManager.render(tpf, mainFrameBufferActive);
+		assertEquals(1, renderManager.getPreViews().size());
+		assertEquals(1, renderManager.getPostViews().size());
+		assertEquals(1, renderManager.getMainViews().size());
+	}
 
 	public void testRenderViewPortQueuesForTransparantWithoutProf() {
 		boolean flush = false;
-		Geometry g = setupGeometry();
+		String geoName = "geoName";
+		Geometry g = setupGeometry(geoName);
 		viewport.getQueue().addToQueue(g, Bucket.Transparent);
 
 		renderManager.renderViewPortQueues(viewport, flush);
@@ -376,7 +511,8 @@ public class RenderManagerTest extends TestCase {
 		boolean flush = false;
 		renderManager.setAppProfiler(prof);
 
-		Geometry g = setupGeometry();
+		String geoName = "geoName";
+		Geometry g = setupGeometry(geoName);
 		viewport.getQueue().addToQueue(g, Bucket.Gui);
 
 		renderManager.renderViewPortQueues(viewport, flush);
@@ -386,8 +522,7 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
 
-	private Geometry setupGeometry() {
-		String geoName = "geoName";
+	private Geometry setupGeometry(String geoName) {
 		Geometry g = new Geometry(geoName);
 		/*
 		 * String matName = "wood"; AssetManager assetManager = new
@@ -485,6 +620,137 @@ public class RenderManagerTest extends TestCase {
 		int actualSceneSize = viewport.getScenes().size();
 		int expectedSize = 0;
 		assertEquals(expectedSize, actualSceneSize);
+	}
+
+	public void testRenderGeometry() {
+		Geometry geo1 = setupGeometry("g1");
+		Geometry geo2 = setupGeometry("g2");
+		GeometryList list = new GeometryList(null);
+		list.add(geo1);
+		list.add(geo2);
+		renderManager.renderGeometryList(list);
+		assertNull(renderManager.getForcedTechnique());
+	}
+
+	public void testRenderGeometryWithForcedTechnique() {
+		Geometry geo1 = setupGeometryWithMaterial("g2");
+		renderManager.setForcedTechnique("SomeTech");
+		renderManager.setForcedMaterial(geo1.getMaterial());
+		String techName = "SomeTech";		
+		geo1.getMaterial().selectTechnique(techName, renderManager);
+		renderManager.renderGeometry(geo1);
+		assertEquals(techName, renderManager.getForcedTechnique());
+	}
+	
+	public void testRenderGeometryWithForcedTechniqueAndNoRenderState() {
+		boolean renderstate = false;
+		Geometry geo1 = setupGeometryWithMaterial("g2", renderstate);		
+		renderManager.setForcedTechnique("SomeTech");
+		renderManager.setForcedMaterial(geo1.getMaterial());
+		String techName = "SomeTech";		
+		renderManager.renderGeometry(geo1);
+		assertEquals(techName, renderManager.getForcedTechnique());
+	}
+	
+	public void testRenderGeometryWithoutForcedTechniqueButForcedMaterialSet() {
+		Geometry geo1 = setupGeometryWithMaterial("g2");
+		String name = "SomeTechWhichIsnotInRenderer";
+		renderManager.setForcedTechnique(name);
+		renderManager.renderGeometry(geo1);
+		assertEquals(name, renderManager.getForcedTechnique());
+	}
+	
+	public void testRenderGeometryWithForcedMaterial() {
+		Geometry geo1 = setupGeometryWithMaterial("g2");
+		boolean ignoreTransform = true;
+		geo1.setIgnoreTransform(ignoreTransform);
+		LightFilter light = null;
+		renderManager.setLightFilter(light);
+		renderManager.setForcedMaterial(geo1.getMaterial());
+		renderManager.renderGeometry(geo1);
+		assertNull(renderManager.getForcedTechnique());
+	}
+	
+	public void testRenderGeometryWithoutForcedTechniqueButWithForcedMaterial() {
+		Geometry geo1 = setupGeometryWithMaterial("g2");
+		String name = "SomeTechWhichIsnotInRenderer";
+		renderManager.setForcedTechnique(name);
+		renderManager.setForcedMaterial(geo1.getMaterial());
+		renderManager.renderGeometry(geo1);
+		assertEquals(name, renderManager.getForcedTechnique());
+	}
+
+	private Geometry setupGeometryWithMaterial(String geoName) {
+		return setupGeometryWithMaterial(geoName, true);
+	}
+	
+	private Geometry setupGeometryWithMaterial(String geoName, boolean renderstate) {
+		Geometry g = new Geometry(geoName);
+
+		String matName = "wood";
+		AssetManager assetManager = new DesktopAssetManager();
+		MaterialDef matdef = new MaterialDef(assetManager, matName);
+		TechniqueDef defaultTech = new TechniqueDef("Default");
+		TechniqueDef def = new TechniqueDef("SomeTech");
+		
+		if (renderstate) {
+			RenderState state = Mockito.mock(RenderState.class);
+			def.setForcedRenderState(state);
+		}
+		
+		matdef.addTechniqueDef(def);
+		matdef.addTechniqueDef(defaultTech);
+		Material material = new Material(matdef);
+		g.setMaterial(material);
+		return g;
+	}
+	
+	public void testSetCameraWithLightFilter() {
+		LightFilter filter = Mockito.mock(LightFilter.class);
+		renderManager.setLightFilter(filter);
+		Camera cam = new Camera(1, 1);
+		boolean ortho = true;
+		renderManager.setCamera(cam, ortho);
+		Camera actual = renderManager.getCurrentCamera();
+		assertNotNull(actual);
+		assertEquals(cam, actual);
+	}
+	
+	public void testSinglePassLightBatchSizeOne() {
+		int singlePassLightBatchSize = 0;
+		renderManager.setSinglePassLightBatchSize(singlePassLightBatchSize);
+		int expected = 1;
+		int actual = renderManager.getSinglePassLightBatchSize();
+		assertEquals(expected, actual);
+	}
+	
+	public void testSinglePassLightBatchSizeRandom() {
+		int singlePassLightBatchSize = 2;
+		renderManager.setSinglePassLightBatchSize(singlePassLightBatchSize);
+		int expected = 2;
+		int actual = renderManager.getSinglePassLightBatchSize();
+		assertEquals(expected, actual);
+	}
+	
+	public void testHandleTranslucentBucket() {
+		boolean handleTranslucentBucket = true;
+		renderManager.setHandleTranslucentBucket(handleTranslucentBucket);
+		assertTrue(renderManager.isHandleTranslucentBucket());
+	}
+	
+	public void testRenderSubSceneNode() {
+		Node scene = Mockito.mock(Node.class);
+		Node child = Mockito.mock(Node.class);
+		scene.attachChild(child);
+		Mockito.when(scene.checkCulling(viewport.getCamera())).thenReturn(true);
+		renderManager.renderScene(scene, viewport);
+	}
+	
+	public void testPreloadSpatialNode() {
+		Node scene = new Node("NodeM");
+		Node child = Mockito.mock(Node.class);
+		scene.attachChild(child);
+		renderManager.preloadScene(scene);
 	}
 
 }
