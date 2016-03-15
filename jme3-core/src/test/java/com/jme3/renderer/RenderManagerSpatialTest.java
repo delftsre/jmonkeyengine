@@ -5,9 +5,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.jme3.asset.AssetManager;
+import static org.mockito.Mockito.*;
+import com.jme3.asset.DesktopAssetManager;
+import com.jme3.material.Material;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.VertexBuffer;
+import com.jme3.util.PlaceholderAssets;
+import com.jme3.scene.VertexBuffer.Type;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 
@@ -35,53 +47,99 @@ public class RenderManagerSpatialTest{
 		camera = null;
 	}
 	
+	//Test the preLoadScene method
+	
 	@Test(expected=IllegalStateException.class)
 	public void testPreLoadSceneGeometryNull() {
 		Geometry geo = new Geometry();
 		Assert.assertNotNull(geo);
-		geo.setMaterial(null);
+		Assert.assertNull(geo.getMaterial());
 		renderManager.preloadScene(geo);	
 	}
 	
+	@Test
+	public void testPreLoadSceneSpatial() {
+		Spatial spatial = Mockito.mock(Spatial.class);
+		renderManager.preloadScene(spatial);	
+		Assert.assertNotNull(spatial);
+	}
+	
+	//TODO: cannot get into final if loop
 	/*@Test
-	 public void testPreLoadSceneGeometry() {
-		Geometry geo = new Geometry();
-		renderManager.preloadScene(geo);	
+	public void testPreLoadSceneGeometryMesh() {
+		Geometry geo = Mockito.mock(Geometry.class);
+		Material material = Mockito.mock(Material.class);
+		Mesh mesh = Mockito.mock(Mesh.class);		
+		VertexBuffer vb = Mockito.mock(VertexBuffer.class);
+		//VertexBuffer vb = new VertexBuffer(Type.Position);
+		//vb.setElementComponent(0,0,5);
+		vb.setUpdateNeeded();
+		mesh.setBuffer(vb);
+		geo.setMaterial(material);
+		geo.setMesh(mesh);
+		//renderManager.preloadScene(geo);
+		//Assert.assertNotNull(geo.getMaterial());	
+		//Assert.assertNotNull(geo.getMesh());
+		
+		Renderer r = Mockito.mock(Renderer.class);
+		RenderManager m = Mockito.spy(new RenderManager(r));
+		m.preloadScene(geo);
+		verify(r).updateBufferData(vb);
+		
 	}*/
 	
-	//TODO test werkt met en zonder deze expected, maar heeft alleen code coverage met
-	@Test(expected=IllegalStateException.class)
+	@Test
+	public void testPreLoadSceneGeometryMeshNull() {
+		Geometry geo = new Geometry();
+		Material material = Mockito.mock(Material.class);
+		geo.setMaterial(material);
+		renderManager.preloadScene(geo);		
+		Assert.assertNull(geo.getMesh());
+	}
+	
+	
+	@Test
 	public void testPreLoadSceneNode() {
 		Node node = new Node();	
 		Geometry geo = new Geometry();
-		geo.setMaterial(null);
+		Material material = Mockito.mock(Material.class);
+		geo.setMaterial(material);
 		node.attachChild(geo);
-		renderManager.preloadScene(node);
+		Renderer r = Mockito.mock(Renderer.class);
+		RenderManager m = Mockito.spy(new RenderManager(r));
+		m.preloadScene(node);
+		verify(m).preloadScene(node.getChild(0));
 	}
 	
-	@Test(expected=IllegalStateException.class)
+	//test the RenderSubScene method
+	
+	//TODO problem with (geo.checkCulling(port.getCamera())
+	/*@Test
 	public void testRenderSubSceneGeometry(){
 		Geometry geo = new Geometry();
-		geo.setMaterial(null);
+		geo.setLastFrustumIntersection(Camera.FrustumIntersect.Inside);
 		ViewPort port = new ViewPort("ViewPort", camera);
-		RenderManager m = Mockito.mock(RenderManager.class);
-		Assert.assertTrue(geo.checkCulling(camera));
-		m.renderScene(geo, port);
+		Field privateField = null;
+		try {
+			privateField = Geometry.class.getDeclaredField("refreshFlags");
+			privateField.setAccessible(true);
+			int fieldValue = (int) privateField.get(geo);
+			privateField.setInt(geo, 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-	}
+		
+		//ViewPort port = Mockito.mock(ViewPort.class);
+		//RenderManager m = Mockito.mock(RenderManager.class);
+		//geo.forceRefresh(transforms, bounds, lights);
+		//Assert.assertTrue(geo.checkCulling(port.getCamera()));
+		//renderManager.renderScene(geo, port);
+		
+		
+	}*/
 	
-	@Test(expected=IllegalStateException.class)
-	public void testRenderSubSceneNode(){
-		Node node = new Node();
-		Geometry geo = new Geometry();
-		geo.setMaterial(null);
-		node.attachChild(geo);
-		ViewPort port = new ViewPort("ViewPort", camera);
-		RenderManager m = Mockito.mock(RenderManager.class);
-		Assert.assertTrue(node.checkCulling(camera));
-		m.renderScene(node, port);
-		
-	}
+	//test the renderScene method
 	
 	@Test
 	public void testRenderScene(){
