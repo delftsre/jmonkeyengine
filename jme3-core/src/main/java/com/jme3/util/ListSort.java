@@ -38,8 +38,8 @@ import java.util.Comparator;
  *
  * It's adapted from Tim Peters's work on list sorting for Python. More details
  * here http://svn.python.org/projects/python/trunk/Objects/listsort.txt
- * 
- * here is the C code from which this class is based 
+ *
+ * here is the C code from which this class is based
  * http://svn.python.org/projects/python/trunk/Objects/listobject.c
  *
  * This class was also greatly inspired from java 7 TimSort by Josh Blosh with the
@@ -72,14 +72,14 @@ public class ListSort<T> {
     private T[] array;
     private T[] tmpArray;
     private Comparator<T> comparator;
-    
+
     /**
      * attribute temp vars for merging. This was used to unroll the merge_lo &
      * merge_hi function of original implementations that used massive labeled
      * goto branching and was almost unreadable
      */
     int iterA, iterB, dest, lengthA, lengthB;
-    
+
     /**
      * Number of runs to merge
      */
@@ -117,10 +117,20 @@ public class ListSort<T> {
      */
     private int minGallop = MIN_GALLOP;
 
+    protected static final int GALLOP_LEFT = 0;
+
+    protected static final int GALLOP_RIGHT = 1;
+
+    private static final boolean WITH_EQUAL = true;
+
     /**
      * Creates a ListSort
      */
     public ListSort() {
+    }
+
+    public void setComparator(Comparator<T> comparator) {
+        this.comparator = comparator;
     }
 
     /**
@@ -143,13 +153,13 @@ public class ListSort<T> {
          * There is a good chance we stumble upon the worst case scenario one 
          * moment or another.
          * So we just always take half of the original array size.
-         */        
+         */
         int tmpLen = len >>> 1;
-     
+
         //if the array is null or tmpLen is above the actual length we allocate the array
         if (tmpArray == null || tmpLen > tmpArray.length) {
             //has to use Object for temp storage
-            tmpArray = (T[]) new Object[tmpLen];         
+            tmpArray = (T[]) new Object[tmpLen];
         }
 
         /*
@@ -165,12 +175,12 @@ public class ListSort<T> {
          */
         int stackLen = (len < 1400 ? 5
                 : len < 15730 ? 10
-                : len < 1196194 ? 19 : 40);
+                        : len < 1196194 ? 19 : 40);
 
         //Same remark as with the temp array
         if (runsIndices == null || stackLen > runsIndices.length) {
             runsIndices = new int[stackLen];
-            runsLength = new int[stackLen];           
+            runsLength = new int[stackLen];
         }
     }
 
@@ -203,8 +213,8 @@ public class ListSort<T> {
          * the size of data to be sorted
          */
         if (remaining < MIN_SIZE) {
-            int runLength = getRunLength(array, low, high, comparator);
-            binaryInsertionSort(array, low, high, low + runLength, comparator);
+            int runLength = getRunLength(array, low, high);
+            binaryInsertionSort(array, low, high, low + runLength);
             return;
         }
 
@@ -215,14 +225,14 @@ public class ListSort<T> {
          */
         int minLength = mergeComputeMinRun(remaining);
         while (remaining != 0) {
-            int runLength = getRunLength(array, low, high, comparator);
+            int runLength = getRunLength(array, low, high);
 
             /* if runlength is bellow the threshold we binary sort the remaining 
              * elements
              */
             if (runLength < minLength) {
                 int newLength = remaining <= minLength ? remaining : minLength;
-                binaryInsertionSort(array, low, low + newLength, low + runLength, comparator);
+                binaryInsertionSort(array, low, low + newLength, low + runLength);
                 runLength = newLength;
             }
 
@@ -238,7 +248,7 @@ public class ListSort<T> {
         }
 
         // Merge all remaining runs to complete sort        
-        mergeForceCollapse();        
+        mergeForceCollapse();
 
     }
 
@@ -260,12 +270,10 @@ public class ListSort<T> {
      * @param array the array to search for run length
      * @param firstId index of the first element of the run
      * @param lastId index+1 of the last element of the run
-     * @param comparator the comparator
      * @return the length of the run beginning at the specified position in the
      * specified array
      */
-    private int getRunLength(T[] array, int firstId, int lastId,
-            Comparator<T> comparator) {
+    private int getRunLength(T[] array, int firstId, int lastId) {
 
         int runEnd = firstId + 1;
         if (runEnd < lastId) {
@@ -303,10 +311,8 @@ public class ListSort<T> {
      * @param lastId the index+ of the last element to sort
      * @param start the index of the element to start sorting range
      * [firstId,satrt]is assumed to be already sorted
-     * @param comparator the comparator
      */
-    private void binaryInsertionSort(T[] array, int firstId, int lastId, int start,
-            Comparator<T> comparator) {
+    private void binaryInsertionSort(T[] array, int firstId, int lastId, int start) {
 
         if (firstId == start) {
             start++;
@@ -452,7 +458,7 @@ public class ListSort<T> {
          * ignored (already in place).
          */
         //didn't find proper naming for k as it's used inthe original implementation
-        int k = gallopRight(array[indexB], array, indexA, lenA, 0, comparator);        
+        int k = gallop(array[indexB], array, indexA, lenA, 0, GALLOP_RIGHT);
         indexA += k;
         lenA -= k;
         if (lenA == 0) {
@@ -462,7 +468,7 @@ public class ListSort<T> {
         /* Where does A end in B?  Elements in B after that can be
          * ignored (already in place).
          */
-        lenB = gallopLeft(array[indexA + lenA - 1], array, indexB, lenB, lenB - 1, comparator);        
+        lenB = gallop(array[indexA + lenA - 1], array, indexB, lenB, lenB - 1, GALLOP_LEFT);
         if (lenB == 0) {
             return;
         }
@@ -475,6 +481,126 @@ public class ListSort<T> {
         } else {
             mergeHigh(indexA, lenA, indexB, lenB);
         }
+    }
+
+    private boolean compareByDirection(T x, T y, int gallopDirection, boolean withEqual) {
+        int compareResult = comparator.compare(x, y);
+        if (gallopDirection == GALLOP_LEFT) {
+            return withEqual ? compareResult >= 0 : compareResult > 0;
+        } else {
+            return withEqual ? compareResult <= 0 : compareResult < 0;
+        }
+    }
+
+    private boolean reverseCompareByDirection(T x, T y, int gallopDirection, boolean withEqual) {
+        return compareByDirection(x, y, getOppositeDirectionn(gallopDirection), withEqual);
+    }
+
+    private int countMaxOffset(int hint, int length, int gallopDirection) {
+        if (gallopDirection == GALLOP_RIGHT) {
+            return length - hint;
+        } else {
+            return hint + 1;
+        }
+    }
+
+    private T getNextArrayElement(T[] array, int idx, int hint, int offset, int gallopDirection) {
+        int newIndex = idx + hint;
+        if (gallopDirection == GALLOP_RIGHT) {
+            newIndex += offset;
+        } else {
+            newIndex -= offset;
+        }
+        return array[newIndex];
+    }
+
+    private int getOppositeDirectionn(int gallopDirection) {
+        return gallopDirection == GALLOP_RIGHT ? GALLOP_LEFT : GALLOP_RIGHT;
+    }
+
+    private int[] translateToOffsetsRelativeToIdx(int hint, int offset, int lastOffset, int direction) {
+        int[] results = new int[2];
+        int hlp = lastOffset;
+        if (direction == GALLOP_RIGHT) {
+            lastOffset += hint;
+            offset += hint;
+        } else {
+            lastOffset = hint - offset;
+            offset = hint - hlp;
+        }
+        results[0] = offset;
+        results[1] = lastOffset;
+        return results;
+    }
+
+    private int[] performGallop(T key, T[] array, int idx, int length, int hint, int direction) {
+        int offset = 1;
+        int lastOffset = 0;
+        int maxOffset;
+        maxOffset = countMaxOffset(hint, length, direction);
+        while (offset < maxOffset && reverseCompareByDirection(key, getNextArrayElement(array, idx, hint, offset, direction), direction, WITH_EQUAL)) {
+            lastOffset = offset;
+            offset = (offset << 1) + 1;
+            /* int overflow. 
+                 * Note : not sure if that can happen but it's here in both 
+                 * original and java 7 TimSort implementation
+             */
+            if (offset <= 0) {
+                offset = maxOffset;
+            }
+        }
+        if (offset > maxOffset) {
+            offset = maxOffset;
+        }
+        return translateToOffsetsRelativeToIdx(hint, offset, lastOffset, direction);
+    }
+    
+    private int binarySearchByDirection (T[] array, T key, int leftBorder, int rightBorder, int idx, int direction) {
+        int testedPosition;
+        while (leftBorder < rightBorder) {
+            testedPosition = leftBorder + ((rightBorder - leftBorder) >>> 1);
+
+            if (compareByDirection(key, array[idx + testedPosition], direction, !WITH_EQUAL)) {
+                if (direction == GALLOP_LEFT) {
+                    leftBorder = testedPosition + 1;
+                } else {
+                    rightBorder = testedPosition;
+                }
+            } else if (direction == GALLOP_LEFT) {
+                rightBorder = testedPosition;
+            } else {
+                leftBorder = testedPosition + 1;
+            }
+        }
+        return rightBorder;
+    }
+
+    protected int gallop(T key, T[] array, int idx, int length, int hint, int direction) {
+        int offset;
+        int lastOffset;
+        int[] newOffsets;
+        if (compareByDirection(key, array[idx + hint], direction, !WITH_EQUAL)) {
+            /* array[hint] < key -- gallop right, until
+             * array[hint + lastOffset] < key <= array[hint + offset]
+             */
+            newOffsets = performGallop(key, array, idx, length, hint, getOppositeDirectionn(direction));
+        } else {
+            /* key <= array[hint] -- gallop left, until
+             * array[hint - offset] < key <= array[hint - lastOffset]
+             */
+            newOffsets = performGallop(key, array, idx, length, hint, direction);
+        }
+        offset = newOffsets[0];
+        lastOffset = newOffsets[1];
+
+        /*
+         * Now array[idx+lastOffset] < key <= array[idx+offset], so key belongs somewhere
+         * to the right of lastOffset but no farther right than offset.  Do a binary
+         * search, with invariant array[idx + lastOffset - 1] < key <= array[idx + offset].
+         */
+        lastOffset++;
+        offset = binarySearchByDirection(array, key, lastOffset, offset, idx, direction);
+        return offset;
     }
 
     /**
@@ -490,9 +616,8 @@ public class ListSort<T> {
      * @param idx the index to start
      * @param length the length of the run
      * @param hint is an index at which to begin the search, 0 <= hint < n. The
-     * closer hint is to the final result, the faster this runs.
-     * @param comparator the comparator used to order the range, and to search
-     * @return is the int k in 0..n such that
+     * closer hint is to the final result, the faster this runs. @param is the
+     * int k in 0..n such that
      *
      * array[k-1] < key <= array[k]
      *
@@ -500,76 +625,75 @@ public class ListSort<T> {
      * IOW, key belongs at index k; or, IOW, the first k elements of a should
      * precede key, and the last n-k should follow key.
      */
-    private int gallopLeft(T key, T[] array, int idx, int length, int hint,
-            Comparator<T> comparator) {        
-        int lastOffset = 0;
-        int offset = 1;
-        if (comparator.compare(key, array[idx + hint]) > 0) {
-            /* array[hint] < key -- gallop right, until
-             * array[hint + lastOffset] < key <= array[hint + offset]
-             */
-            int maxOffset = length - hint;
-            while (offset < maxOffset && comparator.compare(key, array[idx + hint + offset]) > 0) {
-                lastOffset = offset;
-                offset = (offset << 1) + 1;
-                /* int overflow. 
-                 * Note : not sure if that can happen but it's here in both 
-                 * original and java 7 TimSort implementation
-                 */
-                if (offset <= 0) {
-                    offset = maxOffset;
-                }
-            }
-            if (offset > maxOffset) {
-                offset = maxOffset;
-            }
-
-            // Translate back to offsets relative to idx. 
-            lastOffset += hint;
-            offset += hint;
-        } else {
-            /* key <= array[hint] -- gallop left, until
-             * array[hint - offset] < key <= array[hint - lastOffset]
-             */
-            int maxOffset = hint + 1;
-            while (offset < maxOffset && comparator.compare(key, array[idx + hint - offset]) <= 0) {
-                lastOffset = offset;
-                offset = (offset << 1) + 1;
-                /* int overflow. 
-                 * Note : not sure if that can happen but it's here in both 
-                 * original and java 7 TimSort implementation
-                 */
-                if (offset <= 0) {
-                    offset = maxOffset;
-                }
-            }
-            if (offset > maxOffset) {
-                offset = maxOffset;
-            }
-
-            // Translate back to positive offsets relative to idx.
-            int k = lastOffset;
-            lastOffset = hint - offset;
-            offset = hint - k;
-        }        
-
-        /*
-         * Now array[idx+lastOffset] < key <= array[idx+offset], so key belongs somewhere
-         * to the right of lastOffset but no farther right than offset.  Do a binary
-         * search, with invariant array[idx + lastOffset - 1] < key <= array[idx + offset].
-         */
-        lastOffset++;
-        while (lastOffset < offset) {
-            int m = lastOffset + ((offset - lastOffset) >>> 1);
-
-            if (comparator.compare(key, array[idx + m]) > 0) {
-                lastOffset = m + 1;  // array[idx + m] < key
-            } else {
-                offset = m;          // key <= array[idx + m]
-            }
-        }        
-        return offset;
-    }
+//    protected int gallopLeft(T key, T[] array, int idx, int length, int hint) {
+//        int lastOffset = 0;
+//        int offset = 1;
+//        if (comparator.compare(key, array[idx + hint]) > 0) {
+//            /* array[hint] < key -- gallop right, until
+//             * array[hint + lastOffset] < key <= array[hint + offset]
+//             */
+//            int maxOffset = length - hint;
+//            while (offset < maxOffset && comparator.compare(key, array[idx + hint + offset]) > 0) {
+//                lastOffset = offset;
+//                offset = (offset << 1) + 1;
+//                /* int overflow. 
+//                 * Note : not sure if that can happen but it's here in both 
+//                 * original and java 7 TimSort implementation
+//                 */
+//                if (offset <= 0) {
+//                    offset = maxOffset;
+//                }
+//            }
+//            if (offset > maxOffset) {
+//                offset = maxOffset;
+//            }
+//
+//            // Translate back to offsets relative to idx. 
+//            lastOffset += hint;
+//            offset += hint;
+//        } else {
+//            /* key <= array[hint] -- gallop left, until
+//             * array[hint - offset] < key <= array[hint - lastOffset]
+//             */
+//            int maxOffset = hint + 1;
+//            while (offset < maxOffset && comparator.compare(key, array[idx + hint - offset]) <= 0) {
+//                lastOffset = offset;
+//                offset = (offset << 1) + 1;
+//                /* int overflow. 
+//                 * Note : not sure if that can happen but it's here in both 
+//                 * original and java 7 TimSort implementation
+//                 */
+//                if (offset <= 0) {
+//                    offset = maxOffset;
+//                }
+//            }
+//            if (offset > maxOffset) {
+//                offset = maxOffset;
+//            }
+//
+//            // Translate back to positive offsets relative to idx.
+//            int k = lastOffset;
+//            lastOffset = hint - offset;
+//            offset = hint - k;
+//        }
+//
+//        /*
+//         * Now array[idx+lastOffset] < key <= array[idx+offset], so key belongs somewhere
+//         * to the right of lastOffset but no farther right than offset.  Do a binary
+//         * search, with invariant array[idx + lastOffset - 1] < key <= array[idx + offset].
+//         */
+//        lastOffset++;
+//        while (lastOffset < offset) {
+//            int m = lastOffset + ((offset - lastOffset) >>> 1);
+//
+//            if (comparator.compare(key, array[idx + m]) > 0) {
+//                lastOffset = m + 1;  // array[idx + m] < key
+//            } else {
+//                offset = m;          // key <= array[idx + m]
+//            }
+//        }
+//        return offset;
+//    }
 
     /**
      * Exactly like gallopLeft(), except that if key already exists in
@@ -586,80 +710,79 @@ public class ListSort<T> {
      * @param idx the index to start
      * @param length the length of the run
      * @param hint is an index at which to begin the search, 0 <= hint < n. The
-     * closer hint is to the final result, the faster this runs.
-     * @param comparator the comparator used to order the range, and to search
-     * @return value is the int k in 0..n such that array[k-1] <= key < array[k]
+     * closer hint is to the final result, the faster this runs. @param value is
+     * the int k in 0..n such that array[k-1] <= key < array[k]
      */
-    private int gallopRight(T key, T[] array, int idx, int length,
-            int hint, Comparator<T> comparator) {
-        
-        int offset = 1;
-        int lastOffset = 0;
-        if (comparator.compare(key, array[idx + hint]) < 0) {
-            /* key < array[hint] -- gallop left, until
-             * array[hint - offset] <= key < array[hint - lastOffset]
-             */
-            int maxOffset = hint + 1;
-            while (offset < maxOffset && comparator.compare(key, array[idx + hint - offset]) < 0) {
-                lastOffset = offset;
-                offset = (offset << 1) + 1;
-                /* int overflow. 
-                 * Note : not sure if that can happen but it's here in both 
-                 * original and java 7 TimSort implementation
-                 */
-                if (offset <= 0) {
-                    offset = maxOffset;
-                }
-            }
-            if (offset > maxOffset) {
-                offset = maxOffset;
-            }
+//    protected int gallopRight(T key, T[] array, int idx, int length, int hint) {
+//
+//        int offset = 1;
+//        int lastOffset = 0;
+//        if (comparator.compare(key, array[idx + hint]) < 0) {
+//            /* key < array[hint] -- gallop left, until
+//             * array[hint - offset] <= key < array[hint - lastOffset]
+//             */
+//            int maxOffset = hint + 1;
+//            while (offset < maxOffset && comparator.compare(key, array[idx + hint - offset]) < 0) {
+//                lastOffset = offset;
+//                offset = (offset << 1) + 1;
+//                /* int overflow. 
+//                 * Note : not sure if that can happen but it's here in both 
+//                 * original and java 7 TimSort implementation
+//                 */
+//                if (offset <= 0) {
+//                    offset = maxOffset;
+//                }
+//            }
+//            if (offset > maxOffset) {
+//                offset = maxOffset;
+//            }
+//
+//            // Translate back to offsets relative to idx. 
+//            int k = lastOffset;
+//            lastOffset = hint - offset;
+//            offset = hint - k;
+//        } else {
+//            /* array[hint] <= key -- gallop right, until
+//             * array[hint + lastOffset] <= key < array[hint + offset]
+//             */
+//            int maxOffset = length - hint;
+//            while (offset < maxOffset && comparator.compare(key, array[idx + hint + offset]) >= 0) {
+//                lastOffset = offset;
+//                offset = (offset << 1) + 1;
+//                /* int overflow. 
+//                 * Note : not sure if that can happen but it's here in both 
+//                 * original and java 7 TimSort implementation
+//                 */
+//                if (offset <= 0) {
+//                    offset = maxOffset;
+//                }
+//            }
+//            if (offset > maxOffset) {
+//                offset = maxOffset;
+//            }
+//
+//            // Translate back to offsets relative to idx. 
+//            lastOffset += hint;
+//            offset += hint;
+//        }
+//
+//        /* Now array[lastOffset] <= key < array[offset], so key belongs somewhere to the
+//         * right of lastOffset but no farther right than offset.  Do a binary
+//         * search, with invariant array[lastOffset-1] <= key < array[offset].
+//         */
+//        lastOffset++;
+//        while (lastOffset < offset) {
+//            int m = lastOffset + ((offset - lastOffset) >>> 1);
+//
+//            if (comparator.compare(key, array[idx + m]) < 0) {
+//                offset = m;           //key < array[idx + m] 
+//            } else {
+//                lastOffset = m + 1;  // array[idx + m] <= key 
+//            }
+//        }
+//        return offset;
+//    }
 
-            // Translate back to offsets relative to idx. 
-            int k = lastOffset;
-            lastOffset = hint - offset;
-            offset = hint - k;
-        } else {
-            /* array[hint] <= key -- gallop right, until
-             * array[hint + lastOffset] <= key < array[hint + offset]
-             */
-            int maxOffset = length - hint;
-            while (offset < maxOffset && comparator.compare(key, array[idx + hint + offset]) >= 0) {
-                lastOffset = offset;
-                offset = (offset << 1) + 1;
-                /* int overflow. 
-                 * Note : not sure if that can happen but it's here in both 
-                 * original and java 7 TimSort implementation
-                 */
-                if (offset <= 0) {
-                    offset = maxOffset;
-                }
-            }
-            if (offset > maxOffset) {
-                offset = maxOffset;
-            }
-
-            // Translate back to offsets relative to idx. 
-            lastOffset += hint;
-            offset += hint;
-        }        
-
-        /* Now array[lastOffset] <= key < array[offset], so key belongs somewhere to the
-         * right of lastOffset but no farther right than offset.  Do a binary
-         * search, with invariant array[lastOffset-1] <= key < array[offset].
-         */
-        lastOffset++;
-        while (lastOffset < offset) {
-            int m = lastOffset + ((offset - lastOffset) >>> 1);
-
-            if (comparator.compare(key, array[idx + m]) < 0) {
-                offset = m;           //key < array[idx + m] 
-            } else {
-                lastOffset = m + 1;  // array[idx + m] <= key 
-            }
-        }        
-        return offset;
-    }
     /**
      * Merge the lenA elements starting at idxA with the lenB elements starting
      * at idxB in a stable way, in-place. lenA and lenB must be > 0, and idxA +
@@ -673,15 +796,13 @@ public class ListSort<T> {
      * @param lengthB length of run B
      */
     private void mergeLow(int idxA, int lenA, int idxB, int lenB) {
-        
+
         lengthA = lenA;
         lengthB = lenB;
         iterA = 0;       // Indexes into tmp array
         iterB = idxB;   // Indexes int a
         dest = idxA;      // Indexes int a
-        Comparator<T> comp = this.comparator;
 
-        
         T[] arr = this.array;
         T[] tempArray = tmpArray;
         System.arraycopy(arr, idxA, tempArray, 0, lengthA);
@@ -689,31 +810,31 @@ public class ListSort<T> {
         arr[dest] = arr[iterB];
         dest++;
         iterB++;
-        innerMergeLow(comp, arr, tempArray);
+        innerMergeLow(arr, tempArray);
 
         //minGallop shouldn't be < 1
-        minGallop = minGallop < 1 ? 1 : minGallop; 
+        minGallop = minGallop < 1 ? 1 : minGallop;
 
         if (lengthA == 1) {//CopyB label
             System.arraycopy(arr, iterB, arr, dest, lengthB);
             // The last element of run A belongs at the end of the merge.
             arr[dest + lengthB] = tempArray[iterA];
-        } else if(lengthA== 0){
-            throw new UnsupportedOperationException("Compare function result changed! " +
-                                                    "Make sure you do not modify the scene from another thread!");
+        } else if (lengthA == 0) {
+            throw new UnsupportedOperationException("Compare function result changed! "
+                    + "Make sure you do not modify the scene from another thread!");
         } else {//Fail label
             System.arraycopy(tempArray, iterA, arr, dest, lengthA);
         }
     }
 
     /**
-     * Attempt to unroll "goto" style original implementation.
-     * this method uses and change temp attributes of the class
-     * @param comp comparator
+     * Attempt to unroll "goto" style original implementation. this method uses
+     * and change temp attributes of the class
+     *
      * @param arr the array
      * @param tempArray the temp array
      */
-    public void innerMergeLow(Comparator<T> comp, T[] arr, T[] tempArray) {
+    private void innerMergeLow(T[] arr, T[] tempArray) {
         lengthB--;
         if (lengthB == 0 || lengthA == 1) {
             return;
@@ -730,8 +851,8 @@ public class ListSort<T> {
              * winning consistently.
              */
             do {
-                
-                if (comp.compare(arr[iterB], tempArray[iterA]) < 0) {
+
+                if (comparator.compare(arr[iterB], tempArray[iterA]) < 0) {
                     arr[dest] = arr[iterB];
                     dest++;
                     iterB++;
@@ -747,7 +868,7 @@ public class ListSort<T> {
                     iterA++;
                     aWins++;
                     bWins = 0;
-                    lengthA--;                    
+                    lengthA--;
                     if (lengthA == 1) {
                         return;
                     }
@@ -759,8 +880,8 @@ public class ListSort<T> {
              * huge win. So try that, and continue galloping until (if ever)
              * neither run appears to be winning consistently anymore.
              */
-            do {                
-                aWins = gallopRight(arr[iterB], tempArray, iterA, lengthA, 0, comp);
+            do {
+                aWins = gallop(arr[iterB], tempArray, iterA, lengthA, 0, GALLOP_RIGHT);
                 if (aWins != 0) {
                     System.arraycopy(tempArray, iterA, arr, dest, aWins);
                     dest += aWins;
@@ -770,8 +891,8 @@ public class ListSort<T> {
                     * function is consistent, but we can't assume
                     * that it is.
                     * a propper error will be thrown in mergeLow if lengthA == 0
-                    */
-                    if (lengthA <= 1){
+                     */
+                    if (lengthA <= 1) {
                         return;
                     }
                 }
@@ -783,7 +904,7 @@ public class ListSort<T> {
                     return;
                 }
 
-                bWins = gallopLeft(tempArray[iterA], arr, iterB, lengthB, 0, comp);
+                bWins = gallop(tempArray[iterA], arr, iterB, lengthB, 0, GALLOP_LEFT);
                 if (bWins != 0) {
                     System.arraycopy(arr, iterB, arr, dest, bWins);
                     dest += bWins;
@@ -807,7 +928,7 @@ public class ListSort<T> {
             }
             //original implementation uses +1 to penalize, Java7 Timsort uses +2
             minGallop += 2;  // Penalize for leaving gallop mode
-        }  
+        }
     }
 
     /**
@@ -823,15 +944,13 @@ public class ListSort<T> {
      * @param lengthB length of run B
      */
     private void mergeHigh(int idxA, int lenA, int idxB, int lenB) {
-        
 
         lengthA = lenA;
         lengthB = lenB;
         iterA = idxA + lengthA - 1;
         iterB = lengthB - 1;
         dest = idxB + lengthB - 1;
-        Comparator<T> comp = this.comparator; 
-        
+
         T[] arr = this.array;
         T[] tempArray = tmpArray;
         System.arraycopy(arr, idxB, tempArray, 0, lengthB);
@@ -839,33 +958,33 @@ public class ListSort<T> {
         arr[dest] = arr[iterA];
         dest--;
         iterA--;
-        innerMergeHigh(comp, tempArray, arr, idxA);
+        innerMergeHigh(tempArray, arr, idxA);
         //minGallop shouldn't be < 1;
-        minGallop = minGallop < 1 ? 1 : minGallop; 
+        minGallop = minGallop < 1 ? 1 : minGallop;
 
         if (lengthB == 1) {//CopyA label            
             dest -= lengthA;
             iterA -= lengthA;
             System.arraycopy(arr, iterA + 1, arr, dest + 1, lengthA);
             // The first element of run B belongs at the front of the merge. 
-            arr[dest] = tempArray[iterB];  
+            arr[dest] = tempArray[iterB];
         } else if (lengthB == 0) {
-              throw new UnsupportedOperationException("Compare function result changed! " +
-                                                      "Make sure you do not modify the scene from another thread!");
+            throw new UnsupportedOperationException("Compare function result changed! "
+                    + "Make sure you do not modify the scene from another thread!");
         } else {//Fail label                        
             System.arraycopy(tempArray, 0, arr, dest - (lengthB - 1), lengthB);
         }
     }
-    
+
     /**
-     * Attempt to unroll "goto" style original implementation.
-     * this method uses and change temp attributes of the class
-     * @param comp comparator
+     * Attempt to unroll "goto" style original implementation. this method uses
+     * and change temp attributes of the class
+     *
      * @param arr the array
      * @param tempArray the temp array
      * @param idxA the index of the first element of run A
      */
-    public void innerMergeHigh(Comparator<T> comp, T[] tempArray, T[] arr, int idxA) {
+    private void innerMergeHigh(T[] tempArray, T[] arr, int idxA) {
         lengthA--;
         if (lengthA == 0 || lengthB == 1) {
             return;
@@ -883,14 +1002,14 @@ public class ListSort<T> {
              * Do the straightforward thing until (if ever) one run
              * appears to win consistently.
              */
-            do {                
-                if (comp.compare(tempArray[iterB], arr[iterA]) < 0) {
+            do {
+                if (comparator.compare(tempArray[iterB], arr[iterA]) < 0) {
                     arr[dest] = arr[iterA];
                     dest--;
                     iterA--;
                     aWins++;
                     bWins = 0;
-                    lengthA --;
+                    lengthA--;
                     if (lengthA == 0) {
                         return;
                     }
@@ -912,8 +1031,8 @@ public class ListSort<T> {
              * huge win. So try that, and continue galloping until (if ever)
              * neither run appears to be winning consistently anymore.
              */
-            do {                
-                aWins = lengthA - gallopRight(tempArray[iterB], arr, idxA, lengthA, lengthA - 1, comp);
+            do {
+                aWins = lengthA - gallop(tempArray[iterB], arr, idxA, lengthA, lengthA - 1, GALLOP_RIGHT);
                 if (aWins != 0) {
                     dest -= aWins;
                     iterA -= aWins;
@@ -931,7 +1050,7 @@ public class ListSort<T> {
                     return;
                 }
 
-                bWins = lengthB - gallopLeft(arr[iterA], tempArray, 0, lengthB, lengthB - 1, comp);
+                bWins = lengthB - gallop(arr[iterA], tempArray, 0, lengthB, lengthB - 1, GALLOP_LEFT);
                 if (bWins != 0) {
                     dest -= bWins;
                     iterB -= bWins;
@@ -941,12 +1060,12 @@ public class ListSort<T> {
                     * function is consistent, but we can't assume
                     * that it is.
                     * a propper error will be thrown in mergeLow if lengthB == 0
-                    */
-                    if (lengthB <= 1){
+                     */
+                    if (lengthB <= 1) {
                         return;
                     }
                 }
-                arr[dest] = arr[iterA];     
+                arr[dest] = arr[iterA];
                 dest--;
                 iterA--;
                 lengthA--;
@@ -978,37 +1097,15 @@ public class ListSort<T> {
             array[lastId] = o;
             firstId++;
             lastId--;
-        }        
+        }
     }
-    
-     /**
+
+    /**
      * return the useful length of the array being sorted
+     *
      * @return the length pass to the last allocateStack method
      */
     public int getLength() {
         return length;
     }
-    
-    /*
-     * test case
-     */
-    public static void main(String[] argv) {
-        Integer[] arr = new Integer[]{5, 6, 2, 9, 10, 11, 12, 8, 3, 12, 3, 7, 12, 32, 458, 12, 5, 3, 78, 45, 12, 32, 58, 45, 65, 45, 98, 45, 65, 2, 3, 47, 21, 35};
-        ListSort ls = new ListSort();
-        ls.allocateStack(34);
-        ls.sort(arr, new Comparator<Integer>() {
-            public int compare(Integer o1, Integer o2) {
-                int x = o1 - o2;
-                return (x == 0) ? 0 : (x > 0) ? 1 : -1;
-            }
-        });
-        for (Integer integer : arr) {
-            System.err.print(integer + ",");
-        }
-        System.err.println();
-    }
-
-   
-    
 }
-

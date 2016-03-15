@@ -475,11 +475,6 @@ public class Image extends NativeObject implements Savable /*, Cloneable*/ {
     public NativeObject createDestructableClone() {
         return new Image(id);
     }
-
-    @Override
-    public long getUniqueId() {
-        return ((long)OBJTYPE_TEXTURE << 32) | ((long)id);
-    }
     
     /**
      * @return A shallow clone of this image. The data is not cloned.

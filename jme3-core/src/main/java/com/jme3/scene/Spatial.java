@@ -32,9 +32,8 @@
 package com.jme3.scene;
 
 import com.jme3.asset.AssetKey;
-import com.jme3.asset.CloneableSmartAsset;
 import com.jme3.bounding.BoundingVolume;
-import com.jme3.collision.Collidable;
+import com.jme3.effect.IParticleEmitter;
 import com.jme3.export.*;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
@@ -63,7 +62,7 @@ import java.util.logging.Logger;
  * @author Joshua Slack
  * @version $Revision: 4075 $, $Data$
  */
-public abstract class Spatial implements Savable, Cloneable, Collidable, CloneableSmartAsset {
+public abstract class Spatial implements ISpatial {
 
     private static final Logger logger = Logger.getLogger(Spatial.class.getName());
 
@@ -394,6 +393,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @return This spatial's name.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -1631,6 +1631,11 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
             s.breadthFirstTraversal(visitor, queue);
         }
     }
+    
+    public IParticleEmitter findEmitter() {
+        return null;
+    }
+
 
     protected abstract void breadthFirstTraversal(SceneGraphVisitor visitor, Queue<Spatial> queue);
 }
