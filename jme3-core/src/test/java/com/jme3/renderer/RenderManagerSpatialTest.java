@@ -64,30 +64,6 @@ public class RenderManagerSpatialTest{
 		Assert.assertNotNull(spatial);
 	}
 	
-	//TODO: cannot get into final if loop
-	/*@Test
-	public void testPreLoadSceneGeometryMesh() {
-		Geometry geo = Mockito.mock(Geometry.class);
-		Material material = Mockito.mock(Material.class);
-		Mesh mesh = Mockito.mock(Mesh.class);		
-		VertexBuffer vb = Mockito.mock(VertexBuffer.class);
-		//VertexBuffer vb = new VertexBuffer(Type.Position);
-		//vb.setElementComponent(0,0,5);
-		vb.setUpdateNeeded();
-		mesh.setBuffer(vb);
-		geo.setMaterial(material);
-		geo.setMesh(mesh);
-		//renderManager.preloadScene(geo);
-		//Assert.assertNotNull(geo.getMaterial());	
-		//Assert.assertNotNull(geo.getMesh());
-		
-		Renderer r = Mockito.mock(Renderer.class);
-		RenderManager m = Mockito.spy(new RenderManager(r));
-		m.preloadScene(geo);
-		verify(r).updateBufferData(vb);
-		
-	}*/
-	
 	@Test
 	public void testPreLoadSceneGeometryMeshNull() {
 		Geometry geo = new Geometry();
@@ -110,34 +86,6 @@ public class RenderManagerSpatialTest{
 		m.preloadScene(node);
 		verify(m).preloadScene(node.getChild(0));
 	}
-	
-	//test the RenderSubScene method
-	
-	//TODO problem with (geo.checkCulling(port.getCamera())
-	/*@Test
-	public void testRenderSubSceneGeometry(){
-		Geometry geo = new Geometry();
-		geo.setLastFrustumIntersection(Camera.FrustumIntersect.Inside);
-		ViewPort port = new ViewPort("ViewPort", camera);
-		Field privateField = null;
-		try {
-			privateField = Geometry.class.getDeclaredField("refreshFlags");
-			privateField.setAccessible(true);
-			int fieldValue = (int) privateField.get(geo);
-			privateField.setInt(geo, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		//ViewPort port = Mockito.mock(ViewPort.class);
-		//RenderManager m = Mockito.mock(RenderManager.class);
-		//geo.forceRefresh(transforms, bounds, lights);
-		//Assert.assertTrue(geo.checkCulling(port.getCamera()));
-		//renderManager.renderScene(geo, port);
-		
-		
-	}*/
 	
 	//test the renderScene method
 	
