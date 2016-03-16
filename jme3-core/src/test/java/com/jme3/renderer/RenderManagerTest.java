@@ -1,5 +1,6 @@
 package com.jme3.renderer;
 
+
 import java.nio.Buffer;
 
 import org.mockito.Mockito;
@@ -88,168 +89,7 @@ public class RenderManagerTest extends TestCase {
 		renderManager = null;
 		camera = null;
 	}
-
-	/**
-	 * Run the ViewPort createPreView(String, Camera) method test
-	 */
-	public void testCreatePreView() {
-		String viewName = "camView";
-		ViewPort viewPortCreated = renderManager.createPreView(viewName, camera);
-		assertNotNull(viewPortCreated);
-		ViewPort retreivedViewport = renderManager.getPreView(viewName);
-		assertEquals(viewPortCreated, retreivedViewport);
-	}
-
-	public void testEmptyPreViewPortList() {
-		String viewName = "noView";
-		ViewPort viewPort = renderManager.getPreView(viewName);
-		assertNull(viewPort);
-	}
-
-	public void testNonExistingPreViewPortList() {
-		String viewName = "camView";
-		renderManager.createPreView(viewName, camera);
-		String viewNameTwo = "anotherCam";
-		assertNull(renderManager.getPreView(viewNameTwo));
-	}
-
-	public void testRemoveExisitingPreViewPort() {
-		String viewName = "camView";
-		renderManager.createPreView(viewName, camera);
-		boolean removed = renderManager.removePreView(viewName);
-		assertTrue(removed);
-	}
-
-	public void testRemoveNonExisitingPreViewPort() {
-		String viewName = "camView";
-		renderManager.createPreView("aview", camera);
-		boolean removed = renderManager.removePreView(viewName);
-		assertFalse(removed);
-	}
-
-	public void testRemoveExisitingPreViewPortFromObject() {
-		String viewName = "camView";
-		ViewPort viewport = renderManager.createPreView(viewName, camera);
-		boolean removed = renderManager.removePreView(viewport);
-		assertTrue(removed);
-	}
-
-	public void testRemoveNullPreViewPort() {
-		String viewName = "camView";
-		ViewPort port = new ViewPort(viewName, camera);
-		boolean removed = renderManager.removePreView(port);
-		assertFalse(removed);
-	}
-
-	public void testCreateMainView() {
-		String viewName = "camView";
-		ViewPort viewPortCreated = renderManager.createMainView(viewName, camera);
-		assertNotNull(viewPortCreated);
-		ViewPort retreivedViewport = renderManager.getMainView(viewName);
-		assertEquals(viewPortCreated, retreivedViewport);
-	}
-
-	public void testEmptyViewPortList() {
-		String viewName = "noView";
-		ViewPort viewPort = renderManager.getMainView(viewName);
-		assertNull(viewPort);
-	}
-
-	public void testNonExistingMainPortList() {
-		String viewName = "camView";
-		renderManager.createMainView(viewName, camera);
-		String viewNameTwo = "anotherCam";
-		ViewPort viewport = renderManager.getMainView(viewNameTwo);
-		assertNull(viewport);
-	}
-
-	public void testRemoveExisitingMainPort() {
-		String viewName = "camView";
-		renderManager.createMainView(viewName, camera);
-		boolean removed = renderManager.removeMainView(viewName);
-		assertTrue(removed);
-	}
-
-	public void testRemoveMainPortObject() {
-		ViewPort viewport = null;
-		boolean removed = renderManager.removeMainView(viewport);
-		assertFalse(removed);
-	}
-
-	public void testRemoveNonExisitingMainPort() {
-		String viewName = "camView";
-		renderManager.createMainView("aview", camera);
-		boolean removed = renderManager.removeMainView(viewName);
-		assertFalse(removed);
-	}
-
-	public void testRemoveExisitingMainPortFromObject() {
-		String viewName = "camView";
-		ViewPort viewport = renderManager.createPreView(viewName, camera);
-		boolean removed = renderManager.removePreView(viewport);
-		assertTrue(removed);
-	}
-
-	public void testRemoveNullMainPort() {
-		String viewName = "camView";
-		ViewPort port = new ViewPort(viewName, camera);
-		assertFalse(renderManager.removePreView(port));
-	}
-
-	public void testPostViewPort() {
-		String viewName = "postView";
-		ViewPort viewport = renderManager.createPostView(viewName, camera);
-		assertNotNull(viewport);
-		ViewPort retreivedPort = renderManager.getPostView(viewName);
-		assertEquals(viewport, retreivedPort);
-	}
-
-	public void testGetNonExistingPostViewPort() {
-		String viewName = "postView";
-		ViewPort viewport = renderManager.createPostView("aview", camera);
-		assertNotNull(viewport);
-		ViewPort retreivedPort = renderManager.getPostView(viewName);
-		assertNull(retreivedPort);
-	}
-
-	public void testGetViews() {
-		assertNotNull(renderManager.getPostViews());
-		assertNotNull(renderManager.getPreViews());
-		assertNotNull(renderManager.getMainViews());
-	}
-
-	public void testRemovePostView() {
-		String viewName = "postView";
-		renderManager.createPostView(viewName, camera);
-		boolean removed = renderManager.removePostView(viewName);
-		assertTrue(removed);
-	}
-
-	public void testRemoveNonExistingPostView() {
-		String viewName = "postView";
-		renderManager.createPostView("aview", camera);
-		boolean removed = renderManager.removePostView(viewName);
-		assertFalse(removed);
-	}
-
-	public void testRemovePostViewByObject() {
-		String viewName = "postView";
-		ViewPort viewport = renderManager.createPostView(viewName, camera);
-		boolean removed = renderManager.removePostView(viewport);
-		assertTrue(removed);
-	}
-
-	public void testGetAndRemoveNullPostView() {
-		String viewName = "Something";
-		assertNull(renderManager.getPostView(viewName));
-		assertFalse(renderManager.removePostView(viewName));
-	}
-
-	public void testRemoveNullPostView() {
-		ViewPort viewport = null;
-		assertFalse(renderManager.removePostView(viewport));
-	}
-
+	
 	public void testNotifyReshapeWhileNoViewports() {
 		int w = 0;
 		int h = 0;
@@ -258,7 +98,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapePreviewPorts() {
 		String viewName = "preview";
-		renderManager.createPreView(viewName, camera);
+		renderManager.getViewportManager().createPreView(viewName, camera);
 		int w = 15;
 		int h = 20;
 		renderManager.notifyReshape(w, h);
@@ -268,7 +108,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapePostviewPorts() {
 		String viewName = "preview";
-		renderManager.createPostView(viewName, camera);
+		renderManager.getViewportManager().createPostView(viewName, camera);
 		int w = 25;
 		int h = 30;
 		renderManager.notifyReshape(w, h);
@@ -278,7 +118,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapeViewPorts() {
 		String viewName = "preview";
-		renderManager.createMainView(viewName, camera);
+		renderManager.getViewportManager().createMainView(viewName, camera);
 		int w = 15;
 		int h = 20;
 		renderManager.notifyReshape(w, h);
@@ -288,7 +128,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapeWitOuputFrameBufferMainView() {
 		String viewName = "preview";
-		ViewPort viewport = renderManager.createMainView(viewName, camera);
+		ViewPort viewport = renderManager.getViewportManager().createMainView(viewName, camera);
 		FrameBuffer bufferOut = setupFrameBuffer();
 		viewport.setOutputFrameBuffer(bufferOut);
 		int w = 15;
@@ -300,7 +140,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapeWitOuputFrameBufferPreView() {
 		String viewName = "preview";
-		ViewPort viewport = renderManager.createPreView(viewName, camera);
+		ViewPort viewport = renderManager.getViewportManager().createPreView(viewName, camera);
 		FrameBuffer bufferOut = setupFrameBuffer();
 		viewport.setOutputFrameBuffer(bufferOut);
 		int w = 15;
@@ -312,7 +152,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapeWitOuputFrameBufferPostView() {
 		String viewName = "preview";
-		ViewPort viewport = renderManager.createPostView(viewName, camera);
+		ViewPort viewport = renderManager.getViewportManager().createPostView(viewName, camera);
 		FrameBuffer bufferOut = setupFrameBuffer();
 		viewport.setOutputFrameBuffer(bufferOut);
 		int w = 15;
@@ -324,7 +164,7 @@ public class RenderManagerTest extends TestCase {
 
 	public void testReshapeWithSceneprocessors() {
 		String viewName = "preview";
-		ViewPort viewport = renderManager.createPreView(viewName, camera);
+		ViewPort viewport = renderManager.getViewportManager().createPreView(viewName, camera);
 		SceneProcessorImpl processor = new SceneProcessorImpl();
 		viewport.addProcessor(processor);
 		int w = 15;
@@ -334,6 +174,7 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(h, camera.getHeight());
 	}
 
+	
 	/**
 	 * Helper function for testing notifyReshape
 	 * 
@@ -425,11 +266,11 @@ public class RenderManagerTest extends TestCase {
 	}
 	
 	public void testRender() {		
-		 
+		Camera cam = new Camera(1, 1);
 		FrameBuffer out = setupFrameBuffer();
-		renderManager.createMainView(viewName, camera).setOutputFrameBuffer(out);
-		renderManager.createPostView(viewName, camera).setOutputFrameBuffer(out);
-		renderManager.createPreView(viewName, camera).setOutputFrameBuffer(out);
+		renderManager.getViewportManager().createMainView(viewName, camera).setOutputFrameBuffer(out);
+		renderManager.getViewportManager().createPostView(viewName, camera).setOutputFrameBuffer(out);
+		renderManager.getViewportManager().createPreView(viewName, camera).setOutputFrameBuffer(out);
 
 		float tpf = 10;
 		boolean mainFrameBufferActive = true;
@@ -438,16 +279,16 @@ public class RenderManagerTest extends TestCase {
 		renderManager.setTimer(timer);
 		
 		renderManager.render(tpf, mainFrameBufferActive);
-		assertEquals(1, renderManager.getPreViews().size());
-		assertEquals(1, renderManager.getPostViews().size());
-		assertEquals(1, renderManager.getMainViews().size());
+		assertEquals(1, renderManager.getViewportManager().getPreViews().size());
+		assertEquals(1, renderManager.getViewportManager().getPostViews().size());
+		assertEquals(1, renderManager.getViewportManager().getMainViews().size());
 	}
 	
 	public void testRenderWithoutOutputBufferAndMainFrameBufferActive() {
 		Camera cam = Mockito.mock(Camera.class);
-		renderManager.createMainView(viewName, cam);
-		renderManager.createPostView(viewName, cam);
-		renderManager.createPreView(viewName, cam);
+		renderManager.getViewportManager().createMainView(viewName, cam);
+		renderManager.getViewportManager().createPostView(viewName, cam);
+		renderManager.getViewportManager().createPreView(viewName, cam);
 		
 		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		renderManager.setAppProfiler(prof);
@@ -459,9 +300,9 @@ public class RenderManagerTest extends TestCase {
 		renderManager.setTimer(timer);
 		
 		renderManager.render(tpf, mainFrameBufferActive);
-		assertEquals(1, renderManager.getPreViews().size());
-		assertEquals(1, renderManager.getPostViews().size());
-		assertEquals(1, renderManager.getMainViews().size());
+		assertEquals(1, renderManager.getViewportManager().getPreViews().size());
+		assertEquals(1, renderManager.getViewportManager().getPostViews().size());
+		assertEquals(1, renderManager.getViewportManager().getMainViews().size());
 	}
 	
 	public void testRenderofNullRenderer() {
@@ -472,16 +313,16 @@ public class RenderManagerTest extends TestCase {
 		boolean mainFrameBufferActive = false;		
 		
 		renderManager.render(tpf, mainFrameBufferActive);
-		assertEquals(0, renderManager.getPreViews().size());
-		assertEquals(0, renderManager.getPostViews().size());
-		assertEquals(0, renderManager.getMainViews().size());
+		assertEquals(0, renderManager.getViewportManager().getPreViews().size());
+		assertEquals(0, renderManager.getViewportManager().getPostViews().size());
+		assertEquals(0, renderManager.getViewportManager().getMainViews().size());
 	}
 	
 	public void testRenderWithMainFrameBufferActive() {
-		 
-		renderManager.createMainView(viewName, camera);
-		renderManager.createPostView(viewName, camera);
-		renderManager.createPreView(viewName, camera);
+		Camera cam = new Camera(1, 1);
+		renderManager.getViewportManager().createMainView(viewName, camera);
+		renderManager.getViewportManager().createPostView(viewName, camera);
+		renderManager.getViewportManager().createPreView(viewName, camera);
 		
 		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		renderManager.setAppProfiler(prof);
@@ -493,9 +334,9 @@ public class RenderManagerTest extends TestCase {
 		renderManager.setTimer(timer);
 		
 		renderManager.render(tpf, mainFrameBufferActive);
-		assertEquals(1, renderManager.getPreViews().size());
-		assertEquals(1, renderManager.getPostViews().size());
-		assertEquals(1, renderManager.getMainViews().size());
+		assertEquals(1, renderManager.getViewportManager().getPreViews().size());
+		assertEquals(1, renderManager.getViewportManager().getPostViews().size());
+		assertEquals(1, renderManager.getViewportManager().getMainViews().size());
 	}
 
 	public void testRenderViewPortQueuesForTransparantWithoutProf() {

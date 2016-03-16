@@ -66,7 +66,7 @@ public class TestRenderToCubemap  extends SimpleApplication {
     public Texture setupOffscreenView(){
         Camera offCamera = new Camera(512, 512);
  
-        offView = renderManager.createPreView("Offscreen View", offCamera);
+        offView = renderManager.getViewportManager().createPreView("Offscreen View", offCamera);
         offView.setClearFlags(true, true, true);
         offView.setBackgroundColor(ColorRGBA.DarkGray);
  
