@@ -9,6 +9,9 @@ import com.jme3.asset.AssetManager;
 import static org.mockito.Mockito.*;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
+import com.jme3.material.RenderState;
+import com.jme3.material.TechniqueDef;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -20,6 +23,8 @@ import com.jme3.scene.VertexBuffer.Type;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -27,12 +32,15 @@ public class RenderManagerSpatialTest{
 	
 	private RenderManager renderManager;
 	private Camera camera;
+	private ViewPort viewport;
 
 	@Before
 	public void setUp() throws Exception {
 		Renderer renderer = null;
 		camera = new Camera();
 		renderManager = new RenderManager(renderer);
+		viewport = new ViewPort("viewName", camera);
+		
 	}
 
 	/**
@@ -85,6 +93,40 @@ public class RenderManagerSpatialTest{
 		RenderManager m = Mockito.spy(new RenderManager(r));
 		m.preloadScene(node);
 		verify(m).preloadScene(node.getChild(0));
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testRenderSubSCeneGeometryNull(){
+		Geometry geo = Mockito.mock(Geometry.class);
+		Mockito.when(geo.checkCulling(viewport.getCamera())).thenReturn(true);
+		renderManager.renderScene(geo, viewport);
+	}
+	
+	/*@Test
+	public void testRenderSubSceneGeometry(){
+		Geometry geo = Mockito.mock(Geometry.class);
+		ViewPort viewport = Mockito.mock(ViewPort.class);
+		Material mat = Mockito.mock(Material.class);
+		Mockito.when(geo.checkCulling(viewport.getCamera())).thenReturn(true);
+		Mockito.when(geo.getMaterial()).thenReturn(mat);
+		Mockito.when(viewport.getCamera()).thenReturn(camera);
+		renderManager.renderScene(geo, viewport);
+		
+		//verify(viewport).getQueue().addToQueue(geo, geo.getQueueBucket());
+	}*/
+	
+	//TODO: assert or verify needs to be added
+	@Test
+	public void testRenderSubSceneNode(){
+		Node node = Mockito.mock(Node.class);
+		Node node2 = Mockito.mock(Node.class);
+		Mockito.when(node.checkCulling(viewport.getCamera())).thenReturn(true);
+		Mockito.when(node2.checkCulling(viewport.getCamera())).thenReturn(true);
+		List<Spatial> children = new ArrayList<Spatial>();
+		children.add(node2);
+		Mockito.when(node.getChildren()).thenReturn(children);
+		renderManager.renderScene(node, viewport);
+		
 	}
 	
 	//test the renderScene method
