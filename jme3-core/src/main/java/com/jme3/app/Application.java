@@ -291,12 +291,12 @@ public class Application implements SystemListener {
             renderManager.setAppProfiler(prof);
         }
         
-        viewPort = renderManager.createMainView("Default", cam);
+        viewPort = renderManager.getViewportManager().createMainView("Default", cam);
         viewPort.setClearFlags(true, true, true);
 
         // Create a new cam for the gui
         Camera guiCam = new Camera(settings.getWidth(), settings.getHeight());
-        guiViewPort = renderManager.createPostView("Gui Default", guiCam);
+        guiViewPort = renderManager.getViewportManager().createPostView("Gui Default", guiCam);
         guiViewPort.setClearFlags(false, false, false);
     }
 
@@ -650,11 +650,27 @@ public class Application implements SystemListener {
      * Callables are executed right at the beginning of the main loop.
      * They are executed even if the application is currently paused
      * or out of focus.
+     * 
+     * @param callable The callable to run in the main jME3 thread
      */
     public <V> Future<V> enqueue(Callable<V> callable) {
         AppTask<V> task = new AppTask<V>(callable);
         taskQueue.add(task);
         return task;
+    }
+    
+    /**
+     * Enqueues a runnable object to execute in the jME3
+     * rendering thread.
+     * <p>
+     * Runnables are executed right at the beginning of the main loop.
+     * They are executed even if the application is currently paused
+     * or out of focus.
+     * 
+     * @param runnable The runnable to run in the main jME3 thread
+     */    
+    public void enqueue(Runnable runnable){
+        enqueue(new RunnableWrapper(runnable));
     }
 
     /**
@@ -740,4 +756,19 @@ public class Application implements SystemListener {
         return viewPort;
     }
 
+    private class RunnableWrapper implements Callable{
+        private final Runnable runnable;
+
+        public RunnableWrapper(Runnable runnable){
+            this.runnable = runnable;
+        }
+
+        @Override
+        public Object call(){
+            runnable.run();
+            return null;
+        }
+        
+    }
+    
 }
