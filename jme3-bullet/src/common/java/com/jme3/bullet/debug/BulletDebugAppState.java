@@ -100,14 +100,14 @@ public class BulletDebugAppState extends AbstractAppState {
         this.assetManager = app.getAssetManager();
         setupMaterials(app);
         physicsDebugRootNode.setCullHint(Spatial.CullHint.Never);
-        viewPort = rm.createMainView("Physics Debug Overlay", app.getCamera());
+        viewPort = rm.getViewportManager().createMainView("Physics Debug Overlay", app.getCamera());
         viewPort.setClearFlags(false, true, false);
         viewPort.attachScene(physicsDebugRootNode);
     }
 
     @Override
     public void cleanup() {
-        rm.removeMainView(viewPort);
+        rm.getViewportManager().removeMainView(viewPort);
         super.cleanup();
     }
 
