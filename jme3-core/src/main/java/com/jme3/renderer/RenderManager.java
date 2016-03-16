@@ -870,28 +870,20 @@ public class RenderManager {
         uniformBindingManager.newFrame();        
 
         if (prof!=null) prof.appStep(AppStep.RenderPreviewViewPorts);        
-        for (int i = 0; i < viewportManager.getPreViewPorts().size(); i++) {
-            ViewPort vp = viewportManager.getPreViewPorts().get(i);
-            if (vp.getOutputFrameBuffer() != null || mainFrameBufferActive) {
-                renderViewPort(vp, tpf);
-            }
-        }
-        
+        callRenderViewPort(viewportManager.getPreViewPorts(),tpf,mainFrameBufferActive);        
         if (prof!=null) prof.appStep(AppStep.RenderMainViewPorts);
-        for (int i = 0; i < viewportManager.getViewPorts().size(); i++) {
-            ViewPort vp = viewportManager.getViewPorts().get(i);
-            if (vp.getOutputFrameBuffer() != null || mainFrameBufferActive) {
-                renderViewPort(vp, tpf);
-            }
-        }
-        
+        callRenderViewPort(viewportManager.getViewPorts(),tpf,mainFrameBufferActive);        
         if (prof!=null) prof.appStep(AppStep.RenderPostViewPorts);
-        for (int i = 0; i < viewportManager.getPostViewPorts().size(); i++) {
-            ViewPort vp = viewportManager.getPostViewPorts().get(i);
+        callRenderViewPort(viewportManager.getPostViewPorts(),tpf,mainFrameBufferActive);
+    }
+    
+    private void callRenderViewPort(ArrayList<ViewPort> viewports,float tpf,boolean mainFrameBufferActive){
+    	for (int i = 0; i < viewports.size(); i++) {
+            ViewPort vp = viewports.get(i);
             if (vp.getOutputFrameBuffer() != null || mainFrameBufferActive) {
                 renderViewPort(vp, tpf);
-            }
-        }
+            }	
+    	}
     }
 
     /**
