@@ -1,6 +1,7 @@
 package com.jme3.renderer;
 
-import org.mockito.Mock;
+import java.nio.Buffer;
+
 import org.mockito.Mockito;
 
 import com.jme3.app.BasicProfiler;
@@ -16,8 +17,12 @@ import com.jme3.profile.AppProfiler;
 import com.jme3.renderer.queue.GeometryList;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.system.NullRenderer;
 import com.jme3.system.Timer;
 import com.jme3.texture.FrameBuffer;
@@ -420,11 +425,11 @@ public class RenderManagerTest extends TestCase {
 	}
 	
 	public void testRender() {		
-		Camera cam = new Camera(1, 1);
+		 
 		FrameBuffer out = setupFrameBuffer();
-		renderManager.createMainView(viewName, cam).setOutputFrameBuffer(out);
-		renderManager.createPostView(viewName, cam).setOutputFrameBuffer(out);
-		renderManager.createPreView(viewName, cam).setOutputFrameBuffer(out);
+		renderManager.createMainView(viewName, camera).setOutputFrameBuffer(out);
+		renderManager.createPostView(viewName, camera).setOutputFrameBuffer(out);
+		renderManager.createPreView(viewName, camera).setOutputFrameBuffer(out);
 
 		float tpf = 10;
 		boolean mainFrameBufferActive = true;
@@ -473,10 +478,10 @@ public class RenderManagerTest extends TestCase {
 	}
 	
 	public void testRenderWithMainFrameBufferActive() {
-		Camera cam = new Camera(1, 1);
-		renderManager.createMainView(viewName, cam);
-		renderManager.createPostView(viewName, cam);
-		renderManager.createPreView(viewName, cam);
+		 
+		renderManager.createMainView(viewName, camera);
+		renderManager.createPostView(viewName, camera);
+		renderManager.createPreView(viewName, camera);
 		
 		AppProfiler prof = Mockito.mock(BasicProfiler.class);
 		renderManager.setAppProfiler(prof);
@@ -708,12 +713,12 @@ public class RenderManagerTest extends TestCase {
 	public void testSetCameraWithLightFilter() {
 		LightFilter filter = Mockito.mock(LightFilter.class);
 		renderManager.setLightFilter(filter);
-		Camera cam = new Camera(1, 1);
+		 
 		boolean ortho = true;
-		renderManager.setCamera(cam, ortho);
+		renderManager.setCamera(camera, ortho);
 		Camera actual = renderManager.getCurrentCamera();
 		assertNotNull(actual);
-		assertEquals(cam, actual);
+		assertEquals(camera, actual);
 	}
 	
 	public void testSinglePassLightBatchSizeOne() {
@@ -738,19 +743,76 @@ public class RenderManagerTest extends TestCase {
 		assertTrue(renderManager.isHandleTranslucentBucket());
 	}
 	
-	public void testRenderSubSceneNode() {
-		Node scene = Mockito.mock(Node.class);
-		Node child = Mockito.mock(Node.class);
-		scene.attachChild(child);
-		Mockito.when(scene.checkCulling(viewport.getCamera())).thenReturn(true);
-		renderManager.renderScene(scene, viewport);
-	}
-	
 	public void testPreloadSpatialNode() {
+		renderer = Mockito.mock(Renderer.class);
+		renderManager = new RenderManager(renderer);
 		Node scene = new Node("NodeM");
 		Node child = Mockito.mock(Node.class);
 		scene.attachChild(child);
+		Geometry geo = setupGeometry("Geo");
+		
+		Mesh mesh = new Mesh();
+		VertexBuffer vb1 = Mockito.mock(VertexBuffer.class);
+		Buffer buffValue = Mockito.mock(Buffer.class);
+		Mockito.when(vb1.getBufferType()).thenReturn(Type.Color);
+		Mockito.when(vb1.getUsage()).thenReturn(Usage.Stream);
+		Mockito.when(vb1.getData()).thenReturn(buffValue);
+				
+		mesh.setBuffer(vb1);
+		geo.setMesh(mesh);
+		
+		geo.setMesh(mesh);
+		scene.attachChild(geo);
 		renderManager.preloadScene(scene);
+		Mockito.verify(renderer, Mockito.times(1)).updateBufferData(vb1);
+	}
+
+	public void testPreloadSpatialNodeCPUOnly() {
+		renderer = Mockito.mock(Renderer.class);
+		renderManager = new RenderManager(renderer);
+		Node scene = new Node("NodeM");
+		Node child = Mockito.mock(Node.class);
+		scene.attachChild(child);
+		Geometry geo = setupGeometry("Geo");
+		
+		Mesh mesh = new Mesh();
+		VertexBuffer vb1 = Mockito.mock(VertexBuffer.class);
+		Buffer buffValue = Mockito.mock(Buffer.class);
+		Mockito.when(vb1.getBufferType()).thenReturn(Type.Color);
+		Mockito.when(vb1.getUsage()).thenReturn(Usage.CpuOnly);
+		Mockito.when(vb1.getData()).thenReturn(buffValue);
+				
+		mesh.setBuffer(vb1);
+		geo.setMesh(mesh);
+		
+		geo.setMesh(mesh);
+		scene.attachChild(geo);
+		renderManager.preloadScene(scene);
+		Mockito.verify(renderer, Mockito.times(0)).updateBufferData(vb1);
+	}
+	
+	public void testPreloadSpatialNodeWithNullDataBufferAndCPUOnly() {
+		renderer = Mockito.mock(Renderer.class);
+		renderManager = new RenderManager(renderer);
+		Node scene = new Node("NodeM");
+		Node child = Mockito.mock(Node.class);
+		scene.attachChild(child);
+		Geometry geo = setupGeometry("Geo");
+		
+		Mesh mesh = new Mesh();
+		VertexBuffer vb1 = Mockito.mock(VertexBuffer.class);
+		Buffer buffValue = null;
+		Mockito.when(vb1.getBufferType()).thenReturn(Type.Color);
+		Mockito.when(vb1.getUsage()).thenReturn(Usage.CpuOnly);
+		Mockito.when(vb1.getData()).thenReturn(buffValue);
+				
+		mesh.setBuffer(vb1);
+		geo.setMesh(mesh);
+		
+		geo.setMesh(mesh);
+		scene.attachChild(geo);
+		renderManager.preloadScene(scene);
+		Mockito.verify(renderer, Mockito.times(0)).updateBufferData(vb1);
 	}
 
 }
