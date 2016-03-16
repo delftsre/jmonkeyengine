@@ -71,7 +71,7 @@ public class RenderManager {
 
     private static final Logger logger = Logger.getLogger(RenderManager.class.getName());
     private Renderer renderer;
-    private ViewportManager viewportManager;
+    private ViewPortManager viewportManager;
     private UniformBindingManager uniformBindingManager = new UniformBindingManager();
     private Camera prevCam = null;
     private Material forcedMaterial = null;
@@ -94,7 +94,7 @@ public class RenderManager {
      */
     public RenderManager(Renderer renderer) {
         this.renderer = renderer;
-        this.viewportManager = new ViewportManager();
+        this.viewportManager = new ViewPortManager();
     }
 
     private void notifyReshape(ViewPort vp, int w, int h) {
@@ -890,7 +890,7 @@ public class RenderManager {
      * Get the viewportManager to access relevant ViewPorts
      * @return ViewportManager viewportManager
      */
-    public ViewportManager getViewportManager(){
+    public ViewPortManager getViewportManager(){
     	return viewportManager;
     }
 }

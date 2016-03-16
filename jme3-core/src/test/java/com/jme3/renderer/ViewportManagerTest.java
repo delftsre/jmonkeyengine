@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 public class ViewportManagerTest extends TestCase{
 	
-	ViewportManager viewportManager;
+	ViewPortManager viewportManager;
 	Camera camera;
 	
 	/**
@@ -17,7 +17,7 @@ public class ViewportManagerTest extends TestCase{
 	protected void setUp() throws Exception {
 		super.setUp();
 		camera = new Camera(1,1);
-		viewportManager = new ViewportManager();
+		viewportManager = new ViewPortManager();
 	}
 	
 	/**
