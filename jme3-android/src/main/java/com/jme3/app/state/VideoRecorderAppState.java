@@ -181,7 +181,7 @@ public class VideoRecorderAppState extends AbstractAppState {
             file = new File(filename);
         }
         processor = new VideoProcessor();
-        List<ViewPort> vps = app.getRenderManager().getPostViews();
+        List<ViewPort> vps = app.getRenderManager().getViewportManager().getPostViews();
 
         for (int i = vps.size() - 1; i >= 0; i-- ) {
             lastViewPort = vps.get(i);
