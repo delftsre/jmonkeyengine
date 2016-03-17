@@ -31,7 +31,6 @@
  */
 package com.jme3.math;
 
-import com.jme3.math.Spline.SplineType;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class CurveAndSurfaceMath {
 	 * class.
    	 */
 	private CurveAndSurfaceMath() {}
-	
+		
 	/**
 	 * This method interpolates the data for the nurbs curve.
 	 * @param u
@@ -56,10 +55,7 @@ public class CurveAndSurfaceMath {
 	 * @param store
 	 *            the resulting point in 3D space
 	 */
-	public static void interpolateNurbs(float u, Spline nurbSpline, Vector3f store) {
-		if (nurbSpline.getType() != SplineType.Nurb) {
-			throw new IllegalArgumentException("Given spline is not of a NURB type!");
-		}
+	public static void interpolateNurbs(float u, NurbSpline nurbSpline, Vector3f store) {
 		List<Vector3f> controlPoints = nurbSpline.getControlPoints();
 		float[] weights = nurbSpline.getWeights();
 		List<Float> knots = nurbSpline.getKnots();

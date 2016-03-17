@@ -36,7 +36,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.MotionPathListener;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.font.BitmapText;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
@@ -44,8 +43,9 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.math.CatmullRomSpline;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Spline.SplineType;
+import com.jme3.math.LinearSpline;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
@@ -181,11 +181,16 @@ public class TestCameraMotionPath extends SimpleApplication {
                 }
 
                 if (name.equals("SwitchPathInterpolation") && keyPressed) {
-                    if (path.getPathSplineType() == SplineType.CatmullRom) {
-                        path.setPathSplineType(SplineType.Linear);
-                    } else {
-                        path.setPathSplineType(SplineType.CatmullRom);
-                    }
+//                    if (path.getPathSplineType() == SplineType.CatmullRom) {
+//                        path.setPathSplineType(SplineType.Linear);
+//                    } else {
+//                        path.setPathSplineType(SplineType.CatmullRom);
+//                    }
+                	if(path.getSpline() instanceof CatmullRomSpline) {
+                		path.setSpline(new LinearSpline(path.getSpline()));
+                	} else {
+                		path.setSpline(new CatmullRomSpline(path.getSpline()));
+                	}
                 }
 
                 if (name.equals("tensionUp") && keyPressed) {

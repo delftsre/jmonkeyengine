@@ -2312,8 +2312,8 @@ public final class GLRenderer implements Renderer {
 
     public void clearVertexAttribs() {
         IDList attribList = context.attribIndexList;
-        for (int i = 0; i < attribList.oldLen; i++) {
-            int idx = attribList.oldList[i];
+        for (int i = 0; i < attribList.getOldLen(); i++) {
+            int idx = attribList.getOldListElem(i);
             gl.glDisableVertexAttribArray(idx);
             if (context.boundAttribs[idx].isInstanced()) {
                 glext.glVertexAttribDivisorARB(idx, 0);
