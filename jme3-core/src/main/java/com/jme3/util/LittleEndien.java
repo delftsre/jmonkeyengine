@@ -31,7 +31,10 @@
  */
 package com.jme3.util;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInput;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * <code>LittleEndien</code> is a class to read littleendien stored data

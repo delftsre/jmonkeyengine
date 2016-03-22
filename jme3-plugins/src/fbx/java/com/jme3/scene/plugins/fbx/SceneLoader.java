@@ -62,6 +62,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -389,7 +390,7 @@ public class SceneLoader implements AssetLoader {
 							double x = (Double) e2.properties.get(4);
 							double y = (Double) e2.properties.get(5);
 							double z = (Double) e2.properties.get(6);
-							data.localRotation.fromAngles((float) x * FastMath.DEG_TO_RAD, (float) y * FastMath.DEG_TO_RAD, (float) z * FastMath.DEG_TO_RAD);
+							data.localRotation.set(QuaternionFactory.createFromAngles((float) x * FastMath.DEG_TO_RAD, (float) y * FastMath.DEG_TO_RAD, (float) z * FastMath.DEG_TO_RAD));
 						} else if(propName.equals("Lcl Scaling")) {
 							double x = (Double) e2.properties.get(4);
 							double y = (Double) e2.properties.get(5);
@@ -1396,7 +1397,7 @@ public class SceneLoader implements AssetLoader {
 						float x = limb.animRotation.xCurve.keyValues[keyIndex];
 						float y = limb.animRotation.yCurve.keyValues[keyIndex];
 						float z = limb.animRotation.zCurve.keyValues[keyIndex];
-						rotations[i] = new Quaternion().fromAngles(FastMath.DEG_TO_RAD * x, FastMath.DEG_TO_RAD * y, FastMath.DEG_TO_RAD * z);
+						rotations[i] = QuaternionFactory.createFromAngles(FastMath.DEG_TO_RAD * x, FastMath.DEG_TO_RAD * y, FastMath.DEG_TO_RAD * z);
 					}
 				} else {
 					for(int i = 0; i < keysCount; ++i)

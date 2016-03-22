@@ -8,6 +8,7 @@ import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.plugins.blender.curves.BezierCurve;
 
@@ -257,7 +258,7 @@ public class Ipo {
                 if (queternionRotationUsed) {
                     rotations[index] = new Quaternion(quaternionRotation[0], quaternionRotation[1], quaternionRotation[2], quaternionRotation[3]);
                 } else {
-                    rotations[index] = new Quaternion().fromAngles(eulerRotation);
+                    rotations[index] = QuaternionFactory.createFromAngles(eulerRotation);
                 }
 
                 scales[index] = new Vector3f(scale[0], scale[1], scale[2]);

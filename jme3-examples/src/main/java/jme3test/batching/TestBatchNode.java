@@ -38,6 +38,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.BatchNode;
 import com.jme3.scene.Geometry;
@@ -145,10 +146,10 @@ public class TestBatchNode extends SimpleApplication {
         time += tpf;
         dl.setDirection(cam.getDirection());
         cube2.setLocalTranslation(FastMath.sin(-time) * 3, FastMath.cos(time) * 3, 0);
-        cube2.setLocalRotation(new Quaternion().fromAngleAxis(time, Vector3f.UNIT_Z));
+        cube2.setLocalRotation(QuaternionFactory.createFromAngleAxis(time, Vector3f.UNIT_Z));
         cube2.setLocalScale(Math.max(FastMath.sin(time), 0.5f));
 
-//        batch.setLocalRotation(new Quaternion().fromAngleAxis(time, Vector3f.UNIT_Z));
+//        batch.setLocalRotation(QuaternionFactory.createFromAngleAxis(time, Vector3f.UNIT_Z));
 
     }
 //    

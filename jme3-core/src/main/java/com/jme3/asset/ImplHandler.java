@@ -31,7 +31,6 @@
  */
 package com.jme3.asset;
 
-import com.jme3.asset.cache.AssetCache;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.asset.cache.AssetCache;
 
 /**
  * <code>ImplHandler</code> manages the asset loader and asset locator

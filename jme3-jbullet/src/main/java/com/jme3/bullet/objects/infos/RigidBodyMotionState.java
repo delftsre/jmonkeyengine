@@ -37,6 +37,7 @@ import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.bullet.util.Converter;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
@@ -87,7 +88,7 @@ public class RigidBodyMotionState extends MotionState {
         motionStateTrans.set(worldTrans);
         Converter.convert(worldTrans.origin, worldLocation);
         Converter.convert(worldTrans.basis, worldRotation);
-        worldRotationQuat.fromRotationMatrix(worldRotation);
+        worldRotationQuat.set(QuaternionFactory.createFromRotationMatrix(worldRotation));
 //        for (Iterator<PhysicsMotionStateListener> it = listeners.iterator(); it.hasNext();) {
 //            PhysicsMotionStateListener physicsMotionStateListener = it.next();
 //            physicsMotionStateListener.stateChanged(worldLocation, worldRotation);

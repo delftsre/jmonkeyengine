@@ -15,6 +15,7 @@ import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -82,7 +83,7 @@ public class TestPostWater extends SimpleApplication {
         flyCam.setMoveSpeed(50);
 
         //cam.setLocation(new Vector3f(-700, 100, 300));
-        //cam.setRotation(new Quaternion().fromAngleAxis(0.5f, Vector3f.UNIT_Z));
+        //cam.setRotation(QuaternionFactory.createFromAngleAxis(0.5f, Vector3f.UNIT_Z));
 //        cam.setLocation(new Vector3f(-327.21957f, 61.6459f, 126.884346f));
 //        cam.setRotation(new Quaternion(0.052168474f, 0.9443102f, -0.18395276f, 0.2678024f));
 

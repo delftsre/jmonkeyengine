@@ -1,6 +1,7 @@
 package com.jme3.scene.plugins.blender.constraints.definitions;
 
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Transform;
 import com.jme3.scene.plugins.blender.BlenderContext;
 import com.jme3.scene.plugins.blender.constraints.ConstraintHelper.Space;
@@ -64,7 +65,7 @@ import com.jme3.scene.plugins.blender.file.Structure;
                 ownerAngles[2] = -ownerAngles[2];
             }
         }
-        ownerRotation.fromAngles(ownerAngles).multLocal(offset);
+        ownerRotation = QuaternionFactory.createFromAngles(ownerAngles).multLocal(offset);
 
         if (influence < 1.0f) {
             // startLocation.subtractLocal(ownerLocation).normalizeLocal().mult(influence);

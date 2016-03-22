@@ -62,7 +62,7 @@ public class TestDepthOfField extends SimpleApplication {
         flyCam.setMoveSpeed(50);
         cam.setFrustumFar(3000);
         cam.setLocation(new Vector3f(-700, 100, 300));
-        cam.setRotation(new Quaternion().fromAngles(new float[]{FastMath.PI * 0.06f, FastMath.PI * 0.65f, 0}));
+        cam.setRotation(QuaternionFactory.createFromAngles(new float[]{FastMath.PI * 0.06f, FastMath.PI * 0.65f, 0}));
 
 
         Spatial sky = SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false);

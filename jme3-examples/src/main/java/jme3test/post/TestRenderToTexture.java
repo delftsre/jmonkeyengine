@@ -40,6 +40,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -129,7 +130,7 @@ public class TestRenderToTexture extends SimpleApplication implements ActionList
         if (offView.isEnabled()) {
             angle += tpf;
             angle %= FastMath.TWO_PI;
-            q.fromAngles(angle, 0, angle);
+            q.set(QuaternionFactory.createFromAngles(angle, 0, angle));
             
             offBox.setLocalRotation(q);
             offBox.updateLogicalState(tpf);

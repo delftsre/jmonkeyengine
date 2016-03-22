@@ -31,8 +31,6 @@
  */
 package com.jme3.asset.cache;
 
-import com.jme3.asset.AssetKey;
-import com.jme3.asset.CloneableSmartAsset;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -40,6 +38,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.CloneableSmartAsset;
 
 /**
  * <code>WeakRefCloneAssetCache</code> caches cloneable assets in a weak-key

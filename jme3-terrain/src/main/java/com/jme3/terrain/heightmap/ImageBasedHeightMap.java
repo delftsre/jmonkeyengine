@@ -34,6 +34,7 @@ package com.jme3.terrain.heightmap;
 import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Image;
 import com.jme3.texture.image.ImageRaster;
+import com.jme3.texture.image.ImageRasterFactory;
 
 /**
  * <code>ImageBasedHeightMap</code> is a height map created from the grayscale
@@ -94,7 +95,7 @@ public class ImageBasedHeightMap extends AbstractHeightMap implements ImageHeigh
     }
     
     protected ImageRaster getImageRaster() {
-        return ImageRaster.create(colorImage);
+        return ImageRasterFactory.create(colorImage);
     }
     
     public boolean load(boolean flipX, boolean flipY) {

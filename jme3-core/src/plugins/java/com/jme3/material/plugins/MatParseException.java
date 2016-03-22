@@ -31,8 +31,9 @@
  */
 package com.jme3.material.plugins;
 
-import com.jme3.util.blockparser.Statement;
 import java.io.IOException;
+
+import com.jme3.util.blockparser.Statement;
 
 /**
  * Custom Exception to report a j3md Material definition file parsing error.

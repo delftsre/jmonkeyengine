@@ -32,6 +32,8 @@
  
 package com.jme3.app;
 
+import java.nio.FloatBuffer;
+
 import com.jme3.profile.AppProfiler;
 import com.jme3.profile.AppStep;
 import com.jme3.profile.VpStep;
@@ -40,7 +42,6 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
-import java.nio.FloatBuffer;
 
 
 /**

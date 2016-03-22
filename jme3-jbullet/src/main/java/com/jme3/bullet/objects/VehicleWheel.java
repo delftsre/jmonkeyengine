@@ -36,6 +36,7 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.util.Converter;
 import com.jme3.export.*;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public class VehicleWheel implements Savable {
     public void updatePhysicsState() {
         Converter.convert(wheelInfo.worldTransform.origin, wheelWorldLocation);
         Converter.convert(wheelInfo.worldTransform.basis, tmp_Matrix);
-        wheelWorldRotation.fromRotationMatrix(tmp_Matrix);
+        wheelWorldRotation.set(QuaternionFactory.createFromRotationMatrix(tmp_Matrix));
     }
 
     public void applyWheelTransform() {

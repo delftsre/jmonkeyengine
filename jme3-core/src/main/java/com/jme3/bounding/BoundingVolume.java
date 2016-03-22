@@ -31,15 +31,20 @@
  */
 package com.jme3.bounding;
 
+import java.io.IOException;
+import java.nio.FloatBuffer;
+
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
-import com.jme3.math.*;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Plane;
+import com.jme3.math.Ray;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.nio.FloatBuffer;
 
 /**
  * <code>BoundingVolume</code> defines an interface for dealing with

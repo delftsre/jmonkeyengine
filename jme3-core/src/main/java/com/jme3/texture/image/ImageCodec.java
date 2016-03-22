@@ -31,10 +31,11 @@
  */
 package com.jme3.texture.image;
 
-import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
 import java.nio.ByteBuffer;
 import java.util.EnumMap;
+
+import com.jme3.texture.Image;
+import com.jme3.texture.Image.Format;
 
 abstract class ImageCodec {
     

@@ -31,12 +31,21 @@
  */
 package com.jme3.animation;
 
-import com.jme3.export.*;
-import com.jme3.math.*;
-import com.jme3.scene.Node;
-import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
+import com.jme3.util.TempVars;
 
 /**
  * <code>Bone</code> describes a bone in the bone-weight skeletal animation

@@ -31,13 +31,14 @@
  */
 package com.jme3.shader;
 
+import java.util.List;
+
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.Technique;
 import com.jme3.material.TechniqueDef;
 import com.jme3.shader.Shader.ShaderType;
-import java.util.List;
 
 /**
  * This class is the base for a shader generator using the ShaderNodes system,

@@ -31,14 +31,26 @@
  */
 package com.jme3.renderer;
 
-import com.jme3.bounding.BoundingBox;
-import com.jme3.bounding.BoundingVolume;
-import com.jme3.export.*;
-import com.jme3.math.*;
-import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingVolume;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.math.FastMath;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Plane;
+import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
+import com.jme3.util.TempVars;
 
 /**
  * <code>Camera</code> is a standalone, purely mathematical class for doing
@@ -707,7 +719,7 @@ public class Camera implements Savable, Cloneable {
      * @see Camera#setAxes(com.jme3.math.Quaternion) 
      */
     public void setAxes(Vector3f left, Vector3f up, Vector3f direction) {
-        this.rotation.fromAxes(left, up, direction);
+        this.rotation.set(QuaternionFactory.createFromAxes(left, up, direction));
         onFrameChange();
     }
 
@@ -800,7 +812,7 @@ public class Camera implements Savable, Cloneable {
             Vector3f direction) {
 
         this.location = location;
-        this.rotation.fromAxes(left, up, direction);
+        this.rotation.set(QuaternionFactory.createFromAxes(left, up, direction));
         onFrameChange();
     }
 
@@ -839,7 +851,7 @@ public class Camera implements Savable, Cloneable {
 
         newUp.set(newDirection).crossLocal(newLeft).normalizeLocal();
 
-        this.rotation.fromAxes(newLeft, newUp, newDirection);
+        this.rotation.set(QuaternionFactory.createFromAxes(newLeft, newUp, newDirection));
         this.rotation.normalizeLocal();
         vars.release();
 

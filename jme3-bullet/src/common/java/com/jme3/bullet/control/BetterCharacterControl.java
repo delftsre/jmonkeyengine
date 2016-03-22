@@ -44,6 +44,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -594,7 +595,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
             logger.log(Level.INFO, "Zero left for left {0}, up {1}", new Object[]{newLeft, worldUpVector});
         }
         if (rotation != null) {
-            rotation.fromAxes(newLeft, worldUpVector, direction);
+            rotation.set(QuaternionFactory.createFromAxes(newLeft, worldUpVector, direction));
         }
         vars.release();
     }

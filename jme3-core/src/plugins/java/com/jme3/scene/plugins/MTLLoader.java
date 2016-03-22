@@ -31,15 +31,6 @@
  */
 package com.jme3.scene.plugins;
 
-import com.jme3.asset.*;
-import com.jme3.material.Material;
-import com.jme3.material.MaterialList;
-import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.ColorRGBA;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
-import com.jme3.util.PlaceholderAssets;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +39,21 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetInfo;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetLoader;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.AssetNotFoundException;
+import com.jme3.asset.TextureKey;
+import com.jme3.material.Material;
+import com.jme3.material.MaterialList;
+import com.jme3.material.RenderState.BlendMode;
+import com.jme3.math.ColorRGBA;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
+import com.jme3.texture.Texture2D;
+import com.jme3.util.PlaceholderAssets;
 
 public class MTLLoader implements AssetLoader {
 

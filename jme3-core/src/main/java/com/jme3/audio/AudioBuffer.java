@@ -31,10 +31,10 @@
  */
 package com.jme3.audio;
 
-import com.jme3.audio.AudioData.DataType;
+import java.nio.ByteBuffer;
+
 import com.jme3.util.BufferUtils;
 import com.jme3.util.NativeObject;
-import java.nio.ByteBuffer;
 
 /**
  * An <code>AudioBuffer</code> is an implementation of AudioData

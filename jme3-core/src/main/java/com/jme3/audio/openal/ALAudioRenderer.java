@@ -31,11 +31,38 @@
  */
 package com.jme3.audio.openal;
 
-import com.jme3.audio.*;
-import com.jme3.audio.AudioSource.Status;
-import com.jme3.math.Vector3f;
-import com.jme3.util.BufferUtils;
-import com.jme3.util.NativeObjectManager;
+import static com.jme3.audio.openal.AL.AL_BUFFER;
+import static com.jme3.audio.openal.AL.AL_BUFFERS_PROCESSED;
+import static com.jme3.audio.openal.AL.AL_BYTE_OFFSET;
+import static com.jme3.audio.openal.AL.AL_CONE_INNER_ANGLE;
+import static com.jme3.audio.openal.AL.AL_CONE_OUTER_ANGLE;
+import static com.jme3.audio.openal.AL.AL_CONE_OUTER_GAIN;
+import static com.jme3.audio.openal.AL.AL_DIRECTION;
+import static com.jme3.audio.openal.AL.AL_EXTENSIONS;
+import static com.jme3.audio.openal.AL.AL_FALSE;
+import static com.jme3.audio.openal.AL.AL_FORMAT_MONO16;
+import static com.jme3.audio.openal.AL.AL_FORMAT_MONO8;
+import static com.jme3.audio.openal.AL.AL_FORMAT_STEREO16;
+import static com.jme3.audio.openal.AL.AL_FORMAT_STEREO8;
+import static com.jme3.audio.openal.AL.AL_GAIN;
+import static com.jme3.audio.openal.AL.AL_INITIAL;
+import static com.jme3.audio.openal.AL.AL_LOOPING;
+import static com.jme3.audio.openal.AL.AL_MAX_DISTANCE;
+import static com.jme3.audio.openal.AL.AL_ORIENTATION;
+import static com.jme3.audio.openal.AL.AL_PAUSED;
+import static com.jme3.audio.openal.AL.AL_PITCH;
+import static com.jme3.audio.openal.AL.AL_PLAYING;
+import static com.jme3.audio.openal.AL.AL_POSITION;
+import static com.jme3.audio.openal.AL.AL_REFERENCE_DISTANCE;
+import static com.jme3.audio.openal.AL.AL_RENDERER;
+import static com.jme3.audio.openal.AL.AL_SEC_OFFSET;
+import static com.jme3.audio.openal.AL.AL_SOURCE_RELATIVE;
+import static com.jme3.audio.openal.AL.AL_SOURCE_STATE;
+import static com.jme3.audio.openal.AL.AL_STOPPED;
+import static com.jme3.audio.openal.AL.AL_TRUE;
+import static com.jme3.audio.openal.AL.AL_VELOCITY;
+import static com.jme3.audio.openal.AL.AL_VENDOR;
+import static com.jme3.audio.openal.AL.AL_VERSION;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -44,7 +71,21 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.jme3.audio.openal.AL.*;
+import com.jme3.audio.AudioBuffer;
+import com.jme3.audio.AudioData;
+import com.jme3.audio.AudioParam;
+import com.jme3.audio.AudioRenderer;
+import com.jme3.audio.AudioSource;
+import com.jme3.audio.AudioSource.Status;
+import com.jme3.audio.AudioStream;
+import com.jme3.audio.Environment;
+import com.jme3.audio.Filter;
+import com.jme3.audio.Listener;
+import com.jme3.audio.ListenerParam;
+import com.jme3.audio.LowPassFilter;
+import com.jme3.math.Vector3f;
+import com.jme3.util.BufferUtils;
+import com.jme3.util.NativeObjectManager;
 
 public class ALAudioRenderer implements AudioRenderer, Runnable {
 

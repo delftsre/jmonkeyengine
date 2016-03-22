@@ -34,6 +34,7 @@ package com.jme3.scene.plugins.fbx.anim;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.plugins.fbx.file.FbxElement;
 import com.jme3.scene.plugins.fbx.node.FbxNode;
@@ -106,10 +107,10 @@ public class FbxAnimCurveNode extends FbxObject {
         System.out.println("\tT: " + time + ". Rotation: " + 
                                 eulerAngles.x + ", " + 
                                 eulerAngles.y + ", " + eulerAngles.z);
-        Quaternion q = new Quaternion();
-        q.fromAngles(eulerAngles.x * FastMath.DEG_TO_RAD, 
-                     eulerAngles.y * FastMath.DEG_TO_RAD, 
-                     eulerAngles.z * FastMath.DEG_TO_RAD);
+        Quaternion q = QuaternionFactory.createFromAngles(
+                    eulerAngles.x * FastMath.DEG_TO_RAD, 
+                    eulerAngles.y * FastMath.DEG_TO_RAD, 
+                    eulerAngles.z * FastMath.DEG_TO_RAD);
         return q;
     }
     

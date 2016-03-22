@@ -47,6 +47,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Spline.SplineType;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -83,7 +84,7 @@ public class TestMotionPath extends SimpleApplication {
 
         motionControl = new MotionEvent(teapot,path);
         motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
+        motionControl.setRotation(QuaternionFactory.createFromAngleNormalAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(2f);       
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");

@@ -31,6 +31,10 @@
  */
 package com.jme3.cinematic.events;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.animation.AnimationUtils;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.Application;
@@ -40,9 +44,6 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This call contains the basic behaviour of a cinematic event.

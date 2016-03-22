@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.plugins.blender.AbstractBlenderHelper;
 import com.jme3.scene.plugins.blender.BlenderContext;
@@ -146,7 +147,7 @@ public class CurvesHelper extends AbstractBlenderHelper {
         Vector3f rotationVector = Vector3f.UNIT_X.cross(planeNormal).normalizeLocal();
         
         Matrix4f m = new Matrix4f();
-        m.setRotationQuaternion(new Quaternion().fromAngleAxis(angle, rotationVector));
+        m.setRotationQuaternion(QuaternionFactory.createFromAngleAxis(angle, rotationVector));
         m.setTranslation(firstCurvePoint);
 
         Vector3f temp = new Vector3f();

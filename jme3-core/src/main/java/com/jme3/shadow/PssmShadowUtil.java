@@ -31,13 +31,14 @@
  */
 package com.jme3.shadow;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.GeometryList;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 /**
  * Includes various useful shadow mapping functions.

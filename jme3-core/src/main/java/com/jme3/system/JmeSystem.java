@@ -31,12 +31,6 @@
  */
 package com.jme3.system;
 
-import com.jme3.asset.AssetManager;
-import com.jme3.audio.AudioRenderer;
-import com.jme3.input.SoftTextDialogInput;
-import com.jme3.texture.Image;
-import com.jme3.texture.image.DefaultImageRaster;
-import com.jme3.texture.image.ImageRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +39,11 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioRenderer;
+import com.jme3.input.SoftTextDialogInput;
+import com.jme3.texture.Image;
 
 public class JmeSystem {
 

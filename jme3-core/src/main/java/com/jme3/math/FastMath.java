@@ -109,6 +109,45 @@ final public class FastMath {
     }
 
     /**
+     * Scale the matrix so its entries are in [-1,1]. The scaling is applied
+     * only when at least one matrix entry has magnitude larger than 1.
+     * 
+     * @return the max magnitude in this matrix
+     */
+    public static float scaleMatrix(Matrix3f mat) {
+
+        float max = FastMath.abs(mat.m00);
+        float abs = FastMath.abs(mat.m01);
+
+        if (abs > max) {
+            max = abs;
+        }
+        abs = FastMath.abs(mat.m02);
+        if (abs > max) {
+            max = abs;
+        }
+        abs = FastMath.abs(mat.m11);
+        if (abs > max) {
+            max = abs;
+        }
+        abs = FastMath.abs(mat.m12);
+        if (abs > max) {
+            max = abs;
+        }
+        abs = FastMath.abs(mat.m22);
+        if (abs > max) {
+            max = abs;
+        }
+
+        if (max > 1f) {
+            float fInvMax = 1f / max;
+            mat.multLocal(fInvMax);
+        }
+
+        return max;
+    }
+
+    /**
      * Linear interpolation from startValue to endValue by the given percent.
      * Basically: ((1 - percent) * startValue) + (percent * endValue)
      * 

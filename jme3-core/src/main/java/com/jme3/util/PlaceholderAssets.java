@@ -31,6 +31,8 @@
  */
 package com.jme3.util;
 
+import java.nio.ByteBuffer;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioBuffer;
 import com.jme3.audio.AudioData;
@@ -42,7 +44,6 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.image.ColorSpace;
-import java.nio.ByteBuffer;
 
 public class PlaceholderAssets {
     

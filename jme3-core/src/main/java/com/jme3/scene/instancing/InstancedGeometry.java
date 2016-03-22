@@ -31,6 +31,11 @@
  */
 package com.jme3.scene.instancing;
 
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -39,6 +44,7 @@ import com.jme3.export.Savable;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
@@ -47,10 +53,6 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class InstancedGeometry extends Geometry {
     
@@ -143,7 +145,8 @@ public class InstancedGeometry extends Geometry {
         // NOTE: No need to take the transpose in order to encode
         // into quaternion, the multiplication in the shader is vec * quat
         // apparently...
-        tempQuat.fromRotationMatrix(tempMat3);
+
+        tempQuat = QuaternionFactory.createFromRotationMatrix(tempMat3);
 
         // Column-major encoding. The "W" field in each of the encoded
         // vectors represents the quaternion.

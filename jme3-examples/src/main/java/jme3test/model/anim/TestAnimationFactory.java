@@ -7,6 +7,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -64,7 +65,7 @@ public class TestAnimationFactory extends SimpleApplication {
 
         
         //Creating a rotation keyFrame at time = 0.5 of quarter PI around the Z axis
-        animationFactory.addTimeRotation(0.5f,new Quaternion().fromAngleAxis(FastMath.QUARTER_PI, Vector3f.UNIT_Z));
+        animationFactory.addTimeRotation(0.5f,QuaternionFactory.createFromAngleAxis(FastMath.QUARTER_PI, Vector3f.UNIT_Z));
         //rotating back to initial rotation value at time = 1
         animationFactory.addTimeRotation(1,Quaternion.IDENTITY);
         //Creating a rotation keyFrame at time = 2. Note that i used the Euler angle version because the angle is higher than PI

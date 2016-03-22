@@ -54,6 +54,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -368,7 +369,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
                 float rot = ikRotSpeed * tpf / (link.rigidBody.getMass() * 2);
 
                 rot = FastMath.clamp(rot, link.joint.getRotationalLimitMotor(dirIndex).getLoLimit(), link.joint.getRotationalLimitMotor(dirIndex).getHiLimit());
-                tmpRot1.fromAngleAxis(rot, vectorAxis);
+                tmpRot1.set(QuaternionFactory.createFromAngleAxis(rot, vectorAxis));
 //                tmpRot1.fromAngleAxis(rotSpeed * tpf / (link.rigidBody.getMass() * 2), vectorAxis);
                 
                 

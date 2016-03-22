@@ -31,12 +31,11 @@
  */
 package com.jme3.texture;
 
-import com.jme3.texture.Image.Format;
-import com.jme3.texture.image.ColorSpace;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import com.jme3.texture.Image.Format;
+import com.jme3.texture.image.ColorSpace;
 
 /**
  * This class implements a Texture array

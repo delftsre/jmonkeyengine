@@ -31,9 +31,10 @@
  */
 package com.jme3.texture.plugins;
 
+import java.nio.ByteBuffer;
+
 import com.jme3.texture.Image;
 import com.jme3.util.BufferUtils;
-import java.nio.ByteBuffer;
 
 /**
  * ImageFlipper is a utility class used to flip images across the Y axis.

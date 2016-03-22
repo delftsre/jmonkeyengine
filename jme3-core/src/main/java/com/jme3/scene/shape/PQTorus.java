@@ -32,6 +32,14 @@
 // $Id: PQTorus.java 4131 2009-03-19 20:15:28Z blaine.dev $
 package com.jme3.scene.shape;
 
+import static com.jme3.util.BufferUtils.createShortBuffer;
+import static com.jme3.util.BufferUtils.createVector2Buffer;
+import static com.jme3.util.BufferUtils.createVector3Buffer;
+
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -40,10 +48,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
-import static com.jme3.util.BufferUtils.*;
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * A parameterized torus, also known as a <em>pq</em> torus.

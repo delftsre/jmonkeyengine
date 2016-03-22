@@ -31,6 +31,11 @@
  */
 package com.jme3.collision.bih;
 
+import static java.lang.Math.max;
+
+import java.io.IOException;
+import java.nio.FloatBuffer;
+
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.bounding.BoundingVolume;
@@ -54,9 +59,6 @@ import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.scene.mesh.VirtualIndexBuffer;
 import com.jme3.scene.mesh.WrappedIndexBuffer;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import static java.lang.Math.max;
-import java.nio.FloatBuffer;
 
 public class BIHTree implements CollisionData {
 
