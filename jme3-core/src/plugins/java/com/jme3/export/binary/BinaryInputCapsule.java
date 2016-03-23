@@ -261,12 +261,16 @@ final class BinaryInputCapsule implements InputCapsule {
         return SavableClassUtil.getSavedSavableVersion(savable, desiredClass, 
                                             cObj.classHierarchyVersions, importer.getFormatVersion());
     }
+    
+    private <T> T readGeneric(String name, T defVal) throws IOException{
+    	 BinaryClassField field = cObj.nameFields.get(name);
+    	 if (field == null || !fieldData.containsKey(field.alias))
+             return defVal;
+         return (T) (fieldData.get(field.alias));
+    }
 
     public BitSet readBitSet(String name, BitSet defVal) throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (BitSet) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public boolean readBoolean(String name, boolean defVal) throws IOException {
