@@ -393,26 +393,40 @@ public class RenderManager {
      */
     public void preloadScene(Spatial scene) {
         if (scene instanceof Node) {
-            // recurse for all children
-            Node n = (Node) scene;
-            List<Spatial> children = n.getChildren();
-            for (int i = 0; i < children.size(); i++) {
-                preloadScene(children.get(i));
-            }
+            preloadNode((Node) scene);
         } else if (scene instanceof Geometry) {
-            // add to the render queue
-            Geometry gm = (Geometry) scene;
-            if (gm.getMaterial() == null) {
-                throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
-            }
+            preloadGeometry((Geometry) scene);
+        }
+    }
+    
+    /**
+     * 
+     * @param node - the Node to preload
+     */
+    private void preloadNode(Node node) {
+    	// recurse for all children
+        List<Spatial> children = node.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            preloadScene(children.get(i));
+        }
+    }
+    
+    /**
+     * 
+     * @param geometry - the Geometry to preload
+     */
+    private void preloadGeometry(Geometry geometry) {
+    	// add to the render queue
+        if (geometry.getMaterial() == null) {
+            throw new IllegalStateException("No material is set for Geometry: " + geometry.getName());
+        }
 
-            gm.getMaterial().preload(this);
-            Mesh mesh = gm.getMesh();
-            if (mesh != null) {
-                for (VertexBuffer vb : mesh.getBufferList().getArray()) {
-                    if (vb.getData() != null && vb.getUsage() != VertexBuffer.Usage.CpuOnly) {
-                        renderer.updateBufferData(vb);
-                    }
+        geometry.getMaterial().preload(this);
+        Mesh mesh = geometry.getMesh();
+        if (mesh != null) {
+            for (VertexBuffer vb : mesh.getBufferList().getArray()) {
+                if (vb.getData() != null && vb.getUsage() != VertexBuffer.Usage.CpuOnly) {
+                    renderer.updateBufferData(vb);
                 }
             }
         }
