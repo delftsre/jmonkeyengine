@@ -11,6 +11,23 @@ public class CameraTest {
     
 	Camera c;
 	
+	/**
+     * LEFT_PLANE represents the left plane of the camera frustum.
+     */
+    private static final int LEFT_PLANE = 0;
+    /**
+     * RIGHT_PLANE represents the right plane of the camera frustum.
+     */
+    private static final int RIGHT_PLANE = 1;
+    /**
+     * BOTTOM_PLANE represents the bottom plane of the camera frustum.
+     */
+    private static final int BOTTOM_PLANE = 2;
+    /**
+     * TOP_PLANE represents the top plane of the camera frustum.
+     */
+    private static final int TOP_PLANE = 3;
+	
     @Test
     public void testConstructor() {
         Camera c = new Camera(20,20);
@@ -380,7 +397,7 @@ public class CameraTest {
      * Tests Set and Get ProjectionMatrix, mainly for null -> identity
      */
     @Test
-    public void testProjectionMatrix(){
+    public void testProjectionMatr(){
     	testInit();
     	//Sets projectionMatrixOverride to identity
     	c.setProjectionMatrix(null);
@@ -389,6 +406,83 @@ public class CameraTest {
     	c.setProjectionMatrix(new Matrix4f(10f,10f,10f,10f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     	assertEquals(new Matrix4f(10f,10f,10f,10f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),c.projectionMatrixOverride);
     	assertEquals(c.projectionMatrixOverride,c.getProjectionMatrix());
+    }
+    
+    @Test
+    public void testLeftPlane() {
+    	testInit();    	
+    	float x = (float) 5.8;
+    	float z = (float) 7.5;
+    	c.coeffLeft[0] = (float) 5.8;
+    	c.coeffLeft[1] = (float) 7.5;
+    	c.onFrameChange();
+    	float wx = c.getWorldPlane(LEFT_PLANE).getNormal().x;
+    	float wy = c.getWorldPlane(LEFT_PLANE).getNormal().y;
+    	float wz = c.getWorldPlane(LEFT_PLANE).getNormal().z;
+    	assertEquals(x, wx, 0);
+    	assertEquals(0, wy, 0);
+    	assertEquals(z, wz, 0);
+    	float actual = c.getWorldPlane(TOP_PLANE).getConstant();
+    	float expected = (float) -0.5;
+    	assertEquals(expected, actual, 0);
+    }
+    
+    @Test
+    public void testRightPlane() {
+    	testInit();
+    	float x = (float) 7.8;
+    	float z = (float) 6.5;
+    	c.coeffRight[0] = (float) 7.8;
+    	c.coeffRight[1] = (float) 6.5;
+    	c.onFrameChange();
+    	float wx = c.getWorldPlane(RIGHT_PLANE).getNormal().x;
+    	float wy = c.getWorldPlane(RIGHT_PLANE).getNormal().y;
+    	float wz = c.getWorldPlane(RIGHT_PLANE).getNormal().z;
+    	assertEquals(x, wx, 0);
+    	assertEquals(0, wy, 0);
+    	assertEquals(z, wz, 0);
+    	float actual = c.getWorldPlane(TOP_PLANE).getConstant();
+    	float expected = (float) -0.5;
+    	assertEquals(expected, actual, 0);   
+    }
+    
+    @Test
+    public void testBottomPlane() {
+    	testInit();
+    	float x = (float) 3.8;
+    	float z = (float) 4.5;
+    	c.coeffBottom[0] = (float) 3.8;
+    	c.coeffBottom[1] = (float) 4.5;
+    	c.onFrameChange();
+    	float wx = c.getWorldPlane(BOTTOM_PLANE).getNormal().x;
+    	float wy = c.getWorldPlane(BOTTOM_PLANE).getNormal().y;
+    	float wz = c.getWorldPlane(BOTTOM_PLANE).getNormal().z;
+    	assertEquals(0, wx, 0);
+    	assertEquals(x, wy, 0);
+    	assertEquals(z, wz, 0);
+    	float actual = c.getWorldPlane(TOP_PLANE).getConstant();
+    	float expected = (float) -0.5;
+    	assertEquals(expected, actual, 0);   
+    }
+    
+    
+    @Test
+    public void testTopPlane() {
+    	testInit();
+    	float x = (float) 6.8;
+    	float z = (float) 3.5;
+    	c.coeffTop[0] = (float) 6.8;
+    	c.coeffTop[1] = (float) 3.5;
+    	c.onFrameChange();
+    	float wx = c.getWorldPlane(TOP_PLANE).getNormal().x;
+    	float wy = c.getWorldPlane(TOP_PLANE).getNormal().y;
+    	float wz = c.getWorldPlane(TOP_PLANE).getNormal().z;
+    	assertEquals(0, wx, 0);
+    	assertEquals(x, wy, 0);
+    	assertEquals(z, wz, 0); 
+    	float actual = c.getWorldPlane(TOP_PLANE).getConstant();
+    	float expected = (float) -0.5;
+    	assertEquals(expected, actual, 0);    	
     }
     
 }
