@@ -41,6 +41,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.UserData;
 import com.jme3.scene.control.Control;
+import com.jme3.scene.control.RenderControl;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.material.MatParam;
@@ -106,7 +107,7 @@ public class InstancedNode extends GeometryGroupNode {
         }
     }
     
-    public static class InstancedNodeControl implements Control {
+    private static class InstancedNodeControl implements Control, RenderControl {
 
         private InstancedNode node;
         
