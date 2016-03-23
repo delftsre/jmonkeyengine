@@ -48,11 +48,15 @@ public class FilterPostProcessorTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
-	//@Test
-	public void testPostFrameForCapsOpenGL32Condition() {		
-		FrameBuffer out = Mockito.mock(FrameBuffer.class);
-		filterPostProcessor.postFrame(out );
+	
+	@Test
+	public void testIfRenderCapsContainsOpenGLByGivingReference() {
+		caps.add(Caps.OpenGL32);
+		caps.add(Caps.FrameBufferMultisample);
+		
+		Enum<Caps> defaultCap = Caps.OpenGL32;
+		assertTrue(caps.contains(Caps.OpenGL32));
+		assertTrue(caps.contains(defaultCap));
 	}
 	
 	@Test
