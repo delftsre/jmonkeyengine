@@ -261,9 +261,7 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
         }
     }
 
-    
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void render(RenderManager rm, ViewPort vp) {
         if (!wasMeshUpdated) {
             updateTargetsAndMaterials(spatial);
             

@@ -162,12 +162,6 @@ public class LightControl extends AbstractControl {
 
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-        // nothing to do
-    }
-
-    @Override
     public Control cloneForSpatial(Spatial newSpatial) {
         LightControl control = new LightControl(light, controlDir);
         control.setSpatial(newSpatial);

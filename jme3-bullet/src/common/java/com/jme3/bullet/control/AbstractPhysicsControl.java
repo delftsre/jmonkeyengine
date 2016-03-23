@@ -200,9 +200,6 @@ public abstract class AbstractPhysicsControl implements PhysicsControl {
     public void update(float tpf) {
     }
 
-    public void render(RenderManager rm, ViewPort vp) {
-    }
-
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {
             if (this.space != null) {

@@ -65,13 +65,4 @@ public interface Control extends Savable {
      * @param tpf Time per frame.
      */
     public void update(float tpf);
-
-    /**
-     * Should be called prior to queuing the spatial by the RenderManager. This
-     * should not be called from user code.
-     *
-     * @param rm
-     * @param vp
-     */
-    public void render(RenderManager rm, ViewPort vp);
 }

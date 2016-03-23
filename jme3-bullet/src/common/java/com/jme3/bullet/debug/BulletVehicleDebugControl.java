@@ -136,7 +136,4 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
         applyPhysicsTransform(body.getPhysicsLocation(location), body.getPhysicsRotation(rotation));
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
 }

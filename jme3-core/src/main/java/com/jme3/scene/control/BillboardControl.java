@@ -97,8 +97,7 @@ public class BillboardControl extends AbstractControl {
     protected void controlUpdate(float tpf) {
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void render(RenderManager rm, ViewPort vp) {
         Camera cam = vp.getCamera();
         rotateBillboard(cam);
     }

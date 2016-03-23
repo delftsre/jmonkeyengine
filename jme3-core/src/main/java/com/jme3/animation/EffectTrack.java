@@ -116,9 +116,6 @@ public class EffectTrack implements ClonableTrack {
             }
         }
 
-        @Override
-        protected void controlRender(RenderManager rm, ViewPort vp) {
-        }
 
         @Override
         public Control cloneForSpatial(Spatial spatial) {

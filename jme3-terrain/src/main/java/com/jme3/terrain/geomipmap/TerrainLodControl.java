@@ -121,10 +121,6 @@ public class TerrainLodControl extends AbstractControl {
         lodCalculator = new DistanceLodCalculator(65, 2.7f); // a default calculator
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
-
     /**
      * Set your own custom executor to be used. The control will use
      * this instead of creating its own.

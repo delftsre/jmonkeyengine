@@ -100,7 +100,4 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
         arrowB.setArrowExtent(body.getPivotB());
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
 }

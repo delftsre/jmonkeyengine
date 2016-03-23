@@ -62,10 +62,6 @@ public class NormalRecalcControl extends AbstractControl {
         terrain.updateNormals();
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-
-    }
 
     public Control cloneForSpatial(Spatial spatial) {
         NormalRecalcControl control = new NormalRecalcControl(terrain);

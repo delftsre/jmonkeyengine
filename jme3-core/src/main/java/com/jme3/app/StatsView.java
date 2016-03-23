@@ -131,7 +131,4 @@ public class StatsView extends Node implements Control {
         return enabled;
     }
 
-    public void render(RenderManager rm, ViewPort vp) {
-    }
-
 }

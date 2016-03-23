@@ -94,9 +94,6 @@ public class TestDepthStencil extends SimpleApplication {
 		);
             }
 
-            @Override
-            protected void controlRender(RenderManager rm, ViewPort vp) {
-            }
         });
 
         //setup main scene

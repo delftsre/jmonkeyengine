@@ -153,10 +153,6 @@ public class TestSceneStress extends SimpleApplication {
             if( spatial != null ) {
                 spatial.rotate(rotate[0] * tpf, rotate[1] * tpf, rotate[2] * tpf);
             }
-        }
-
-        @Override
-        protected void controlRender( RenderManager rm, ViewPort vp ) {
-        }        
+        }     
     }  
 }

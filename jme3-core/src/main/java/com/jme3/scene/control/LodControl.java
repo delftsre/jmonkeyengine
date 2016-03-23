@@ -146,7 +146,7 @@ public class LodControl extends AbstractControl implements Cloneable {
     protected void controlUpdate(float tpf) {
     }
 
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void render(RenderManager rm, ViewPort vp) {
         BoundingVolume bv = spatial.getWorldBound();
 
         Camera cam = vp.getCamera();
