@@ -106,7 +106,7 @@ public class InstancedNode extends GeometryGroupNode {
         }
     }
     
-    private static class InstancedNodeControl implements Control {
+    public static class InstancedNodeControl implements Control {
 
         private InstancedNode node;
         

@@ -51,6 +51,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.control.BillboardControl;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.control.LodControl;
+import com.jme3.scene.instancing.InstancedNode.InstancedNodeControl;
 import com.jme3.util.SafeArrayList;
 import com.jme3.util.TempVars;
 import java.io.IOException;
@@ -697,6 +698,10 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         	else if(c instanceof ParticleEmitterControl){
         		ParticleEmitterControl pc = (ParticleEmitterControl) c;
         		pc.render(rm, vp);
+        	}
+        	else if(c instanceof InstancedNodeControl){
+        		InstancedNodeControl ic = (InstancedNodeControl) c;
+        		ic.render(rm, vp);
         	}
             //c.render(rm, vp);
         }
