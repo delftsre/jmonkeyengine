@@ -280,20 +280,13 @@ final class BinaryInputCapsule implements InputCapsule {
         return ((Boolean) fieldData.get(field.alias)).booleanValue();
     }
 
-    public boolean[] readBooleanArray(String name, boolean[] defVal)
-            throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (boolean[]) fieldData.get(field.alias);
+    public boolean[] readBooleanArray(String name, boolean[] defVal) throws IOException {
+    	return readGeneric(name, defVal);
     }
 
     public boolean[][] readBooleanArray2D(String name, boolean[][] defVal)
             throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (boolean[][]) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public byte readByte(String name, byte defVal) throws IOException {
