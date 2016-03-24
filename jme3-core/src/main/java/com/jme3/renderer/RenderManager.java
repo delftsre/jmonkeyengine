@@ -476,25 +476,33 @@ public class RenderManager {
 
         scene.runControlRender(this, vp);
         if (scene instanceof Node) {
-            // Recurse for all children
-            Node n = (Node) scene;
-            List<Spatial> children = n.getChildren();
-            // Saving cam state for culling
-            int camState = vp.getCamera().getPlaneState();
-            for (int i = 0; i < children.size(); i++) {
-                // Restoring cam state before proceeding children recusively
-                vp.getCamera().setPlaneState(camState);
-                renderSubScene(children.get(i), vp);
-            }
+            renderSubSceneNode((Node) scene, vp);
+            
         } else if (scene instanceof Geometry) {
-            // add to the render queue
-            Geometry gm = (Geometry) scene;
-            if (gm.getMaterial() == null) {
-                throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
-            }
-
-            vp.getQueue().addToQueue(gm, scene.getQueueBucket());
+            renderSubSceneGeometry(scene, vp);
         }
+    }
+    
+    private void renderSubSceneNode(Node node, ViewPort vp) {
+    	// Recurse for all children
+        List<Spatial> children = node.getChildren();
+        // Saving cam state for culling
+        int camState = vp.getCamera().getPlaneState();
+        for (int i = 0; i < children.size(); i++) {
+            // Restoring cam state before proceeding children recusively
+            vp.getCamera().setPlaneState(camState);
+            renderSubScene(children.get(i), vp);
+        }
+    }
+    
+    private void renderSubSceneGeometry(Spatial scene, ViewPort vp) {
+    	// add to the render queue
+        Geometry gm = (Geometry) scene;
+        if (gm.getMaterial() == null) {
+            throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
+        }
+
+        vp.getQueue().addToQueue(gm, scene.getQueueBucket());
     }
 
     /**

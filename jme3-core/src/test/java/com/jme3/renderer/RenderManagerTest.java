@@ -265,8 +265,7 @@ public class RenderManagerTest extends TestCase {
 		assertEquals(expectedEnd, ((RendererImpl) renderer).getEnd());
 	}
 	
-	public void testRender() {		
-		Camera cam = new Camera(1, 1);
+	public void testRender() {
 		FrameBuffer out = setupFrameBuffer();
 		renderManager.getViewportManager().createMainView(viewName, camera).setOutputFrameBuffer(out);
 		renderManager.getViewportManager().createPostView(viewName, camera).setOutputFrameBuffer(out);
@@ -319,7 +318,6 @@ public class RenderManagerTest extends TestCase {
 	}
 	
 	public void testRenderWithMainFrameBufferActive() {
-		Camera cam = new Camera(1, 1);
 		renderManager.getViewportManager().createMainView(viewName, camera);
 		renderManager.getViewportManager().createPostView(viewName, camera);
 		renderManager.getViewportManager().createPreView(viewName, camera);
