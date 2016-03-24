@@ -84,7 +84,7 @@ public class Mesh implements Savable, Cloneable {
          */
         Points(true) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize;
             }
         },
@@ -96,7 +96,7 @@ public class Mesh implements Savable, Cloneable {
          */
         Lines(true) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize / 2;
             }
         },
@@ -109,7 +109,7 @@ public class Mesh implements Savable, Cloneable {
          */
         LineStrip(false) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize - 1;
             }
         },
@@ -122,7 +122,7 @@ public class Mesh implements Savable, Cloneable {
          */
         LineLoop(false) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize;
             }
         },
@@ -133,7 +133,7 @@ public class Mesh implements Savable, Cloneable {
          */
         Triangles(true) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize / 3;
             }
         },
@@ -145,7 +145,7 @@ public class Mesh implements Savable, Cloneable {
          */
         TriangleStrip(false) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize - 2;
             }
         },
@@ -157,7 +157,7 @@ public class Mesh implements Savable, Cloneable {
          */
         TriangleFan(false) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize - 2;
             }
         },
@@ -171,7 +171,7 @@ public class Mesh implements Savable, Cloneable {
          */
         Hybrid(false) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 throw new UnsupportedOperationException();
             }
         },
@@ -181,7 +181,7 @@ public class Mesh implements Savable, Cloneable {
          */
         Patch(true) {
             @Override
-            private int computeNumElements(int bufSize){
+            int computeNumElements(int bufSize, int patchVertexCount){
                 return bufSize/patchVertexCount;
             }
         };
@@ -208,7 +208,7 @@ public class Mesh implements Savable, Cloneable {
          * Function that computes all the number of elements of each mode
          * @return the number of elements
          */
-        abstract int computeNumElements(int bufSize);
+        abstract int computeNumElements(int bufSize, int patchVertexCount);
     }
 
     /**
@@ -770,7 +770,7 @@ public class Mesh implements Savable, Cloneable {
     }
 
     private int computeNumElements(int bufSize){
-        return mode.computeNumElements(int bufSize, int patchVertexCount);
+        return mode.computeNumElements(bufSize,  patchVertexCount);
     }
 
     private int computeInstanceCount() {
