@@ -82,14 +82,24 @@ public class Mesh implements Savable, Cloneable {
          * A primitive is a single point in space. The size of the points 
          * can be specified with {@link Mesh#setPointSize(float) }.
          */
-        Points(true),
+        Points(true) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize;
+            }
+        },
         
         /**
          * A primitive is a line segment. Every two vertices specify
          * a single line. {@link Mesh#setLineWidth(float) } can be used 
          * to set the width of the lines.
          */
-        Lines(true),
+        Lines(true) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize / 2;
+            }
+        },
         
         /**
          * A primitive is a line segment. The first two vertices specify
@@ -97,7 +107,12 @@ public class Mesh implements Savable, Cloneable {
          * previous vertex to make a line. {@link Mesh#setLineWidth(float) } can 
          * be used to set the width of the lines.
          */
-        LineStrip(false),
+        LineStrip(false) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize - 1;
+            }
+        },
         
         /**
          * Identical to {@link #LineStrip} except that at the end
@@ -105,27 +120,47 @@ public class Mesh implements Savable, Cloneable {
          * {@link Mesh#setLineWidth(float) } can be used 
          * to set the width of the lines.
          */
-        LineLoop(false),
+        LineLoop(false) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize;
+            }
+        },
         
         /**
          * A primitive is a triangle. Each 3 vertices specify a single
          * triangle.
          */
-        Triangles(true),
+        Triangles(true) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize / 3;
+            }
+        },
         
         /**
          * Similar to {@link #Triangles}, the first 3 vertices 
          * specify a triangle, while subsequent vertices are combined with
          * the previous two to form a triangle. 
          */
-        TriangleStrip(false),
+        TriangleStrip(false) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize - 2;
+            }
+        },
         
         /**
          * Similar to {@link #Triangles}, the first 3 vertices 
          * specify a triangle, each 2 subsequent vertices are combined
          * with the very first vertex to make a triangle.
          */
-        TriangleFan(false),
+        TriangleFan(false) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize - 2;
+            }
+        },
         
         /**
          * A combination of various triangle modes. It is best to avoid
@@ -134,12 +169,22 @@ public class Mesh implements Savable, Cloneable {
          * {@link Mesh#setElementLengths(int[]) element lengths} must 
          * be specified for this mode.
          */
-        Hybrid(false),
+        Hybrid(false) {
+            @Override
+            private int computeNumElements(int bufSize){
+                throw new UnsupportedOperationException();
+            }
+        },
         /**
          * Used for Tesselation only. Requires to set the number of vertices
          * for each patch (default is 3 for triangle tesselation)
          */
-        Patch(true);
+        Patch(true) {
+            @Override
+            private int computeNumElements(int bufSize){
+                return bufSize/patchVertexCount;
+            }
+        };
         private boolean listMode = false;
         
         private Mode(boolean listMode){
@@ -158,6 +203,12 @@ public class Mesh implements Savable, Cloneable {
         public boolean isListMode(){
             return listMode;
         }
+
+        /**
+         * Function that computes all the number of elements of each mode
+         * @return the number of elements
+         */
+        abstract int computeNumElements(int bufSize);
     }
 
     /**
@@ -719,25 +770,7 @@ public class Mesh implements Savable, Cloneable {
     }
 
     private int computeNumElements(int bufSize){
-        switch (mode){
-            case Triangles:
-                return bufSize / 3;
-            case TriangleFan:
-            case TriangleStrip:
-                return bufSize - 2;
-            case Points:
-                return bufSize;
-            case Lines:
-                return bufSize / 2;
-            case LineLoop:
-                return bufSize;
-            case LineStrip:
-                return bufSize - 1;
-            case Patch:
-                return bufSize/patchVertexCount;
-            default:
-                throw new UnsupportedOperationException();
-        }
+        return mode.computeNumElements(int bufSize, int patchVertexCount);
     }
 
     private int computeInstanceCount() {
