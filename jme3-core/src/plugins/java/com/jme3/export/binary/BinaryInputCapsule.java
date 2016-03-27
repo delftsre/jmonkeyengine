@@ -297,35 +297,23 @@ final class BinaryInputCapsule implements InputCapsule {
     }
 
     public byte[] readByteArray(String name, byte[] defVal) throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (byte[]) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public byte[][] readByteArray2D(String name, byte[][] defVal)
             throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (byte[][]) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public ByteBuffer readByteBuffer(String name, ByteBuffer defVal)
             throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (ByteBuffer) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     @SuppressWarnings("unchecked")
     public ArrayList<ByteBuffer> readByteBufferArrayList(String name,
             ArrayList<ByteBuffer> defVal) throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (ArrayList<ByteBuffer>) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public double readDouble(String name, double defVal) throws IOException {
@@ -337,18 +325,12 @@ final class BinaryInputCapsule implements InputCapsule {
 
     public double[] readDoubleArray(String name, double[] defVal)
             throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (double[]) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public double[][] readDoubleArray2D(String name, double[][] defVal)
             throws IOException {
-        BinaryClassField field = cObj.nameFields.get(name);
-        if (field == null || !fieldData.containsKey(field.alias))
-            return defVal;
-        return (double[][]) fieldData.get(field.alias);
+    	return readGeneric(name, defVal);
     }
 
     public float readFloat(String name, float defVal) throws IOException {
