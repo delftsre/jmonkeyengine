@@ -1,30 +1,23 @@
 package com.jme3.renderer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.jme3.asset.AssetManager;
-import static org.mockito.Mockito.*;
-import com.jme3.asset.DesktopAssetManager;
 import com.jme3.material.Material;
-import com.jme3.material.MaterialDef;
-import com.jme3.material.RenderState;
-import com.jme3.material.TechniqueDef;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.Spatial.CullHint;
-import com.jme3.scene.VertexBuffer;
-import com.jme3.util.PlaceholderAssets;
-import com.jme3.scene.VertexBuffer.Type;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -37,7 +30,9 @@ public class RenderManagerSpatialTest{
 	@Before
 	public void setUp() throws Exception {
 		Renderer renderer = null;
-		camera = new Camera();
+		int height = 5;
+		int width = 8;
+		camera = new Camera(width, height);
 		renderManager = new RenderManager(renderer);
 		viewport = new ViewPort("viewName", camera);
 		
@@ -115,22 +110,75 @@ public class RenderManagerSpatialTest{
 		//verify(viewport).getQueue().addToQueue(geo, geo.getQueueBucket());
 	}*/
 	
-	//TODO: assert or verify needs to be added
 	@Test
 	public void testRenderSubSceneNode(){
-		Node node = Mockito.mock(Node.class);
-		Node node2 = Mockito.mock(Node.class);
-		Mockito.when(node.checkCulling(viewport.getCamera())).thenReturn(true);
-		Mockito.when(node2.checkCulling(viewport.getCamera())).thenReturn(true);
+		Node nodeParrent = Mockito.mock(Node.class);
+		Node nodeChild1 = Mockito.mock(Node.class);
+		Mockito.when(nodeParrent.checkCulling(viewport.getCamera())).thenReturn(true);
+		Mockito.when(nodeChild1.checkCulling(viewport.getCamera())).thenReturn(true);
 		List<Spatial> children = new ArrayList<Spatial>();
-		children.add(node2);
-		Mockito.when(node.getChildren()).thenReturn(children);
-		renderManager.renderScene(node, viewport);
-		
+		children.add(nodeChild1);
+		Mockito.when(nodeParrent.getChildren()).thenReturn(children);
+		int planeState = 5;
+		viewport.getCamera().setPlaneState(planeState );
+		assertEquals(5, viewport.getCamera().getPlaneState());
+		renderManager.renderScene(nodeParrent, viewport);		
+		assertEquals(0, viewport.getCamera().getPlaneState());
 	}
 	
-	//test the renderScene method
+	@Test
+	public void testRenderSubSceneGeometry(){
+		Geometry geo = Mockito.mock(Geometry.class);
+		Mockito.when(geo.checkCulling(viewport.getCamera())).thenReturn(true);
+		
+		Material mat = Mockito.mock(Material.class);
+		Mockito.when(geo.getMaterial()).thenReturn(mat);
+		
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Sky));
+		
+		Bucket value = Bucket.Sky;
+		Mockito.when(geo.getQueueBucket()).thenReturn(value);
+		
+		renderManager.renderScene(geo, viewport);	
+		
+		assertFalse(viewport.getQueue().isQueueEmpty(Bucket.Sky));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Opaque));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Translucent));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Transparent));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Gui));
+	}
 	
+	@Test
+	public void testRenderSubSceneNodeAndGeo(){
+		Node nodeParrent = Mockito.mock(Node.class);
+		Geometry geo = Mockito.mock(Geometry.class);
+		Mockito.when(nodeParrent.checkCulling(viewport.getCamera())).thenReturn(true);
+		Mockito.when(geo.checkCulling(viewport.getCamera())).thenReturn(true);
+		
+		List<Spatial> children = new ArrayList<Spatial>();
+		children.add(geo);
+		Mockito.when(nodeParrent.getChildren()).thenReturn(children);
+		int planeState = 5;
+		viewport.getCamera().setPlaneState(planeState );
+		
+		Material mat = Mockito.mock(Material.class);
+		Mockito.when(geo.getMaterial()).thenReturn(mat);
+		Bucket value = Bucket.Sky;
+		Mockito.when(geo.getQueueBucket()).thenReturn(value);
+		
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Sky));
+		
+		assertEquals(5, viewport.getCamera().getPlaneState());
+		renderManager.renderScene(nodeParrent, viewport);		
+		assertEquals(0, viewport.getCamera().getPlaneState());
+		assertFalse(viewport.getQueue().isQueueEmpty(Bucket.Sky));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Opaque));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Translucent));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Transparent));
+		assertTrue(viewport.getQueue().isQueueEmpty(Bucket.Gui));
+	}
+	
+	//test the renderScene method	
 	@Test
 	public void testRenderScene(){
 		Spatial spatial = Mockito.mock(Spatial.class);
@@ -139,11 +187,6 @@ public class RenderManagerSpatialTest{
 		port.getCamera().setPlaneState(5);
 		Assert.assertEquals(port.getCamera().getPlaneState(),5);
 		renderManager.renderScene(spatial, port);
-		Assert.assertEquals(port.getCamera().getPlaneState(),0);
-		
+		Assert.assertEquals(port.getCamera().getPlaneState(),0);		
 	}
-	
-	
-	
-
 }
