@@ -1,5 +1,7 @@
 package com.jme3.renderer;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
 public class ViewportManagerTest extends TestCase{
@@ -181,6 +183,35 @@ public class ViewportManagerTest extends TestCase{
 		assertFalse(viewportManager.removePostView(viewport));
 	}
 
-
+	public void testGetSetViewPorts(){
+		ArrayList<ViewPort> pre = new ArrayList<>();
+		ArrayList<ViewPort> main = new ArrayList<>();
+		ArrayList<ViewPort> post = new ArrayList<>();
+		
+		pre.add(new ViewPort("pre1", null));
+		pre.add(new ViewPort("pre2", null));
+		pre.add(new ViewPort("pre3", null));
+		
+		main.add(new ViewPort("m1", null));
+		main.add(new ViewPort("m2", null));
+		main.add(new ViewPort("m3", null));
+		
+		post.add(new ViewPort("post1", null));
+		post.add(new ViewPort("post2", null));
+		post.add(new ViewPort("post3", null));
+		
+		assertNotNull(viewportManager.getPreViewPorts());
+		assertNotNull(viewportManager.getViewPorts());
+		assertNotNull(viewportManager.getPostViewPorts());
+		
+		viewportManager.setPreViewPorts(pre);
+		assertEquals("pre1",viewportManager.getPreViewPorts().get(0).name);
+		
+		viewportManager.setViewPorts(main);
+		assertEquals("m1",viewportManager.getViewPorts().get(0).name);
+		
+		viewportManager.setPostViewPorts(post);
+		assertEquals("post1",viewportManager.getPostViewPorts().get(0).name);
+	}
 
 }
