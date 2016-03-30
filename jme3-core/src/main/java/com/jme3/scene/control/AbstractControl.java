@@ -78,11 +78,6 @@ public abstract class AbstractControl implements Control {
     protected abstract void controlUpdate(float tpf);
 
     /**
-     * To be implemented in subclass.
-     */
-    protected abstract void controlRender(RenderManager rm, ViewPort vp);
-
-    /**
      *  Default implementation of cloneForSpatial() that
      *  simply clones the control and sets the spatial.
      *  <pre>
@@ -110,13 +105,6 @@ public abstract class AbstractControl implements Control {
             return;
 
         controlUpdate(tpf);
-    }
-
-    public void render(RenderManager rm, ViewPort vp) {
-        if (!enabled)
-            return;
-
-        controlRender(rm, vp);
     }
 
     public void write(JmeExporter ex) throws IOException {

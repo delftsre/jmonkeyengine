@@ -90,8 +90,4 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
         applyPhysicsTransform(body.getPhysicsLocation(location), body.getPhysicsRotation(rotation));
         geom.setLocalScale(body.getCollisionShape().getScale());
     }
-
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
 }

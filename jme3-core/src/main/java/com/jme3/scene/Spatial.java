@@ -31,10 +31,12 @@
  */
 package com.jme3.scene;
 
+import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.CloneableSmartAsset;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
+import com.jme3.effect.ParticleEmitter.ParticleEmitterControl;
 import com.jme3.export.*;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
@@ -46,7 +48,10 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.scene.control.BillboardControl;
 import com.jme3.scene.control.Control;
+import com.jme3.scene.control.LodControl;
+import com.jme3.scene.control.RenderControl;
 import com.jme3.util.SafeArrayList;
 import com.jme3.util.TempVars;
 import java.io.IOException;
@@ -678,7 +683,9 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         }
 
         for (Control c : controls.getArray()) {
-            c.render(rm, vp);
+        	if(c instanceof RenderControl){
+        		((RenderControl) c).render(rm, vp);
+        	}
         }
     }
 

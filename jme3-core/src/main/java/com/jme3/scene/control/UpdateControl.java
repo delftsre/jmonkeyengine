@@ -80,10 +80,6 @@ public class UpdateControl extends AbstractControl {
         } while (((task = taskQueue.poll()) != null));
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-        
-    }
 
     public Control cloneForSpatial(Spatial newSpatial) {
         UpdateControl control = new UpdateControl(); 

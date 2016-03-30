@@ -151,10 +151,6 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         applyPhysicsTransform(location, rotation);
     }
 
-    @Override
-    public void render(RenderManager rm, ViewPort vp) {
-        super.render(rm, vp);
-    }
 
     /**
      * Used internally, don't call manually

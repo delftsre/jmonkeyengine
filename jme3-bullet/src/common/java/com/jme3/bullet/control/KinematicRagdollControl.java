@@ -900,15 +900,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         return null;
     }
 
-    /**
-     * For internal use only specific render for the ragdoll(if debugging)
-     *
-     * @param rm
-     * @param vp
-     */
-    @Override
-    public void render(RenderManager rm, ViewPort vp) {
-    }
 
     public Control cloneForSpatial(Spatial spatial) {
         KinematicRagdollControl control = new KinematicRagdollControl(preset, weightThreshold);

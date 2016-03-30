@@ -86,7 +86,4 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
         geom.setLocalScale(body.getCollisionShape().getScale());
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
 }
