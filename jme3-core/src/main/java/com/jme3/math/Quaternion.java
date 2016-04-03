@@ -324,9 +324,10 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      * @param matrix
      *            the matrix that defines the rotation.
      */
-    public Quaternion fromRotationMatrix(Matrix3f matrix) {
-        return fromRotationMatrix(matrix.m00, matrix.m01, matrix.m02, matrix.m10,
-                matrix.m11, matrix.m12, matrix.m20, matrix.m21, matrix.m22);
+    public Quaternion fromRotationMatrix(Matrix matrix) {
+        return fromRotationMatrix(matrix.matrix[0][0], matrix.matrix[0][1], matrix.matrix[0][2], 
+        		matrix.matrix[1][0],matrix.matrix[1][1], matrix.matrix[1][2], 
+        		matrix.matrix[2][1], matrix.matrix[2][1], matrix.matrix[2][2]);
     }
 
     public Quaternion fromRotationMatrix(float m00, float m01, float m02,
@@ -403,53 +404,9 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      * 
      * @return the rotation matrix representation of this quaternion.
      */
-    public Matrix3f toRotationMatrix() {
-        Matrix3f matrix = new Matrix3f();
+    public Matrix toRotationMatrix() {
+        Matrix matrix = new Matrix(3);
         return toRotationMatrix(matrix);
-    }
-
-    /**
-     * <code>toRotationMatrix</code> converts this quaternion to a rotational
-     * matrix. The result is stored in result.
-     * 
-     * @param result
-     *            The Matrix3f to store the result in.
-     * @return the rotation matrix representation of this quaternion.
-     */
-    public Matrix3f toRotationMatrix(Matrix3f result) {
-
-        float norm = norm();
-        // we explicitly test norm against one here, saving a division
-        // at the cost of a test and branch.  Is it worth it?
-        float s = (norm == 1f) ? 2f : (norm > 0f) ? 2f / norm : 0;
-
-        // compute xs/ys/zs first to save 6 multiplications, since xs/ys/zs
-        // will be used 2-4 times each.
-        float xs = x * s;
-        float ys = y * s;
-        float zs = z * s;
-        float xx = x * xs;
-        float xy = x * ys;
-        float xz = x * zs;
-        float xw = w * xs;
-        float yy = y * ys;
-        float yz = y * zs;
-        float yw = w * ys;
-        float zz = z * zs;
-        float zw = w * zs;
-
-        // using s=2/norm (instead of 1/norm) saves 9 multiplications by 2 here
-        result.m00 = 1 - (yy + zz);
-        result.m01 = (xy - zw);
-        result.m02 = (xz + yw);
-        result.m10 = (xy + zw);
-        result.m11 = 1 - (xx + zz);
-        result.m12 = (yz - xw);
-        result.m20 = (xz - yw);
-        result.m21 = (yz + xw);
-        result.m22 = 1 - (xx + yy);
-
-        return result;
     }
 
     /**
@@ -461,7 +418,7 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      *            The Matrix4f to store the result in.
      * @return the rotation matrix representation of this quaternion.
      */
-    public Matrix4f toRotationMatrix(Matrix4f result) {
+    public Matrix toRotationMatrix(Matrix result) {
         TempVars tempv = TempVars.get();
         Vector3f originalScale = tempv.vect1;
         
@@ -488,15 +445,15 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
         float zw = w * zs;
 
         // using s=2/norm (instead of 1/norm) saves 9 multiplications by 2 here
-        result.m00 = 1 - (yy + zz);
-        result.m01 = (xy - zw);
-        result.m02 = (xz + yw);
-        result.m10 = (xy + zw);
-        result.m11 = 1 - (xx + zz);
-        result.m12 = (yz - xw);
-        result.m20 = (xz - yw);
-        result.m21 = (yz + xw);
-        result.m22 = 1 - (xx + yy);
+        result.matrix[0][0] = 1 - (yy + zz);
+        result.matrix[0][1] = (xy - zw);
+        result.matrix[0][2] = (xz + yw);
+        result.matrix[1][0] = (xy + zw);
+        result.matrix[1][1] = 1 - (xx + zz);
+        result.matrix[1][2] = (yz - xw);
+        result.matrix[2][0] = (xz - yw);
+        result.matrix[2][1] = (yz + xw);
+        result.matrix[2][2] = 1 - (xx + yy);
 
         result.setScale(originalScale);
         
@@ -885,7 +842,7 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      * @param matrix
      *            the matrix to apply to this quaternion.
      */
-    public void apply(Matrix3f matrix) {
+    public void apply(Matrix matrix) {
         float oldX = x, oldY = y, oldZ = z, oldW = w;
         fromRotationMatrix(matrix);
         float tempX = x, tempY = y, tempZ = z, tempW = w;
@@ -943,7 +900,7 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      *            the array of vectors to be filled.
      */
     public void toAxes(Vector3f axis[]) {
-        Matrix3f tempMat = toRotationMatrix();
+        Matrix tempMat = toRotationMatrix();
         axis[0] = tempMat.getColumn(0, axis[0]);
         axis[1] = tempMat.getColumn(1, axis[1]);
         axis[2] = tempMat.getColumn(2, axis[2]);
