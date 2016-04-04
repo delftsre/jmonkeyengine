@@ -2125,27 +2125,9 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
     
     static boolean equalIdentity(Matrix mat) 
     {
-    	for (int i = 0; i < mat.M; i++)
-        {
-            if (Math.abs(mat.matrix[i][i] - 1) > 1e-4)
-            {
-            	return false;
-            }
-        }
-    	for (int c = 0; c < mat.M; c++)
-        {
-            for (int r = 0; r < mat.M; r++)
-            {
-            	if (r != c)
-                {
-            		if (Math.abs(mat.matrix[c][r]) > 1e-4)
-            		{
-            			return false;
-            		}
-                }
-            }
-        }
-        return Math.abs(mat.matrix[3][2]) <= 1e-4;
+    	Matrix identity = new Matrix(mat.M);
+    	mat.equals(identity);
+        return mat.equals(identity);
     }  
     
     // XXX: This tests more solid than converting the q to a matrix and multiplying... why?
