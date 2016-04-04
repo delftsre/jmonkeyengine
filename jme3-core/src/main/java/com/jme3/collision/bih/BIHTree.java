@@ -42,7 +42,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CollisionData;
@@ -403,7 +403,7 @@ public class BIHTree implements CollisionData {
     }
 
     private int collideWithRay(Ray r,
-            Matrix4f worldMatrix,
+            Matrix worldMatrix,
             BoundingVolume worldBound,
             CollisionResults results) {
 
@@ -443,7 +443,7 @@ public class BIHTree implements CollisionData {
     }
 
     private int collideWithBoundingVolume(BoundingVolume bv,
-            Matrix4f worldMatrix,
+            Matrix worldMatrix,
             CollisionResults results) {
         BoundingBox bbox;
         if (bv instanceof BoundingSphere) {
@@ -462,7 +462,7 @@ public class BIHTree implements CollisionData {
     }
 
     public int collideWith(Collidable other,
-            Matrix4f worldMatrix,
+            Matrix worldMatrix,
             BoundingVolume worldBound,
             CollisionResults results) {
 

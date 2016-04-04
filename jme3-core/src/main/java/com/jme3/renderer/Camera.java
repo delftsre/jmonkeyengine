@@ -195,11 +195,11 @@ public class Camera implements Savable, Cloneable {
      * store the value for field parallelProjection
      */
     private boolean parallelProjection = true;
-    protected Matrix4f projectionMatrixOverride = new Matrix4f();
+    protected Matrix projectionMatrixOverride = new Matrix(4);
     private boolean overrideProjection;
-    protected Matrix4f viewMatrix = new Matrix4f();
-    protected Matrix4f projectionMatrix = new Matrix4f();
-    protected Matrix4f viewProjectionMatrix = new Matrix4f();
+    protected Matrix viewMatrix = new Matrix(4);
+    protected Matrix projectionMatrix = new Matrix(4);
+    protected Matrix viewProjectionMatrix = new Matrix(4);
     private BoundingBox guiBounding = new BoundingBox();
     /** The camera's name. */
     protected String name;
@@ -390,9 +390,9 @@ public class Camera implements Savable, Cloneable {
         
         TempVars vars = TempVars.get();
         try {        
-            Matrix4f p = projectionMatrixOverride.set(projectionMatrix);
+            Matrix p = projectionMatrixOverride.set(projectionMatrix);
 
-            Matrix4f ivm = viewMatrix;
+            Matrix ivm = viewMatrix;
 
             Vector3f point = clipPlane.getNormal().mult(clipPlane.getConstant(), vars.vect1);
             Vector3f pp = ivm.mult(point, vars.vect2);
@@ -401,18 +401,18 @@ public class Camera implements Savable, Cloneable {
     
             Vector4f v = vars.vect4f2.set(0, 0, 0, 0);
     
-            v.x = (Math.signum(clipPlaneV.x) + p.m02) / p.m00;
-            v.y = (Math.signum(clipPlaneV.y) + p.m12) / p.m11;
+            v.x = (Math.signum(clipPlaneV.x) + p.matrix[0][2]) / p.matrix[0][0];
+            v.y = (Math.signum(clipPlaneV.y) + p.matrix[1][2]) / p.matrix[1][1];
             v.z = -1.0f;
-            v.w = (1.0f + p.m22) / p.m23;
+            v.w = (1.0f + p.matrix[2][2]) / p.matrix[2][3];
     
             float dot = clipPlaneV.dot(v);//clipPlaneV.x * v.x + clipPlaneV.y * v.y + clipPlaneV.z * v.z + clipPlaneV.w * v.w;
             Vector4f c = clipPlaneV.multLocal(2.0f / dot);
     
-            p.m20 = c.x - p.m30;
-            p.m21 = c.y - p.m31;
-            p.m22 = c.z - p.m32;
-            p.m23 = c.w - p.m33;
+            p.matrix[2][0] = c.x - p.matrix[3][0];
+            p.matrix[2][1] = c.y - p.matrix[3][1];
+            p.matrix[2][2] = c.z - p.matrix[3][2];
+            p.matrix[2][3] = c.w - p.matrix[3][3];
             setProjectionMatrix(p);
         } finally {
             vars.release();
@@ -1078,7 +1078,7 @@ public class Camera implements Savable, Cloneable {
      * This matrix is usually defined by the position and
      * orientation of the camera.
      */
-    public Matrix4f getViewMatrix() {
+    public Matrix getViewMatrix() {
         return viewMatrix;
     }
 
@@ -1089,7 +1089,7 @@ public class Camera implements Savable, Cloneable {
      *
      * @param projMatrix
      */
-    public void setProjectionMatrix(Matrix4f projMatrix) {
+    public void setProjectionMatrix(Matrix projMatrix) {
         if (projMatrix == null) {
             overrideProjection = false;
             projectionMatrixOverride.loadIdentity();   
@@ -1106,7 +1106,7 @@ public class Camera implements Savable, Cloneable {
      * This matrix is usually defined by the viewport and perspective settings
      * of the camera.
      */
-    public Matrix4f getProjectionMatrix() {
+    public Matrix getProjectionMatrix() {
         if (overrideProjection) {
             return projectionMatrixOverride;
         }
@@ -1131,7 +1131,7 @@ public class Camera implements Savable, Cloneable {
      * matrix. This matrix is required for rendering an object. It is
      * precomputed so as to not compute it every time an object is rendered.
      */
-    public Matrix4f getViewProjectionMatrix() {
+    public Matrix getViewProjectionMatrix() {
         return viewProjectionMatrix;
     }
 
@@ -1356,7 +1356,7 @@ public class Camera implements Savable, Cloneable {
             store = new Vector3f();
         }
  
-        Matrix4f inverseMat = new Matrix4f(viewProjectionMatrix);
+        Matrix inverseMat = new Matrix(viewProjectionMatrix);
         inverseMat.invertLocal();
 
         store.set(

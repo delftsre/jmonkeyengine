@@ -35,7 +35,7 @@ import com.jme3.light.DefaultLightFilter;
 import com.jme3.light.LightFilter;
 import com.jme3.light.LightList;
 import com.jme3.material.*;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.post.SceneProcessor;
 import com.jme3.profile.AppProfiler;
 import com.jme3.profile.AppStep;
@@ -80,7 +80,7 @@ public class RenderManager {
     private String forcedTechnique = null;
     private RenderState forcedRenderState = null;
     private int viewX, viewY, viewWidth, viewHeight;
-    private Matrix4f orthoMatrix = new Matrix4f();
+    private Matrix orthoMatrix = new Matrix(4);
     private LightList filteredLightList = new LightList(null);
     private String tmpTech;
     private boolean handleTranlucentBucket = true;
@@ -471,7 +471,7 @@ public class RenderManager {
      * 
      * @param mat The world matrix to set
      */
-    public void setWorldMatrix(Matrix4f mat) {
+    public void setWorldMatrix(Matrix mat) {
         uniformBindingManager.setWorldMatrix(mat);
     }
 
@@ -517,7 +517,7 @@ public class RenderManager {
      */
     public void renderGeometry(Geometry g) {
         if (g.isIgnoreTransform()) {
-            setWorldMatrix(Matrix4f.IDENTITY);
+            setWorldMatrix(new Matrix(4));
         } else {
             setWorldMatrix(g.getWorldMatrix());
         }
@@ -903,7 +903,7 @@ public class RenderManager {
 
     private void setViewProjection(Camera cam, boolean ortho) {
         if (ortho) {
-            uniformBindingManager.setCamera(cam, Matrix4f.IDENTITY, orthoMatrix, orthoMatrix);
+            uniformBindingManager.setCamera(cam, new Matrix(4), orthoMatrix, orthoMatrix);
         } else {
             uniformBindingManager.setCamera(cam, cam.getViewMatrix(), cam.getProjectionMatrix(), cam.getViewProjectionMatrix());
         }

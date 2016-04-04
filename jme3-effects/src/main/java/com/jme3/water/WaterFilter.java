@@ -75,11 +75,12 @@ public class WaterFilter extends Filter {
     protected Ray ray = new Ray();
     private Vector3f targetLocation = new Vector3f();
     private ReflectionProcessor reflectionProcessor;
-    private Matrix4f biasMatrix = new Matrix4f(0.5f, 0.0f, 0.0f, 0.5f,
+    private float[] data = {0.5f, 0.0f, 0.0f, 0.5f,
             0.0f, 0.5f, 0.0f, 0.5f,
             0.0f, 0.0f, 0.0f, 0.5f,
-            0.0f, 0.0f, 0.0f, 1.0f);
-    private Matrix4f textureProjMatrix = new Matrix4f();
+            0.0f, 0.0f, 0.0f, 1.0f};
+    private Matrix biasMatrix = new Matrix(data);
+    private Matrix textureProjMatrix = new Matrix(4);
     private boolean underWater;
     private RenderManager renderManager;
     private ViewPort viewPort;

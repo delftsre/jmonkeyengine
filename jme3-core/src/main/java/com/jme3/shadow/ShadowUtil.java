@@ -34,7 +34,7 @@ package com.jme3.shadow;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -194,7 +194,7 @@ public class ShadowUtil {
      * @param mat
      * @return
      */
-    public static BoundingBox computeUnionBound(GeometryList list, Matrix4f mat) {
+    public static BoundingBox computeUnionBound(GeometryList list, Matrix mat) {
         BoundingBox bbox = new BoundingBox();
         TempVars tempv = TempVars.get();
         for (int i = 0; i < list.size(); i++) {
@@ -252,7 +252,7 @@ public class ShadowUtil {
      * @param mat
      * @return
      */
-    public static BoundingBox computeBoundForPoints(Vector3f[] pts, Matrix4f mat) {
+    public static BoundingBox computeBoundForPoints(Vector3f[] pts, Matrix mat) {
         Vector3f min = new Vector3f(Vector3f.POSITIVE_INFINITY);
         Vector3f max = new Vector3f(Vector3f.NEGATIVE_INFINITY);
         TempVars vars = TempVars.get();
@@ -293,8 +293,8 @@ public class ShadowUtil {
             shadowCam.setFrustumPerspective(45, 1, 1, 150);
         }
 
-        Matrix4f viewProjMatrix = shadowCam.getViewProjectionMatrix();
-        Matrix4f projMatrix = shadowCam.getProjectionMatrix();
+        Matrix viewProjMatrix = shadowCam.getViewProjectionMatrix();
+        Matrix projMatrix = shadowCam.getProjectionMatrix();
 
         BoundingBox splitBB = computeBoundForPoints(points, viewProjMatrix);
 
@@ -316,14 +316,15 @@ public class ShadowUtil {
         scaleZ = 1.0f / (splitMax.z - splitMin.z);
         offsetZ = -splitMin.z * scaleZ;
 
-        Matrix4f cropMatrix = vars.tempMat4;
-        cropMatrix.set(scaleX, 0f, 0f, offsetX,
+        Matrix cropMatrix = vars.tempMat4;
+        float[] data = {scaleX, 0f, 0f, offsetX,
                 0f, scaleY, 0f, offsetY,
                 0f, 0f, scaleZ, offsetZ,
-                0f, 0f, 0f, 1f);
+                0f, 0f, 0f, 1f};
+        cropMatrix.set(data);
 
 
-        Matrix4f result = new Matrix4f();
+        Matrix result = new Matrix(4);
         result.set(cropMatrix);
         result.multLocal(projMatrix);
 
@@ -341,7 +342,7 @@ public class ShadowUtil {
     public static class OccludersExtractor
     {
         // global variables set in order not to have recursive process method with too many parameters
-        Matrix4f viewProjMatrix;
+        Matrix viewProjMatrix;
         public Integer casterCount;
         BoundingBox splitBB, casterBB;
         GeometryList splitOccluders;
@@ -350,7 +351,7 @@ public class ShadowUtil {
         public OccludersExtractor() {}
         
         // initialize the global OccludersExtractor variables
-        public OccludersExtractor(Matrix4f vpm, int cc, BoundingBox sBB, BoundingBox cBB, GeometryList sOCC, TempVars v) {
+        public OccludersExtractor(Matrix vpm, int cc, BoundingBox sBB, BoundingBox cBB, GeometryList sOCC, TempVars v) {
             viewProjMatrix = vpm; 
             casterCount = cc;
             splitBB = sBB;
@@ -469,7 +470,7 @@ public class ShadowUtil {
         }
 
         // create transform to rotate points to viewspace        
-        Matrix4f viewProjMatrix = shadowCam.getViewProjectionMatrix();
+        Matrix viewProjMatrix = shadowCam.getViewProjectionMatrix();
 
         BoundingBox splitBB = computeBoundForPoints(points, viewProjMatrix);
 
@@ -524,7 +525,7 @@ public class ShadowUtil {
 //            shadowCam.setFrustumPerspective(45, 1, 1, splitMax.z);
 //        }
 
-        Matrix4f projMatrix = shadowCam.getProjectionMatrix();
+        Matrix projMatrix = shadowCam.getProjectionMatrix();
 
         Vector3f cropMin = vars.vect7;
         Vector3f cropMax = vars.vect8;
@@ -576,14 +577,15 @@ public class ShadowUtil {
 
 
 
-        Matrix4f cropMatrix = vars.tempMat4;
-        cropMatrix.set(scaleX, 0f, 0f, offsetX,
+        Matrix cropMatrix = vars.tempMat4;
+        float[] data = {scaleX, 0f, 0f, offsetX,
                 0f, scaleY, 0f, offsetY,
                 0f, 0f, scaleZ, offsetZ,
-                0f, 0f, 0f, 1f);
+                0f, 0f, 0f, 1f};
+        cropMatrix.set(data);
 
 
-        Matrix4f result = new Matrix4f();
+        Matrix result = new Matrix(4);
         result.set(cropMatrix);
         result.multLocal(projMatrix);
         vars.release();

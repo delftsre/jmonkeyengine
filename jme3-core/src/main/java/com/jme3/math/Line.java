@@ -136,7 +136,7 @@ public class Line implements Savable, Cloneable, java.io.Serializable {
 
         Vector3f compVec1 = vars.vect1;
         Vector3f compVec2 = vars.vect2;
-        Matrix3f compMat1 = vars.tempMat3;
+        Matrix compMat1 = vars.tempMat3;
         Eigen3f compEigen1 = vars.eigen;
 
         points.rewind();
@@ -169,15 +169,15 @@ public class Line implements Savable, Cloneable, java.io.Serializable {
         }
 
         //find the smallest eigen vector for the direction vector
-        compMat1.m00 = sumYY + sumZZ;
-        compMat1.m01 = -sumXY;
-        compMat1.m02 = -sumXZ;
-        compMat1.m10 = -sumXY;
-        compMat1.m11 = sumXX + sumZZ;
-        compMat1.m12 = -sumYZ;
-        compMat1.m20 = -sumXZ;
-        compMat1.m21 = -sumYZ;
-        compMat1.m22 = sumXX + sumYY;
+        compMat1.matrix[0][0] = sumYY + sumZZ;
+        compMat1.matrix[0][1] = -sumXY;
+        compMat1.matrix[0][2] = -sumXZ;
+        compMat1.matrix[1][0] = -sumXY;
+        compMat1.matrix[1][1] = sumXX + sumZZ;
+        compMat1.matrix[1][2] = -sumYZ;
+        compMat1.matrix[2][0] = -sumXZ;
+        compMat1.matrix[2][1] = -sumYZ;
+        compMat1.matrix[2][2] = sumXX + sumYY;
 
         compEigen1.calculateEigen(compMat1);
         direction = compEigen1.getEigenVector(0);

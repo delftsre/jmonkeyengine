@@ -38,7 +38,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -118,7 +118,7 @@ public class FbxNode extends FbxObject<Spatial> {
     protected Transform jmeLocalBindPose;
     
     // used for debugging only
-    protected Matrix4f cachedWorldBindPose;
+    protected Matrix cachedWorldBindPose;
     
     public FbxNode(AssetManager assetManager, String sceneFolderName) {
         super(assetManager, sceneFolderName);
@@ -139,16 +139,16 @@ public class FbxNode extends FbxObject<Spatial> {
         // ScalingPivot, 
         // ScalingOffset
         
-        Matrix4f scaleMat = new Matrix4f();
+        Matrix scaleMat = new Matrix(4);
         scaleMat.setScale(jmeLocalNodeTransform.getScale());
         
-        Matrix4f rotationMat = new Matrix4f();
+        Matrix rotationMat = new Matrix(4);
         rotationMat.setRotationQuaternion(jmeLocalNodeTransform.getRotation());
         
-        Matrix4f translationMat = new Matrix4f();
+        Matrix translationMat = new Matrix(4);
         translationMat.setTranslation(jmeLocalNodeTransform.getTranslation());
         
-        Matrix4f result = new Matrix4f();
+        Matrix result = new Matrix(4);
         result.multLocal(scaleMat).multLocal(rotationMat).multLocal(translationMat);
         
         Transform t = new Transform();
@@ -157,7 +157,7 @@ public class FbxNode extends FbxObject<Spatial> {
         return t;
     }
     
-    public void setWorldBindPose(Matrix4f worldBindPose) {
+    public void setWorldBindPose(Matrix worldBindPose) {
         if (cachedWorldBindPose != null) {
             if (!cachedWorldBindPose.equals(worldBindPose)) {
                 throw new UnsupportedOperationException("Bind poses don't match");

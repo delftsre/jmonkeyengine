@@ -33,7 +33,7 @@ package com.jme3.terrain.geomipmap.lodcalc.util;
 
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
@@ -93,7 +93,7 @@ public class EntropyComputeUtil {
             ray.setOrigin(pos);
 
             results.clear();
-            terrainBlock.collideWith(ray, Matrix4f.IDENTITY, bbox, results);
+            terrainBlock.collideWith(ray, new Matrix(4), bbox, results);
 
             if (results.size() > 0){
                 Vector3f contactPoint = results.getClosestCollision().getContactPoint();

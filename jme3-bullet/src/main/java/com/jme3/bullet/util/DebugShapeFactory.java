@@ -34,7 +34,7 @@ package com.jme3.bullet.util;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -80,7 +80,7 @@ public class DebugShapeFactory {
 
                 // apply rotation
                 TempVars vars = TempVars.get();                
-                Matrix3f tempRot = vars.tempMat3;
+                Matrix tempRot = vars.tempMat3;
 
                 tempRot.set(geometry.getLocalRotation());
                 childCollisionShape.rotation.mult(tempRot, tempRot);

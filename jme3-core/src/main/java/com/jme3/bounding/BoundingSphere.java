@@ -398,7 +398,7 @@ public class BoundingSphere extends BoundingVolume {
         return sphere;
     }
 
-    public BoundingVolume transform(Matrix4f trans, BoundingVolume store) {
+    public BoundingVolume transform(Matrix trans, BoundingVolume store) {
         BoundingSphere sphere;
         if (store == null || store.getType() != BoundingVolume.Type.Sphere) {
             sphere = new BoundingSphere(1, new Vector3f(0, 0, 0));

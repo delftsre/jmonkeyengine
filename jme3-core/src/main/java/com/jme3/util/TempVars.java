@@ -192,9 +192,9 @@ public class TempVars {
     /**
      * General matrices.
      */
-    public final Matrix3f tempMat3 = new Matrix3f();
-    public final Matrix4f tempMat4 = new Matrix4f();
-    public final Matrix4f tempMat42 = new Matrix4f();    
+    public final Matrix tempMat3 = new Matrix(3);
+    public final Matrix tempMat4 = new Matrix(4);
+    public final Matrix tempMat42 = new Matrix(4);    
     /**
      * General quaternions.
      */

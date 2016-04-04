@@ -35,7 +35,7 @@ import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.bullet.util.Converter;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -48,9 +48,9 @@ import com.jme3.scene.Spatial;
 public class RigidBodyMotionState extends MotionState {
     //stores the bullet transform
 
-    private Transform motionStateTrans = new Transform(Converter.convert(new Matrix3f()));
+    private Transform motionStateTrans = new Transform(Converter.convert(new Matrix(3)));
     private Vector3f worldLocation = new Vector3f();
-    private Matrix3f worldRotation = new Matrix3f();
+    private Matrix worldRotation = new Matrix(3);
     private Quaternion worldRotationQuat = new Quaternion();
     private Vector3f localLocation = new Vector3f();
     private Quaternion localRotationQuat = new Quaternion();
@@ -134,7 +134,7 @@ public class RigidBodyMotionState extends MotionState {
     /**
      * @return the worldRotation
      */
-    public Matrix3f getWorldRotation() {
+    public Matrix getWorldRotation() {
         return worldRotation;
     }
 

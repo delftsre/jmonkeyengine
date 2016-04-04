@@ -39,7 +39,7 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,9 +67,9 @@ public class CompoundCollisionShape extends CollisionShape {
      * @param location the local location of the child shape
      */
     public void addChildShape(CollisionShape shape, Vector3f location) {
-        Transform transA = new Transform(Converter.convert(new Matrix3f()));
+        Transform transA = new Transform(Converter.convert(new Matrix(3)));
         Converter.convert(location, transA.origin);
-        children.add(new ChildCollisionShape(location.clone(), new Matrix3f(), shape));
+        children.add(new ChildCollisionShape(location.clone(), new Matrix(3), shape));
         ((CompoundShape) cShape).addChildShape(transA, shape.getCShape());
     }
 
@@ -78,7 +78,7 @@ public class CompoundCollisionShape extends CollisionShape {
      * @param shape the child shape to add
      * @param location the local location of the child shape
      */
-    public void addChildShape(CollisionShape shape, Vector3f location, Matrix3f rotation) {
+    public void addChildShape(CollisionShape shape, Vector3f location, Matrix rotation) {
         if(shape instanceof CompoundCollisionShape){
             throw new IllegalStateException("CompoundCollisionShapes cannot have CompoundCollisionShapes as children!");
         }
@@ -89,7 +89,7 @@ public class CompoundCollisionShape extends CollisionShape {
         ((CompoundShape) cShape).addChildShape(transA, shape.getCShape());
     }
 
-    private void addChildShapeDirect(CollisionShape shape, Vector3f location, Matrix3f rotation) {
+    private void addChildShapeDirect(CollisionShape shape, Vector3f location, Matrix rotation) {
         if(shape instanceof CompoundCollisionShape){
             throw new IllegalStateException("CompoundCollisionShapes cannot have CompoundCollisionShapes as children!");
         }

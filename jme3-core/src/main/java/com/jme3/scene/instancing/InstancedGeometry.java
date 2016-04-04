@@ -36,8 +36,8 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
@@ -134,8 +134,8 @@ public class InstancedGeometry extends Geometry {
         return transformInstanceData;
     }
     
-    private void updateInstance(Matrix4f worldMatrix, float[] store, 
-                                int offset, Matrix3f tempMat3, 
+    private void updateInstance(Matrix worldMatrix, float[] store, 
+                                int offset, Matrix tempMat3, 
                                 Quaternion tempQuat) {
         worldMatrix.toRotationMatrix(tempMat3);
         tempMat3.invertLocal();
@@ -147,21 +147,21 @@ public class InstancedGeometry extends Geometry {
 
         // Column-major encoding. The "W" field in each of the encoded
         // vectors represents the quaternion.
-        store[offset + 0] = worldMatrix.m00;
-        store[offset + 1] = worldMatrix.m10;
-        store[offset + 2] = worldMatrix.m20;
+        store[offset + 0] = worldMatrix.matrix[0][0];
+        store[offset + 1] = worldMatrix.matrix[1][0];
+        store[offset + 2] = worldMatrix.matrix[2][0];
         store[offset + 3] = tempQuat.getX();
-        store[offset + 4] = worldMatrix.m01;
-        store[offset + 5] = worldMatrix.m11;
-        store[offset + 6] = worldMatrix.m21;
+        store[offset + 4] = worldMatrix.matrix[0][1];
+        store[offset + 5] = worldMatrix.matrix[1][1];
+        store[offset + 6] = worldMatrix.matrix[2][1];
         store[offset + 7] = tempQuat.getY();
-        store[offset + 8] = worldMatrix.m02;
-        store[offset + 9] = worldMatrix.m12;
-        store[offset + 10] = worldMatrix.m22;
+        store[offset + 8] = worldMatrix.matrix[0][2];
+        store[offset + 9] = worldMatrix.matrix[1][2];
+        store[offset + 10] = worldMatrix.matrix[2][2];
         store[offset + 11] = tempQuat.getZ();
-        store[offset + 12] = worldMatrix.m03;
-        store[offset + 13] = worldMatrix.m13;
-        store[offset + 14] = worldMatrix.m23;
+        store[offset + 12] = worldMatrix.matrix[0][3];
+        store[offset + 13] = worldMatrix.matrix[1][3];
+        store[offset + 14] = worldMatrix.matrix[2][3];
         store[offset + 15] = tempQuat.getW();
     }
     
@@ -272,7 +272,7 @@ public class InstancedGeometry extends Geometry {
                     }
                 }
                 
-                Matrix4f worldMatrix = geom.getWorldMatrix();
+                Matrix worldMatrix = geom.getWorldMatrix();
                 updateInstance(worldMatrix, temp, 0, vars.tempMat3, vars.quat1);
                 fb.put(temp);
             }

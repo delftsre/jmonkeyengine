@@ -32,7 +32,7 @@
 package com.jme3.effect;
 
 import com.jme3.material.RenderState;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Mesh;
 
@@ -80,6 +80,6 @@ public abstract class ParticleMesh extends Mesh {
     /**
      * Update the particle visual data. Typically called every frame.
      */
-    public abstract void updateParticleData(Particle[] particles, Camera cam, Matrix3f inverseRotation);
+    public abstract void updateParticleData(Particle[] particles, Camera cam, Matrix inverseRotation);
 
 }

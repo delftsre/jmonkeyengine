@@ -15,10 +15,6 @@ import com.jme3.util.TempVars;
 public final class Matrix  implements Savable, Cloneable, java.io.Serializable 
 {
     private static final Logger logger = Logger.getLogger(Matrix.class.getName());
-    public float m00, m01, m02, m03;
-    public float m10, m11, m12, m13;
-    public float m20, m21, m22, m23;
-    public float m30, m31, m32, m33;
     private int M = 0;             // number of rows & columns
     public float[][] matrix = null;   // M-by-N array
 	
@@ -2149,7 +2145,7 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
                 }
             }
         }
-        return Math.abs(mat.m32) <= 1e-4;
+        return Math.abs(mat.matrix[3][2]) <= 1e-4;
     }  
     
     // XXX: This tests more solid than converting the q to a matrix and multiplying... why?

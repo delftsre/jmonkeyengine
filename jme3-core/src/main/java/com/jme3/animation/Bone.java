@@ -537,7 +537,7 @@ public final class Bone implements Savable {
      * 
      * @param outTransform
      */
-    void getOffsetTransform(Matrix4f outTransform, Quaternion tmp1, Vector3f tmp2, Vector3f tmp3, Matrix3f tmp4) {
+    void getOffsetTransform(Matrix outTransform, Quaternion tmp1, Vector3f tmp2, Vector3f tmp3, Matrix tmp4) {
         // Computing scale
         Vector3f scale = modelScale.mult(modelBindInverseScale, tmp3);
 
