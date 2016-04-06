@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.jme3.texture.TextureDefault2D;
 import jme3tools.converters.ImageToAwt;
 
 import com.jme3.bounding.BoundingBox;
@@ -30,7 +31,6 @@ import com.jme3.scene.plugins.blender.textures.io.PixelInputOutput;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
 
@@ -41,7 +41,7 @@ import com.jme3.util.BufferUtils;
  * 
  * @author Marcin Roguski (Kaelthas)
  */
-/* package */class TriangulatedTexture extends Texture2D {
+/* package */class TriangulatedTexture extends TextureDefault2D {
     /** The result image format. */
     private Format                             format;
     /** The collection of images for each face. */
@@ -54,7 +54,7 @@ import com.jme3.util.BufferUtils;
     /** A variable that can prevent removing identical textures. */
     private boolean                            keepIdenticalTextures = false;
     /** The result texture. */
-    private Texture2D                          resultTexture;
+    private TextureDefault2D resultTexture;
     /** The result texture's UV coordinates. */
     private List<Vector2f>                     resultUVS;
 
@@ -62,12 +62,12 @@ import com.jme3.util.BufferUtils;
      * This method triangulates the given flat texture. The given texture is not
      * changed.
      * 
-     * @param texture2d
+     * @param textureDefault2D
      *            the texture to be triangulated
      * @param uvs
      *            the UV coordinates for each face
      */
-    public TriangulatedTexture(Texture2D texture2d, List<Vector2f> uvs, BlenderContext blenderContext) {
+    public TriangulatedTexture(TextureDefault2D textureDefault2D, List<Vector2f> uvs, BlenderContext blenderContext) {
         maxTextureSize = blenderContext.getBlenderKey().getMaxTextureSize();
         faceTextures = new TreeSet<TriangleTextureElement>(new Comparator<TriangleTextureElement>() {
             public int compare(TriangleTextureElement o1, TriangleTextureElement o2) {
@@ -76,9 +76,9 @@ import com.jme3.util.BufferUtils;
         });
         int facesCount = uvs.size() / 3;
         for (int i = 0; i < facesCount; ++i) {
-            faceTextures.add(new TriangleTextureElement(i, texture2d.getImage(), uvs, true, blenderContext));
+            faceTextures.add(new TriangleTextureElement(i, textureDefault2D.getImage(), uvs, true, blenderContext));
         }
-        format = texture2d.getImage().getFormat();
+        format = textureDefault2D.getImage().getFormat();
     }
 
     /**
@@ -179,7 +179,7 @@ import com.jme3.util.BufferUtils;
      *            computed vefore)
      * @return flat result texture (all images merged into one)
      */
-    public Texture2D getResultTexture(boolean rebuild) {
+    public TextureDefault2D getResultTexture(boolean rebuild) {
         if (resultTexture == null || rebuild) {
             // sorting the parts by their height (from highest to the lowest)
             List<TriangleTextureElement> list = new ArrayList<TriangleTextureElement>(faceTextures);
@@ -244,7 +244,7 @@ import com.jme3.util.BufferUtils;
             }
 
             Image resultImage = new Image(format, resultImageWidth, resultImageHeight, BufferUtils.createByteBuffer(resultImageWidth * resultImageHeight * (format.getBitsPerPixel() >> 3)), ColorSpace.Linear);
-            resultTexture = new Texture2D(resultImage);
+            resultTexture = new TextureDefault2D(resultImage);
             for (Entry<TriangleTextureElement, Integer[]> entry : imageLayoutData.entrySet()) {
                 if (!duplicatedFaceIndexes.contains(entry.getKey().faceIndex)) {
                     this.draw(resultImage, entry.getKey().image, entry.getValue()[0], entry.getValue()[1]);
@@ -263,7 +263,7 @@ import com.jme3.util.BufferUtils;
     /**
      * @return the result flat texture
      */
-    public Texture2D getResultTexture() {
+    public TextureDefault2D getResultTexture() {
         return this.getResultTexture(false);
     }
 

@@ -45,7 +45,7 @@ import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.scene.shape.Quad;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.BufferUtils;
 import de.lessvoid.nifty.render.BlendMode;
 import de.lessvoid.nifty.spi.render.MouseCursor;
@@ -270,7 +270,7 @@ public class RenderDeviceJme implements RenderDevice {
             int centerX, int centerY) {
         
         RenderImageJme jmeImage = (RenderImageJme) image;
-        Texture2D texture = jmeImage.getTexture();
+        TextureDefault2D texture = jmeImage.getTexture();
         
         textureColorMaterial.setColor("Color", convertColor(color, tempColor));
         textureColorMaterial.setTexture("ColorMap", texture);        

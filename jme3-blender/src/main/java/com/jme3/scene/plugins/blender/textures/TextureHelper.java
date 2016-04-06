@@ -68,7 +68,7 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
 
@@ -250,11 +250,11 @@ public class TextureHelper extends AbstractBlenderHelper {
                     blenderContext.getInputStream().setPosition(dataFileBlock.getBlockPosition());
 
                     // Should the texture be flipped? It works for sinbad ..
-                    result = new Texture2D(new ImageLoader().loadImage(blenderContext.getInputStream(), dataFileBlock.getBlockPosition(), true));
+                    result = new TextureDefault2D(new ImageLoader().loadImage(blenderContext.getInputStream(), dataFileBlock.getBlockPosition(), true));
                 }
             }
         //} else {
-       //     result = new Texture2D(im);
+       //     result = new TextureDefault2D(im);
        // }
 
         if (result != null) {// render result is not being loaded

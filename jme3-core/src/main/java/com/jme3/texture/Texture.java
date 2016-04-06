@@ -318,6 +318,9 @@ public abstract class Texture implements CloneableSmartAsset, Savable, Cloneable
     private ShadowCompareMode shadowCompareMode = ShadowCompareMode.Off;
     private int anisotropicFilter;
 
+    protected WrapMode wrapS = WrapMode.EdgeClamp;
+    protected WrapMode wrapT = WrapMode.EdgeClamp;
+
     /**
      * @return A cloned Texture object.
      */
@@ -450,7 +453,22 @@ public abstract class Texture implements CloneableSmartAsset, Savable, Cloneable
      * @throws IllegalArgumentException
      *             if axis or mode are null or invalid for this type of texture
      */
-    public abstract void setWrap(WrapAxis axis, WrapMode mode);
+    public void setWrap(WrapAxis axis, WrapMode mode){
+        if (mode == null) {
+            throw new IllegalArgumentException("mode can not be null.");
+        } else if (axis == null) {
+            throw new IllegalArgumentException("axis can not be null.");
+        }
+
+        switch (axis) {
+            case S:
+                this.wrapS = mode;
+                break;
+            case T:
+                this.wrapT = mode;
+                break;
+        }
+    }
 
     /**
      * <code>setWrap</code> sets the wrap mode of this texture for all axis.
@@ -460,7 +478,13 @@ public abstract class Texture implements CloneableSmartAsset, Savable, Cloneable
      * @throws IllegalArgumentException
      *             if mode is null or invalid for this type of texture
      */
-    public abstract void setWrap(WrapMode mode);
+    public void setWrap(WrapMode mode) {
+        if (mode == null) {
+            throw new IllegalArgumentException("mode can not be null.");
+        }
+        this.wrapS = mode;
+        this.wrapT = mode;
+    }
 
     /**
      * <code>getWrap</code> returns the wrap mode for a given coordinate axis
@@ -472,7 +496,11 @@ public abstract class Texture implements CloneableSmartAsset, Savable, Cloneable
      * @throws IllegalArgumentException
      *             if axis is null or invalid for this type of texture
      */
-    public abstract WrapMode getWrap(WrapAxis axis);
+    public WrapMode getWrap(WrapAxis axis) {
+        if (axis == WrapAxis.S) return wrapS;
+        else if (axis == WrapAxis.T) return wrapT;
+        throw new IllegalArgumentException("invalid WrapAxis: " + axis);
+    }
 
     public abstract Type getType();
 
@@ -523,6 +551,11 @@ public abstract class Texture implements CloneableSmartAsset, Savable, Cloneable
             return false;
         }
         final Texture other = (Texture) obj;
+
+        if (this.getWrap(WrapAxis.S) != other.getWrap(WrapAxis.S))
+            return false;
+        if (this.getWrap(WrapAxis.T) != other.getWrap(WrapAxis.T))
+            return false;
         
         // NOTE: Since images are generally considered unique assets in jME3,
         // using the image's equals() implementation is not neccessary here
@@ -600,6 +633,8 @@ public abstract class Texture implements CloneableSmartAsset, Savable, Cloneable
                 MinFilter.BilinearNoMipMaps);
         capsule.write(magnificationFilter, "magnificationFilter",
                 MagFilter.Bilinear);
+        capsule.write(wrapS, "wrapS", WrapMode.EdgeClamp);
+        capsule.write(wrapT, "wrapT", WrapMode.EdgeClamp);
     }
 
     public void read(JmeImporter e) throws IOException {

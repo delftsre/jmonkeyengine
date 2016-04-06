@@ -40,7 +40,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 
 /**
  * A <code>Picture</code> represents a 2D image drawn on the screen.
@@ -133,7 +133,7 @@ public class Picture extends Geometry {
      */
     public void setImage(AssetManager assetManager, String imgName, boolean useAlpha){
         TextureKey key = new TextureKey(imgName, true);
-        Texture2D tex = (Texture2D) assetManager.loadTexture(key);
+        TextureDefault2D tex = (TextureDefault2D) assetManager.loadTexture(key);
         setTexture(assetManager, tex, useAlpha);
     }
 
@@ -146,7 +146,7 @@ public class Picture extends Geometry {
      * objects behind it to appear through. If false, the transparent
      * portions will be the image's color at that pixel.
      */
-    public void setTexture(AssetManager assetManager, Texture2D tex, boolean useAlpha){
+    public void setTexture(AssetManager assetManager, TextureDefault2D tex, boolean useAlpha){
         if (getMaterial() == null){
             Material mat = new Material(assetManager, "Common/MatDefs/Gui/Gui.j3md");
             mat.setColor("Color", ColorRGBA.White);

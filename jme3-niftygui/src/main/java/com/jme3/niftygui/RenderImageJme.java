@@ -35,12 +35,12 @@ import com.jme3.asset.TextureKey;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import de.lessvoid.nifty.spi.render.RenderImage;
 
 public class RenderImageJme implements RenderImage {
 
-    private Texture2D texture;
+    private TextureDefault2D texture;
     private Image image;
     private int width;
     private int height;
@@ -51,7 +51,7 @@ public class RenderImageJme implements RenderImage {
         key.setAnisotropy(0);
         key.setGenerateMips(false);
         
-        texture = (Texture2D) display.getAssetManager().loadTexture(key);
+        texture = (TextureDefault2D) display.getAssetManager().loadTexture(key);
         texture.setMagFilter(linear ? MagFilter.Bilinear : MagFilter.Nearest);
         texture.setMinFilter(linear ? MinFilter.BilinearNoMipMaps : MinFilter.NearestNoMipMaps);
         image = texture.getImage();
@@ -60,7 +60,7 @@ public class RenderImageJme implements RenderImage {
         height = image.getHeight();
     }
 
-    public RenderImageJme(Texture2D texture){
+    public RenderImageJme(TextureDefault2D texture){
         if (texture.getImage() == null) {
             throw new IllegalArgumentException("texture.getImage() cannot be null");
         }
@@ -71,7 +71,7 @@ public class RenderImageJme implements RenderImage {
         height = image.getHeight();
     }
 
-    public Texture2D getTexture(){
+    public TextureDefault2D getTexture(){
         return texture;
     }
 

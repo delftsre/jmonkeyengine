@@ -44,7 +44,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,7 +76,7 @@ public final class TranslucentBucketFilter extends Filter {
         this.viewPort = vp;
         material = new Material(manager, "Common/MatDefs/Post/Overlay.j3md");
         material.setColor("Color", ColorRGBA.White);
-        Texture2D tex = processor.getFilterTexture();
+        TextureDefault2D tex = processor.getFilterTexture();
         material.setTexture("Texture", tex);
         if (tex.getImage().getMultiSamples() > 1) {
             material.setInt("NumSamples", tex.getImage().getMultiSamples());

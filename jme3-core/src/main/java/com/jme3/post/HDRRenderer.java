@@ -42,7 +42,7 @@ import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -63,13 +63,13 @@ public class HDRRenderer implements SceneProcessor {
     private FrameBuffer msFB;
 
     private FrameBuffer mainSceneFB;
-    private Texture2D mainScene;
+    private TextureDefault2D mainScene;
     private FrameBuffer scene64FB;
-    private Texture2D scene64;
+    private TextureDefault2D scene64;
     private FrameBuffer scene8FB;
-    private Texture2D scene8;
+    private TextureDefault2D scene8;
     private FrameBuffer scene1FB[] = new FrameBuffer[2];
-    private Texture2D scene1[] = new Texture2D[2];
+    private TextureDefault2D scene1[] = new TextureDefault2D[2];
 
     private Material hdr64;
     private Material hdr8;
@@ -256,7 +256,7 @@ public class HDRRenderer implements SceneProcessor {
         }
 
         mainSceneFB = new FrameBuffer(w, h, 1);
-        mainScene = new Texture2D(w, h, bufFormat);
+        mainScene = new TextureDefault2D(w, h, bufFormat);
         mainSceneFB.setDepthBuffer(Format.Depth);
         mainSceneFB.setColorTexture(mainScene);
         mainScene.setMagFilter(fbMagFilter);
@@ -297,23 +297,23 @@ public class HDRRenderer implements SceneProcessor {
 
         Format lumFmt = Format.RGB8;
         scene64FB = new FrameBuffer(64, 64, 1);
-        scene64 = new Texture2D(64, 64, lumFmt);
+        scene64 = new TextureDefault2D(64, 64, lumFmt);
         scene64FB.setColorTexture(scene64);
         scene64.setMagFilter(fbMagFilter);
         scene64.setMinFilter(fbMinFilter);
 
         scene8FB = new FrameBuffer(8, 8, 1);
-        scene8 = new Texture2D(8, 8, lumFmt);
+        scene8 = new TextureDefault2D(8, 8, lumFmt);
         scene8FB.setColorTexture(scene8);
         scene8.setMagFilter(fbMagFilter);
         scene8.setMinFilter(fbMinFilter);
 
         scene1FB[0] = new FrameBuffer(1, 1, 1);
-        scene1[0] = new Texture2D(1, 1, lumFmt);
+        scene1[0] = new TextureDefault2D(1, 1, lumFmt);
         scene1FB[0].setColorTexture(scene1[0]);
 
         scene1FB[1] = new FrameBuffer(1, 1, 1);
-        scene1[1] = new Texture2D(1, 1, lumFmt);
+        scene1[1] = new TextureDefault2D(1, 1, lumFmt);
         scene1FB[1].setColorTexture(scene1[1]);
 
         // prepare tonemap shader

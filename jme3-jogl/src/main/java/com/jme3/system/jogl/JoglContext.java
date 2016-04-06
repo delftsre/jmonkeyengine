@@ -32,6 +32,7 @@
 
 package com.jme3.system.jogl;
 
+import com.jme3.input.Input;
 import com.jme3.input.JoyInput;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -59,6 +60,9 @@ import com.jme3.system.SystemListener;
 import com.jme3.system.Timer;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,6 +86,7 @@ public abstract class JoglContext implements JmeContext {
     protected Timer timer;
     protected SystemListener listener;
 
+    protected List<Input> inputs;
     protected KeyInput keyInput;
     protected MouseInput mouseInput;
     protected JoyInput joyInput;
@@ -133,6 +138,20 @@ public abstract class JoglContext implements JmeContext {
         return joyInput;
     }
 
+    @Override
+    public java.util.List<Input> getInput() {
+        if(inputs == null) {
+            inputs = new ArrayList<>();
+            inputs.add(getKeyInput());
+            inputs.add(getMouseInput());
+            if(!settings.getBoolean("DisableJoysticks")) {
+                inputs.add(getJoyInput());
+            }
+            inputs.add(getTouchInput());
+            inputs.removeAll(Collections.singleton(null));
+        }
+        return inputs;
+    }
     @Override
 	public Timer getTimer() {
         return timer;

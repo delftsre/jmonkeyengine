@@ -33,7 +33,7 @@ import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class TestPostWater extends SimpleApplication {
         water.setCausticsIntensity(0.4f);        
         water.setWaveScale(0.003f);
         water.setMaxAmplitude(2f);
-        water.setFoamTexture((Texture2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
+        water.setFoamTexture((TextureDefault2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
         water.setRefractionStrength(0.2f);
         water.setWaterHeight(initialWaterHeight);
         
@@ -162,13 +162,13 @@ public class TestPostWater extends SimpleApplication {
             public void onAction(String name, boolean isPressed, float tpf) {
                 if (isPressed) {
                     if (name.equals("foam1")) {
-                        water.setFoamTexture((Texture2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam.jpg"));
+                        water.setFoamTexture((TextureDefault2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam.jpg"));
                     }
                     if (name.equals("foam2")) {
-                        water.setFoamTexture((Texture2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
+                        water.setFoamTexture((TextureDefault2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
                     }
                     if (name.equals("foam3")) {
-                        water.setFoamTexture((Texture2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam3.jpg"));
+                        water.setFoamTexture((TextureDefault2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam3.jpg"));
                     }
 
                     if (name.equals("upRM")) {

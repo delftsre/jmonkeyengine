@@ -38,7 +38,7 @@ import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.PlaceholderAssets;
 import java.io.File;
 import java.io.IOException;
@@ -182,7 +182,7 @@ public class MTLLoader implements AssetLoader {
             texture.setWrap(WrapMode.Repeat);
         } catch (AssetNotFoundException ex){
             logger.log(Level.WARNING, "Cannot locate {0} for material {1}", new Object[]{texKey, key});
-            texture = new Texture2D(PlaceholderAssets.getPlaceholderImage(assetManager));
+            texture = new TextureDefault2D(PlaceholderAssets.getPlaceholderImage(assetManager));
             texture.setWrap(WrapMode.Repeat);
             texture.setKey(key);
         }

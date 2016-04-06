@@ -56,7 +56,7 @@ import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture.ShadowCompareMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,8 +140,8 @@ public class PssmShadowRenderer implements SceneProcessor {
     protected RenderManager renderManager;
     protected ViewPort viewPort;
     protected FrameBuffer[] shadowFB;
-    protected Texture2D[] shadowMaps;
-    protected Texture2D dummyTex;
+    protected TextureDefault2D[] shadowMaps;
+    protected TextureDefault2D dummyTex;
     protected Camera shadowCam;
     protected Material preshadowMat;
     protected Material postshadowMat;
@@ -212,14 +212,14 @@ public class PssmShadowRenderer implements SceneProcessor {
         shadowMapSize = size;
 
         shadowFB = new FrameBuffer[nbSplits];
-        shadowMaps = new Texture2D[nbSplits];
+        shadowMaps = new TextureDefault2D[nbSplits];
         dispPic = new Picture[nbSplits];
         lightViewProjectionsMatrices = new Matrix4f[nbSplits];
         splits = new ColorRGBA();
         splitsArray = new float[nbSplits + 1];
 
         //DO NOT COMMENT THIS (it prevent the OSX incomplete read buffer crash)
-        dummyTex = new Texture2D(size, size, Format.RGBA8);
+        dummyTex = new TextureDefault2D(size, size, Format.RGBA8);
 
         preshadowMat = new Material(manager, "Common/MatDefs/Shadow/PreShadow.j3md");
         postshadowMat.setFloat("ShadowMapSize", size);
@@ -227,7 +227,7 @@ public class PssmShadowRenderer implements SceneProcessor {
         for (int i = 0; i < nbSplits; i++) {
             lightViewProjectionsMatrices[i] = new Matrix4f();
             shadowFB[i] = new FrameBuffer(size, size, 1);
-            shadowMaps[i] = new Texture2D(size, size, Format.Depth);
+            shadowMaps[i] = new TextureDefault2D(size, size, Format.Depth);
 
             shadowFB[i].setDepthTexture(shadowMaps[i]);
 
@@ -273,7 +273,7 @@ public class PssmShadowRenderer implements SceneProcessor {
         postshadowMat.setInt("FilterMode", filterMode.ordinal());
         postshadowMat.setFloat("PCFEdge", edgesThickness);
         if (compareMode == CompareMode.Hardware) {
-            for (Texture2D shadowMap : shadowMaps) {
+            for (TextureDefault2D shadowMap : shadowMaps) {
                 if (filterMode == FilterMode.Bilinear) {
                     shadowMap.setMagFilter(MagFilter.Bilinear);
                     shadowMap.setMinFilter(MinFilter.BilinearNoMipMaps);
@@ -301,7 +301,7 @@ public class PssmShadowRenderer implements SceneProcessor {
         }
 
         this.compareMode = compareMode;
-        for (Texture2D shadowMap : shadowMaps) {
+        for (TextureDefault2D shadowMap : shadowMaps) {
             if (compareMode == CompareMode.Hardware) {
                 shadowMap.setShadowCompareMode(ShadowCompareMode.LessOrEqual);
                 if (filterMode == FilterMode.Bilinear) {

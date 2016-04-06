@@ -64,7 +64,7 @@ import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture.ShadowCompareMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 
 /**
@@ -81,8 +81,8 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
     protected RenderManager renderManager;
     protected ViewPort viewPort;
     protected FrameBuffer[] shadowFB;
-    protected Texture2D[] shadowMaps;
-    protected Texture2D dummyTex;
+    protected TextureDefault2D[] shadowMaps;
+    protected TextureDefault2D dummyTex;
     protected Material preshadowMat;
     protected Material postshadowMat;
     protected Matrix4f[] lightViewProjectionsMatrices;
@@ -147,14 +147,14 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
     private void init(AssetManager assetManager, int nbShadowMaps, int shadowMapSize) {
         this.postshadowMat = new Material(assetManager, "Common/MatDefs/Shadow/PostShadow.j3md");
         shadowFB = new FrameBuffer[nbShadowMaps];
-        shadowMaps = new Texture2D[nbShadowMaps];
+        shadowMaps = new TextureDefault2D[nbShadowMaps];
         dispPic = new Picture[nbShadowMaps];
         lightViewProjectionsMatrices = new Matrix4f[nbShadowMaps];
         shadowMapStringCache = new String[nbShadowMaps];
         lightViewStringCache = new String[nbShadowMaps];
 
         //DO NOT COMMENT THIS (it prevent the OSX incomplete read buffer crash)
-        dummyTex = new Texture2D(shadowMapSize, shadowMapSize, Format.RGBA8);
+        dummyTex = new TextureDefault2D(shadowMapSize, shadowMapSize, Format.RGBA8);
 
         preshadowMat = new Material(assetManager, "Common/MatDefs/Shadow/PreShadow.j3md");
         postshadowMat.setFloat("ShadowMapSize", shadowMapSize);
@@ -162,7 +162,7 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
         for (int i = 0; i < nbShadowMaps; i++) {
             lightViewProjectionsMatrices[i] = new Matrix4f();
             shadowFB[i] = new FrameBuffer(shadowMapSize, shadowMapSize, 1);
-            shadowMaps[i] = new Texture2D(shadowMapSize, shadowMapSize, Format.Depth);
+            shadowMaps[i] = new TextureDefault2D(shadowMapSize, shadowMapSize, Format.Depth);
 
             shadowFB[i].setDepthTexture(shadowMaps[i]);
 
@@ -214,7 +214,7 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
         postshadowMat.setInt("FilterMode", filterMode.getMaterialParamValue());
         postshadowMat.setFloat("PCFEdge", edgesThickness);
         if (shadowCompareMode == CompareMode.Hardware) {
-            for (Texture2D shadowMap : shadowMaps) {
+            for (TextureDefault2D shadowMap : shadowMaps) {
                 if (filterMode == EdgeFilteringMode.Bilinear) {
                     shadowMap.setMagFilter(MagFilter.Bilinear);
                     shadowMap.setMinFilter(MinFilter.BilinearNoMipMaps);
@@ -247,7 +247,7 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
         }
 
         this.shadowCompareMode = compareMode;
-        for (Texture2D shadowMap : shadowMaps) {
+        for (TextureDefault2D shadowMap : shadowMaps) {
             if (compareMode == CompareMode.Hardware) {
                 shadowMap.setShadowCompareMode(ShadowCompareMode.LessOrEqual);
                 if (edgeFilteringMode == EdgeFilteringMode.Bilinear) {

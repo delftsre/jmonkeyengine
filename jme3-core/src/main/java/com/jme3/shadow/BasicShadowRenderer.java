@@ -46,7 +46,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 
 /**
@@ -62,7 +62,7 @@ public class BasicShadowRenderer implements SceneProcessor {
     private RenderManager renderManager;
     private ViewPort viewPort;
     private FrameBuffer shadowFB;
-    private Texture2D shadowMap;
+    private TextureDefault2D shadowMap;
     private Camera shadowCam;
     private Material preshadowMat;
     private Material postshadowMat;
@@ -70,7 +70,7 @@ public class BasicShadowRenderer implements SceneProcessor {
     private boolean noOccluders = false;
     private Vector3f[] points = new Vector3f[8];
     private Vector3f direction = new Vector3f();
-    protected Texture2D dummyTex;
+    protected TextureDefault2D dummyTex;
     private float shadowMapSize;
 
     protected GeometryList lightReceivers = new GeometryList(new OpaqueComparator());
@@ -83,12 +83,12 @@ public class BasicShadowRenderer implements SceneProcessor {
      */
     public BasicShadowRenderer(AssetManager manager, int size) {
         shadowFB = new FrameBuffer(size, size, 1);
-        shadowMap = new Texture2D(size, size, Format.Depth);
+        shadowMap = new TextureDefault2D(size, size, Format.Depth);
         shadowFB.setDepthTexture(shadowMap);
         shadowCam = new Camera(size, size);
         
          //DO NOT COMMENT THIS (it prevent the OSX incomplete read buffer crash)
-        dummyTex = new Texture2D(size, size, Format.RGBA8);        
+        dummyTex = new TextureDefault2D(size, size, Format.RGBA8);
         shadowFB.setColorTexture(dummyTex);
         shadowMapSize = (float)size;
         preshadowMat = new Material(manager, "Common/MatDefs/Shadow/PreShadow.j3md");

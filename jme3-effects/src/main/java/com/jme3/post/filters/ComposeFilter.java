@@ -40,7 +40,8 @@ import com.jme3.material.Material;
 import com.jme3.post.Filter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
+
 import java.io.IOException;
 
 /**
@@ -56,7 +57,7 @@ import java.io.IOException;
  */
 public class ComposeFilter extends Filter {
 
-    private Texture2D compositeTexture;
+    private TextureDefault2D compositeTexture;
 
     /**
      * creates a ComposeFilter
@@ -70,7 +71,7 @@ public class ComposeFilter extends Filter {
      *
      * @param color
      */
-    public ComposeFilter(Texture2D compositeTexture) {
+    public ComposeFilter(TextureDefault2D compositeTexture) {
         this();
         this.compositeTexture = compositeTexture;
     }
@@ -86,7 +87,7 @@ public class ComposeFilter extends Filter {
      *
      * @return the compositeTexture
      */
-    public Texture2D getCompositeTexture() {
+    public TextureDefault2D getCompositeTexture() {
         return compositeTexture;
     }
 
@@ -95,7 +96,7 @@ public class ComposeFilter extends Filter {
      *
      * @param compositeTexture
      */
-    public void setCompositeTexture(Texture2D compositeTexture) {
+    public void setCompositeTexture(TextureDefault2D compositeTexture) {
         this.compositeTexture = compositeTexture;
     }
 

@@ -36,7 +36,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.BufferUtils;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -54,7 +54,7 @@ class BitmapTextPage extends Geometry {
     private final short[] idx;
     private final byte[] color;
     private final int page;
-    private final Texture2D texture;
+    private final TextureDefault2D texture;
     private final LinkedList<LetterQuad> pageQuads = new LinkedList<LetterQuad>();
 
     BitmapTextPage(BitmapFont font, boolean arrayBased, int page) {
@@ -73,7 +73,7 @@ class BitmapTextPage extends Geometry {
         }
 
         setMaterial(mat);
-        this.texture = (Texture2D) mat.getTextureParam("ColorMap").getTextureValue();
+        this.texture = (TextureDefault2D) mat.getTextureParam("ColorMap").getTextureValue();
 
         // initialize buffers
         Mesh m = getMesh();
@@ -112,7 +112,7 @@ class BitmapTextPage extends Geometry {
         this(font, false, 0);
     }
 
-    Texture2D getTexture() {
+    TextureDefault2D getTexture() {
         return texture;
     }
 

@@ -48,6 +48,7 @@ import com.jme3.system.*;
 import com.jme3.system.JmeContext.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
@@ -86,10 +87,8 @@ public class Application implements SystemListener {
     protected LostFocusBehavior lostFocusBehavior = LostFocusBehavior.ThrottleOnLostFocus;
     protected float speed = 1f;
     protected boolean paused = false;
-    protected MouseInput mouseInput;
-    protected KeyInput keyInput;
-    protected JoyInput joyInput;
-    protected TouchInput touchInput;
+
+    protected List<Input> inputs;
     protected InputManager inputManager;
     protected AppStateManager stateManager;
 
@@ -171,6 +170,10 @@ public class Application implements SystemListener {
                                           + " before initialization.");
 
         this.assetManager = assetManager;
+    }
+
+    public void setInputManager(InputManager inputManager) {
+        this.inputManager = inputManager;
     }
 
     private void initAssetManager(){
@@ -305,26 +308,9 @@ public class Application implements SystemListener {
      * initializes joystick input if joysticks are enabled in the
      * AppSettings.
      */
-    private void initInput(){
-        mouseInput = context.getMouseInput();
-        if (mouseInput != null)
-            mouseInput.initialize();
-
-        keyInput = context.getKeyInput();
-        if (keyInput != null)
-            keyInput.initialize();
-
-        touchInput = context.getTouchInput();
-        if (touchInput != null)
-            touchInput.initialize();
-
-        if (!settings.getBoolean("DisableJoysticks")){
-            joyInput = context.getJoyInput();
-            if (joyInput != null)
-                joyInput.initialize();
-        }
-
-        inputManager = new InputManager(mouseInput, keyInput, joyInput, touchInput);
+    protected void initInput(){
+        inputs = context.getInput();
+        inputManager = new InputManager(inputs);
     }
 
     private void initStateManager(){
@@ -715,18 +701,7 @@ public class Application implements SystemListener {
     }
 
     protected void destroyInput(){
-        if (mouseInput != null)
-            mouseInput.destroy();
-
-        if (keyInput != null)
-            keyInput.destroy();
-
-        if (joyInput != null)
-            joyInput.destroy();
-
-        if (touchInput != null)
-            touchInput.destroy();
-
+        inputManager.destroyInput();
         inputManager = null;
     }
 

@@ -31,17 +31,15 @@
  */
 package com.jme3.system;
 
-import com.jme3.input.JoyInput;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.TouchInput;
+import com.jme3.input.*;
 import com.jme3.renderer.Renderer;
+
+import java.util.List;
 
 /**
  * Represents a rendering context within the engine.
  */
 public interface JmeContext {
-
     /**
      * The type of context.
      */
@@ -109,6 +107,11 @@ public interface JmeContext {
      * @return The renderer for this context, or null if not created yet.
      */
     public Renderer getRenderer();
+
+    /**
+     * @return All input implementations. May be empty if not available.
+     */
+    public List<Input> getInput();
 
     /**
      * @return Mouse input implementation. May be null if not available.

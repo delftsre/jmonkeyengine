@@ -59,39 +59,30 @@ import com.jme3.util.ListMap;
 import com.jme3.util.MipMapGenerator;
 import com.jme3.util.NativeObjectManager;
 import java.nio.*;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import jme3tools.shader.ShaderDebug;
 
-public final class GLRenderer implements Renderer {
+public class GLRenderer implements Renderer {
 
     private static final Logger logger = Logger.getLogger(GLRenderer.class.getName());
     private static final boolean VALIDATE_SHADER = false;
-    private static final Pattern GLVERSION_PATTERN = Pattern.compile(".*?(\\d+)\\.(\\d+).*");
 
     private final ByteBuffer nameBuf = BufferUtils.createByteBuffer(250);
     private final StringBuilder stringBuf = new StringBuilder(250);
     private final IntBuffer intBuf1 = BufferUtils.createIntBuffer(1);
     private final IntBuffer intBuf16 = BufferUtils.createIntBuffer(16);
-    private final FloatBuffer floatBuf16 = BufferUtils.createFloatBuffer(16);
-    private final RenderContext context = new RenderContext();
+    protected final RenderContext context = new RenderContext();
     private final NativeObjectManager objManager = new NativeObjectManager();
-    private final EnumSet<Caps> caps = EnumSet.noneOf(Caps.class);
-    private final EnumMap<Limits, Integer> limits = new EnumMap<Limits, Integer>(Limits.class);
+    protected final GLCapabilities glCaps = new GLCapabilities();
 
     private FrameBuffer mainFbOverride = null;
     private final Statistics statistics = new Statistics();
     private int vpX, vpY, vpW, vpH;
     private int clipX, clipY, clipW, clipH;
     private boolean linearizeSrgbImages;
-    private HashSet<String> extensions;
 
     private final GL gl;
     private final GL2 gl2;
@@ -118,381 +109,12 @@ public final class GLRenderer implements Renderer {
 
     @Override
     public EnumSet<Caps> getCaps() {
-        return caps;
+        return glCaps.getCaps();
     }
 
     // Not making public yet ...
     public EnumMap<Limits, Integer> getLimits() {
-        return limits;
-    }
-
-    private HashSet<String> loadExtensions() {
-        HashSet<String> extensionSet = new HashSet<String>(64);
-        if (caps.contains(Caps.OpenGL30)) {
-            // If OpenGL3+ is available, use the non-deprecated way
-            // of getting supported extensions.
-            gl3.glGetInteger(GL3.GL_NUM_EXTENSIONS, intBuf16);
-            int extensionCount = intBuf16.get(0);
-            for (int i = 0; i < extensionCount; i++) {
-                String extension = gl3.glGetString(GL.GL_EXTENSIONS, i);
-                extensionSet.add(extension);
-            }
-        } else {
-            extensionSet.addAll(Arrays.asList(gl.glGetString(GL.GL_EXTENSIONS).split(" ")));
-        }
-        return extensionSet;
-    }
-
-    public static int extractVersion(String version) {
-        Matcher m = GLVERSION_PATTERN.matcher(version);
-        if (m.matches()) {
-            int major = Integer.parseInt(m.group(1));
-            int minor = Integer.parseInt(m.group(2));
-            if (minor >= 10 && minor % 10 == 0) {
-                // some versions can look like "1.30" instead of "1.3". 
-                // make sure to correct for this
-                minor /= 10;
-            }
-            return major * 100 + minor * 10;
-        } else {
-            return -1;
-        }
-    }
-
-    private boolean hasExtension(String extensionName) {
-        return extensions.contains(extensionName);
-    }
-
-    private void loadCapabilitiesES() {
-        caps.add(Caps.GLSL100);
-        caps.add(Caps.OpenGLES20);
-
-        // Important: Do not add OpenGL20 - that's the desktop capability!
-    }
-
-    private void loadCapabilitiesGL2() {
-        int oglVer = extractVersion(gl.glGetString(GL.GL_VERSION));
-
-        if (oglVer >= 200) {
-            caps.add(Caps.OpenGL20);
-            if (oglVer >= 210) {
-                caps.add(Caps.OpenGL21);
-                if (oglVer >= 300) {
-                    caps.add(Caps.OpenGL30);
-                    if (oglVer >= 310) {
-                        caps.add(Caps.OpenGL31);
-                        if (oglVer >= 320) {
-                            caps.add(Caps.OpenGL32);
-                        }
-                        if (oglVer >= 330) {
-                            caps.add(Caps.OpenGL33);
-                            caps.add(Caps.GeometryShader);
-                        }
-                        if (oglVer >= 400) {
-                            caps.add(Caps.OpenGL40);
-                            caps.add(Caps.TesselationShader);
-                        }
-                    }
-                }
-            }
-        }
-
-        int glslVer = extractVersion(gl.glGetString(GL.GL_SHADING_LANGUAGE_VERSION));
-
-        switch (glslVer) {
-            default:
-                if (glslVer < 400) {
-                    break;
-                }
-                // so that future OpenGL revisions wont break jme3
-                // fall through intentional
-            case 400:
-                caps.add(Caps.GLSL400);
-            case 330:
-                caps.add(Caps.GLSL330);
-            case 150:
-                caps.add(Caps.GLSL150);
-            case 140:
-                caps.add(Caps.GLSL140);
-            case 130:
-                caps.add(Caps.GLSL130);
-            case 120:
-                caps.add(Caps.GLSL120);
-            case 110:
-                caps.add(Caps.GLSL110);
-            case 100:
-                caps.add(Caps.GLSL100);
-                break;
-        }
-
-        // Workaround, always assume we support GLSL100 & GLSL110
-        // Supporting OpenGL 2.0 means supporting GLSL 1.10.
-        caps.add(Caps.GLSL110);
-        caps.add(Caps.GLSL100);
-
-        // Fix issue in TestRenderToMemory when GL.GL_FRONT is the main
-        // buffer being used.
-        context.initialDrawBuf = getInteger(GL2.GL_DRAW_BUFFER);
-        context.initialReadBuf = getInteger(GL2.GL_READ_BUFFER);
-
-        // XXX: This has to be GL.GL_BACK for canvas on Mac
-        // Since initialDrawBuf is GL.GL_FRONT for pbuffer, gotta
-        // change this value later on ...
-//        initialDrawBuf = GL.GL_BACK;
-//        initialReadBuf = GL.GL_BACK;
-    }
-
-    private void loadCapabilitiesCommon() {
-        extensions = loadExtensions();
-
-        limits.put(Limits.VertexTextureUnits, getInteger(GL.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS));
-        if (limits.get(Limits.VertexTextureUnits) > 0) {
-            caps.add(Caps.VertexTextureFetch);
-        }
-
-        limits.put(Limits.FragmentTextureUnits, getInteger(GL.GL_MAX_TEXTURE_IMAGE_UNITS));
-
-//        gl.glGetInteger(GL.GL_MAX_VERTEX_UNIFORM_COMPONENTS, intBuf16);
-//        vertexUniforms = intBuf16.get(0);
-//        logger.log(Level.FINER, "Vertex Uniforms: {0}", vertexUniforms);
-//
-//        gl.glGetInteger(GL.GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, intBuf16);
-//        fragUniforms = intBuf16.get(0);
-//        logger.log(Level.FINER, "Fragment Uniforms: {0}", fragUniforms);
-        if (caps.contains(Caps.OpenGLES20)) {
-            limits.put(Limits.VertexUniformVectors, getInteger(GL.GL_MAX_VERTEX_UNIFORM_VECTORS));
-        } else {
-            limits.put(Limits.VertexUniformVectors, getInteger(GL.GL_MAX_VERTEX_UNIFORM_COMPONENTS) / 4);
-        }
-        limits.put(Limits.VertexAttributes, getInteger(GL.GL_MAX_VERTEX_ATTRIBS));
-        limits.put(Limits.TextureSize, getInteger(GL.GL_MAX_TEXTURE_SIZE));
-        limits.put(Limits.CubemapSize, getInteger(GL.GL_MAX_CUBE_MAP_TEXTURE_SIZE));
-
-        if (hasExtension("GL_ARB_draw_instanced") &&
-                hasExtension("GL_ARB_instanced_arrays")) {
-            caps.add(Caps.MeshInstancing);
-        }
-
-        if (hasExtension("GL_OES_element_index_uint") || gl2 != null) {
-            caps.add(Caps.IntegerIndexBuffer);
-        }
-
-        if (hasExtension("GL_ARB_texture_buffer_object")) {
-            caps.add(Caps.TextureBuffer);
-        }
-
-        // == texture format extensions ==
-
-        boolean hasFloatTexture;
-
-        hasFloatTexture = hasExtension("GL_OES_texture_half_float") &&
-                hasExtension("GL_OES_texture_float");
-
-        if (!hasFloatTexture) {
-            hasFloatTexture = hasExtension("GL_ARB_texture_float") &&
-                    hasExtension("GL_ARB_half_float_pixel");
-
-            if (!hasFloatTexture) {
-                hasFloatTexture = caps.contains(Caps.OpenGL30);
-            }
-        }
-
-        if (hasFloatTexture) {
-            caps.add(Caps.FloatTexture);
-        }
-
-        if (hasExtension("GL_OES_depth_texture") || gl2 != null) {
-            caps.add(Caps.DepthTexture);
-
-            // TODO: GL_OES_depth24
-        }
-
-        if (hasExtension("GL_OES_rgb8_rgba8") ||
-                hasExtension("GL_ARM_rgba8") ||
-                hasExtension("GL_EXT_texture_format_BGRA8888")) {
-            caps.add(Caps.Rgba8);
-        }
-
-        if (caps.contains(Caps.OpenGL30) || hasExtension("GL_OES_packed_depth_stencil")) {
-            caps.add(Caps.PackedDepthStencilBuffer);
-        }
-
-        if (hasExtension("GL_ARB_color_buffer_float") &&
-                hasExtension("GL_ARB_half_float_pixel")) {
-            // XXX: Require both 16 and 32 bit float support for FloatColorBuffer.
-            caps.add(Caps.FloatColorBuffer);
-        }
-
-        if (hasExtension("GL_ARB_depth_buffer_float")) {
-            caps.add(Caps.FloatDepthBuffer);
-        }
-
-        if ((hasExtension("GL_EXT_packed_float") && hasFloatTexture) ||
-                caps.contains(Caps.OpenGL30)) {
-            // Either OpenGL3 is available or both packed_float & half_float_pixel.
-            caps.add(Caps.PackedFloatColorBuffer);
-            caps.add(Caps.PackedFloatTexture);
-        }
-
-        if (hasExtension("GL_EXT_texture_shared_exponent") || caps.contains(Caps.OpenGL30)) {
-            caps.add(Caps.SharedExponentTexture);
-        }
-
-        if (hasExtension("GL_EXT_texture_compression_s3tc")) {
-            caps.add(Caps.TextureCompressionS3TC);
-        }
-
-        if (hasExtension("GL_ARB_ES3_compatibility")) {
-            caps.add(Caps.TextureCompressionETC2);
-            caps.add(Caps.TextureCompressionETC1);
-        } else if (hasExtension("GL_OES_compressed_ETC1_RGB8_texture")) {
-            caps.add(Caps.TextureCompressionETC1);
-        }
-
-        // == end texture format extensions ==
-
-        if (hasExtension("GL_ARB_vertex_array_object") || caps.contains(Caps.OpenGL30)) {
-            caps.add(Caps.VertexBufferArray);
-        }
-
-        if (hasExtension("GL_ARB_texture_non_power_of_two") ||
-                hasExtension("GL_OES_texture_npot") ||
-                caps.contains(Caps.OpenGL30)) {
-            caps.add(Caps.NonPowerOfTwoTextures);
-        } else {
-            logger.log(Level.WARNING, "Your graphics card does not "
-                    + "support non-power-of-2 textures. "
-                    + "Some features might not work.");
-        }
-
-        if (caps.contains(Caps.OpenGLES20)) {
-            // OpenGL ES 2 has some limited support for NPOT textures
-            caps.add(Caps.PartialNonPowerOfTwoTextures);
-        }
-
-        if (hasExtension("GL_EXT_texture_array") || caps.contains(Caps.OpenGL30)) {
-            caps.add(Caps.TextureArray);
-        }
-
-        if (hasExtension("GL_EXT_texture_filter_anisotropic")) {
-            caps.add(Caps.TextureFilterAnisotropic);
-            limits.put(Limits.TextureAnisotropy, getInteger(GLExt.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
-        }
-
-        if (hasExtension("GL_EXT_framebuffer_object") 
-                || caps.contains(Caps.OpenGL30)
-                || caps.contains(Caps.OpenGLES20)) {
-            caps.add(Caps.FrameBuffer);
-
-            limits.put(Limits.RenderBufferSize, getInteger(GLFbo.GL_MAX_RENDERBUFFER_SIZE_EXT));
-            limits.put(Limits.FrameBufferAttachments, getInteger(GLFbo.GL_MAX_COLOR_ATTACHMENTS_EXT));
-
-            if (hasExtension("GL_EXT_framebuffer_blit") || caps.contains(Caps.OpenGL30)) {
-                caps.add(Caps.FrameBufferBlit);
-            }
-
-            if (hasExtension("GL_EXT_framebuffer_multisample")) {
-                caps.add(Caps.FrameBufferMultisample);
-                limits.put(Limits.FrameBufferSamples, getInteger(GLExt.GL_MAX_SAMPLES_EXT));
-            }
-
-            if (hasExtension("GL_ARB_texture_multisample")) {
-                caps.add(Caps.TextureMultisample);
-                limits.put(Limits.ColorTextureSamples, getInteger(GLExt.GL_MAX_COLOR_TEXTURE_SAMPLES));
-                limits.put(Limits.DepthTextureSamples, getInteger(GLExt.GL_MAX_DEPTH_TEXTURE_SAMPLES));
-                if (!limits.containsKey(Limits.FrameBufferSamples)) {
-                    // In case they want to query samples on main FB ...
-                    limits.put(Limits.FrameBufferSamples, limits.get(Limits.ColorTextureSamples));
-                }
-            }
-
-            if (hasExtension("GL_ARB_draw_buffers") || caps.contains(Caps.OpenGL30)) {
-                limits.put(Limits.FrameBufferMrtAttachments, getInteger(GLExt.GL_MAX_DRAW_BUFFERS_ARB));
-                if (limits.get(Limits.FrameBufferMrtAttachments) > 1) {
-                    caps.add(Caps.FrameBufferMRT);
-                }
-            } else {
-                limits.put(Limits.FrameBufferMrtAttachments, 1);
-            }
-        }
-
-        if (hasExtension("GL_ARB_multisample")) {
-            boolean available = getInteger(GLExt.GL_SAMPLE_BUFFERS_ARB) != 0;
-            int samples = getInteger(GLExt.GL_SAMPLES_ARB);
-            logger.log(Level.FINER, "Samples: {0}", samples);
-            boolean enabled = gl.glIsEnabled(GLExt.GL_MULTISAMPLE_ARB);
-            if (samples > 0 && available && !enabled) {
-                // Doesn't seem to be neccessary .. OGL spec says its always
-                // set by default?
-                gl.glEnable(GLExt.GL_MULTISAMPLE_ARB);
-            }
-            caps.add(Caps.Multisample);
-        }
-
-        // Supports sRGB pipeline.
-        if ( (hasExtension("GL_ARB_framebuffer_sRGB") && hasExtension("GL_EXT_texture_sRGB"))
-                || caps.contains(Caps.OpenGL30) ) {
-            caps.add(Caps.Srgb);
-        }
-
-        // Supports seamless cubemap
-        if (hasExtension("GL_ARB_seamless_cube_map") || caps.contains(Caps.OpenGL32)) {
-            caps.add(Caps.SeamlessCubemap);
-        }
-
-        if (caps.contains(Caps.OpenGL32) && !hasExtension("GL_ARB_compatibility")) {
-            caps.add(Caps.CoreProfile);
-        }
-
-        if (hasExtension("GL_ARB_get_program_binary")) {
-            int binaryFormats = getInteger(GLExt.GL_NUM_PROGRAM_BINARY_FORMATS);
-            if (binaryFormats > 0) {
-                caps.add(Caps.BinaryShader);
-            }
-        }
-
-        // Print context information
-        logger.log(Level.INFO, "OpenGL Renderer Information\n" +
-                        " * Vendor: {0}\n" +
-                        " * Renderer: {1}\n" +
-                        " * OpenGL Version: {2}\n" +
-                        " * GLSL Version: {3}\n" +
-                        " * Profile: {4}",
-                new Object[]{
-                        gl.glGetString(GL.GL_VENDOR),
-                        gl.glGetString(GL.GL_RENDERER),
-                        gl.glGetString(GL.GL_VERSION),
-                        gl.glGetString(GL.GL_SHADING_LANGUAGE_VERSION),
-                        caps.contains(Caps.CoreProfile) ? "Core" : "Compatibility"
-                });
-
-        // Print capabilities (if fine logging is enabled)
-        if (logger.isLoggable(Level.FINE)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Supported capabilities: \n");
-            for (Caps cap : caps)
-            {
-                sb.append("\t").append(cap.toString()).append("\n");
-            }
-            logger.log(Level.FINE, sb.toString());
-        }
-
-        texUtil.initialize(caps);
-    }
-
-    private void loadCapabilities() {
-        if (gl2 != null) {
-            loadCapabilitiesGL2();
-        } else {
-            loadCapabilitiesES();
-        }
-        loadCapabilitiesCommon();
-    }
-
-    private int getInteger(int en) {
-        intBuf16.clear();
-        gl.glGetInteger(en, intBuf16);
-        return intBuf16.get(0);
+        return glCaps.getLimits();
     }
 
     private boolean getBoolean(int en) {
@@ -504,15 +126,17 @@ public final class GLRenderer implements Renderer {
     public void initialize() {
         loadCapabilities();
 
+        texUtil.initialize(glCaps.getCaps());
+
         // Initialize default state..
         gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
         
-        if (caps.contains(Caps.SeamlessCubemap)) {
+        if (glCaps.has(Caps.SeamlessCubemap)) {
             // Enable this globally. Should be OK.
             gl.glEnable(GLExt.GL_TEXTURE_CUBE_MAP_SEAMLESS);
         }
 
-        if (caps.contains(Caps.CoreProfile)) {
+        if (glCaps.has(Caps.CoreProfile)) {
             // Core Profile requires VAO to be bound.
             gl3.glGenVertexArrays(intBuf16);
             int vaoId = intBuf16.get(0);
@@ -520,11 +144,15 @@ public final class GLRenderer implements Renderer {
         }
         if (gl2 != null) {
             gl2.glEnable(GL2.GL_VERTEX_PROGRAM_POINT_SIZE);
-            if (!caps.contains(Caps.CoreProfile)) {
+            if (!glCaps.has(Caps.CoreProfile)) {
                 gl2.glEnable(GL2.GL_POINT_SPRITE);
                 context.pointSprite = true;
             }
         }
+    }
+
+    protected void loadCapabilities() {
+        glCaps.loadCapabilities(gl, gl2, gl3, context);
     }
 
     public void invalidateState() {
@@ -595,7 +223,7 @@ public final class GLRenderer implements Renderer {
     }
 
     public void setAlphaToCoverage(boolean value) {
-        if (caps.contains(Caps.Multisample)) {
+        if (glCaps.has(Caps.Multisample)) {
             if (value) {
                 gl.glEnable(GLExt.GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
             } else {
@@ -1051,7 +679,7 @@ public final class GLRenderer implements Renderer {
             throw new RendererException("Cannot recompile shader source");
         }
 
-        boolean gles2 = caps.contains(Caps.OpenGLES20);
+        boolean gles2 = glCaps.has(Caps.OpenGLES20);
         String language = source.getLanguage();
 
         if (gles2 && !language.equals("GLSL100")) {
@@ -1170,7 +798,7 @@ public final class GLRenderer implements Renderer {
             // Check if GLSL version is 1.5 for shader
             gl3.glBindFragDataLocation(id, 0, "outFragColor");
             // For MRT
-            for (int i = 0; i < limits.get(Limits.FrameBufferMrtAttachments); i++) {
+            for (int i = 0; i < glCaps.getLimits().get(Limits.FrameBufferMrtAttachments); i++) {
                 gl3.glBindFragDataLocation(id, i, "outFragData[" + i + "]");
             }
         }
@@ -1270,7 +898,7 @@ public final class GLRenderer implements Renderer {
     }
 
     public void copyFrameBuffer(FrameBuffer src, FrameBuffer dst, boolean copyDepth) {
-        if (caps.contains(Caps.FrameBufferBlit)) {
+        if (glCaps.has(Caps.FrameBufferBlit)) {
             int srcX0 = 0;
             int srcY0 = 0;
             int srcX1;
@@ -1381,7 +1009,7 @@ public final class GLRenderer implements Renderer {
             context.boundRB = id;
         }
 
-        int rbSize = limits.get(Limits.RenderBufferSize);
+        int rbSize = glCaps.getLimits().get(Limits.RenderBufferSize);
         if (fb.getWidth() > rbSize || fb.getHeight() > rbSize) {
             throw new RendererException("Resolution " + fb.getWidth()
                     + ":" + fb.getHeight() + " is not supported.");
@@ -1389,9 +1017,9 @@ public final class GLRenderer implements Renderer {
 
         GLImageFormat glFmt = texUtil.getImageFormatWithError(rb.getFormat(), fb.isSrgb());
 
-        if (fb.getSamples() > 1 && caps.contains(Caps.FrameBufferMultisample)) {
+        if (fb.getSamples() > 1 && glCaps.has(Caps.FrameBufferMultisample)) {
             int samples = fb.getSamples();
-            int maxSamples = limits.get(Limits.FrameBufferSamples);
+            int maxSamples = glCaps.getLimits().get(Limits.FrameBufferSamples);
             if (maxSamples < samples) {
                 samples = maxSamples;
             }
@@ -1521,7 +1149,7 @@ public final class GLRenderer implements Renderer {
         if (fb.getSamples() <= 1) {
             throw new IllegalArgumentException("Framebuffer must be multisampled");
         }
-        if (!caps.contains(Caps.TextureMultisample)) {
+        if (!glCaps.has(Caps.TextureMultisample)) {
             throw new RendererException("Multisampled textures are not supported");
         }
 
@@ -1570,28 +1198,26 @@ public final class GLRenderer implements Renderer {
             if (fb.getNumColorBuffers() == 0) {
                 // make sure to select NONE as draw buf
                 // no color buffer attached.
-                if (gl2 != null) {
-                    if (context.boundDrawBuf != NONE) {
-                        gl2.glDrawBuffer(GL.GL_NONE);
-                        context.boundDrawBuf = NONE;
-                    }
-                    if (context.boundReadBuf != NONE) {
-                        gl2.glReadBuffer(GL.GL_NONE);
-                        context.boundReadBuf = NONE;
-                    }
+                if (context.boundDrawBuf != NONE) {
+                    gl2.glDrawBuffer(GL.GL_NONE);
+                    context.boundDrawBuf = NONE;
+                }
+                if (context.boundReadBuf != NONE) {
+                    gl2.glReadBuffer(GL.GL_NONE);
+                    context.boundReadBuf = NONE;
                 }
             } else {
-                if (fb.getNumColorBuffers() > limits.get(Limits.FrameBufferAttachments)) {
+                if (fb.getNumColorBuffers() > glCaps.getLimits().get(Limits.FrameBufferAttachments)) {
                     throw new RendererException("Framebuffer has more color "
                             + "attachments than are supported"
                             + " by the video hardware!");
                 }
                 if (fb.isMultiTarget()) {
-                    if (!caps.contains(Caps.FrameBufferMRT)) {
+                    if (!glCaps.has(Caps.FrameBufferMRT)) {
                         throw new RendererException("Multiple render targets "
                                 + " are not supported by the video hardware");
                     }
-                    if (fb.getNumColorBuffers() > limits.get(Limits.FrameBufferMrtAttachments)) {
+                    if (fb.getNumColorBuffers() > glCaps.getLimits().get(Limits.FrameBufferMrtAttachments)) {
                         throw new RendererException("Framebuffer has more"
                                 + " multi targets than are supported"
                                 + " by the video hardware!");
@@ -1610,11 +1236,9 @@ public final class GLRenderer implements Renderer {
                 } else {
                     RenderBuffer rb = fb.getColorBuffer(fb.getTargetIndex());
                     // select this draw buffer
-                    if (gl2 != null) {
-                        if (context.boundDrawBuf != rb.getSlot()) {
-                            gl2.glDrawBuffer(GLFbo.GL_COLOR_ATTACHMENT0_EXT + rb.getSlot());
-                            context.boundDrawBuf = rb.getSlot();
-                        }
+                    if (context.boundDrawBuf != rb.getSlot()) {
+                        gl2.glDrawBuffer(GLFbo.GL_COLOR_ATTACHMENT0_EXT + rb.getSlot());
+                        context.boundDrawBuf = rb.getSlot();
                     }
                 }
             }
@@ -1633,7 +1257,7 @@ public final class GLRenderer implements Renderer {
             }
         }
 
-        if (!caps.contains(Caps.FrameBuffer)) {
+        if (!glCaps.has(Caps.FrameBuffer)) {
             throw new RendererException("Framebuffer objects are not supported"
                     + " by the video hardware");
         }
@@ -1736,7 +1360,7 @@ public final class GLRenderer implements Renderer {
      |* Textures                                                          *|
      \*********************************************************************/
     private int convertTextureType(Texture.Type type, int samples, int face) {
-        if (samples > 1 && !caps.contains(Caps.TextureMultisample)) {
+        if (samples > 1 && !glCaps.has(Caps.TextureMultisample)) {
             throw new RendererException("Multisample textures are not supported" +
                     " by the video hardware.");
         }
@@ -1749,7 +1373,7 @@ public final class GLRenderer implements Renderer {
                     return GL.GL_TEXTURE_2D;
                 }
             case TwoDimensionalArray:
-                if (!caps.contains(Caps.TextureArray)) {
+                if (!glCaps.has(Caps.TextureArray)) {
                     throw new RendererException("Array textures are not supported"
                             + " by the video hardware.");
                 }
@@ -1759,7 +1383,7 @@ public final class GLRenderer implements Renderer {
                     return GLExt.GL_TEXTURE_2D_ARRAY_EXT;
                 }
             case ThreeDimensional:
-                if (!caps.contains(Caps.OpenGL20)) {
+                if (!glCaps.has(Caps.OpenGL20)) {
                     throw new RendererException("3D textures are not supported" +
                             " by the video hardware.");
                 }
@@ -1860,7 +1484,7 @@ public final class GLRenderer implements Renderer {
             gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, convertMinFilter(tex.getMinFilter(), haveMips));
             curState.minFilter = tex.getMinFilter();
         }
-        if (caps.contains(Caps.TextureFilterAnisotropic)
+        if (glCaps.has(Caps.TextureFilterAnisotropic)
                 && curState.anisoFilter != tex.getAnisotropicFilter()) {
             bindTextureAndUnit(target, image, unit);
             gl.glTexParameterf(target,
@@ -1931,13 +1555,13 @@ public final class GLRenderer implements Renderer {
             return;
         }
 
-        if (caps.contains(Caps.NonPowerOfTwoTextures)) {
+        if (glCaps.has(Caps.NonPowerOfTwoTextures)) {
             // Texture is NPOT but it is supported by video hardware.
             return;
         }
 
         // Maybe we have some / partial support for NPOT?
-        if (!caps.contains(Caps.PartialNonPowerOfTwoTextures)) {
+        if (!glCaps.has(Caps.PartialNonPowerOfTwoTextures)) {
             // Cannot use any type of NPOT texture (uncommon)
             throw new RendererException("non-power-of-2 textures are not "
                     + "supported by the video hardware");
@@ -2043,7 +1667,7 @@ public final class GLRenderer implements Renderer {
             // Image does not have mipmaps, but they are required.
             // Generate from base level.
 
-            if (!caps.contains(Caps.FrameBuffer) && gl2 != null) {
+            if (!glCaps.has(Caps.FrameBuffer) && gl2 != null) {
                 gl2.glTexParameteri(target, GL2.GL_GENERATE_MIPMAP, GL.GL_TRUE);
                 img.setMipmapsGenerated(true);
             } else {
@@ -2063,27 +1687,27 @@ public final class GLRenderer implements Renderer {
         int imageSamples = img.getMultiSamples();
         if (imageSamples > 1) {
             if (img.getFormat().isDepthFormat()) {
-                img.setMultiSamples(Math.min(limits.get(Limits.DepthTextureSamples), imageSamples));
+                img.setMultiSamples(Math.min(glCaps.getLimits().get(Limits.DepthTextureSamples), imageSamples));
             } else {
-                img.setMultiSamples(Math.min(limits.get(Limits.ColorTextureSamples), imageSamples));
+                img.setMultiSamples(Math.min(glCaps.getLimits().get(Limits.ColorTextureSamples), imageSamples));
             }
         }
 
         // Check if graphics card doesn't support multisample textures
-        if (!caps.contains(Caps.TextureMultisample)) {
+        if (!glCaps.has(Caps.TextureMultisample)) {
             if (img.getMultiSamples() > 1) {
                 throw new RendererException("Multisample textures are not supported by the video hardware");
             }
         }
 
         // Check if graphics card doesn't support depth textures
-        if (img.getFormat().isDepthFormat() && !caps.contains(Caps.DepthTexture)) {
+        if (img.getFormat().isDepthFormat() && !glCaps.has(Caps.DepthTexture)) {
             throw new RendererException("Depth textures are not supported by the video hardware");
         }
 
         if (target == GL.GL_TEXTURE_CUBE_MAP) {
             // Check max texture size before upload
-            int cubeSize = limits.get(Limits.CubemapSize);
+            int cubeSize = glCaps.getLimits().get(Limits.CubemapSize);
             if (img.getWidth() > cubeSize || img.getHeight() > cubeSize) {
                 throw new RendererException("Cannot upload cubemap " + img + ". The maximum supported cubemap resolution is " + cubeSize);
             }
@@ -2091,7 +1715,7 @@ public final class GLRenderer implements Renderer {
                 throw new RendererException("Cubemaps must have square dimensions");
             }
         } else {
-            int texSize = limits.get(Limits.TextureSize);
+            int texSize = glCaps.getLimits().get(Limits.TextureSize);
             if (img.getWidth() > texSize || img.getHeight() > texSize) {
                 throw new RendererException("Cannot upload texture " + img + ". The maximum supported texture resolution is " + texSize);
             }
@@ -2114,7 +1738,7 @@ public final class GLRenderer implements Renderer {
                 texUtil.uploadTexture(imageForUpload, GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, i, linearizeSrgbImages);
             }
         } else if (target == GLExt.GL_TEXTURE_2D_ARRAY_EXT) {
-            if (!caps.contains(Caps.TextureArray)) {
+            if (!glCaps.has(Caps.TextureArray)) {
                 throw new RendererException("Texture arrays not supported by graphics hardware");
             }
 
@@ -2136,7 +1760,7 @@ public final class GLRenderer implements Renderer {
             img.setMultiSamples(imageSamples);
         }
 
-        if (caps.contains(Caps.FrameBuffer) || gl2 == null) {
+        if (glCaps.has(Caps.FrameBuffer) || gl2 == null) {
             if (!img.hasMipmaps() && img.isGeneratedMipmapsRequired() && img.getData(0) != null) {
                 glfbo.glGenerateMipmapEXT(target);
                 img.setMipmapsGenerated(true);
@@ -2351,7 +1975,7 @@ public final class GLRenderer implements Renderer {
         }
 
         if (vb.isInstanced()) {
-            if (!caps.contains(Caps.MeshInstancing)) {
+            if (!glCaps.has(Caps.MeshInstancing)) {
                 throw new RendererException("Instancing is required, "
                         + "but not supported by the "
                         + "graphics hardware");
@@ -2433,7 +2057,7 @@ public final class GLRenderer implements Renderer {
     }
 
     public void drawTriangleArray(Mesh.Mode mode, int count, int vertCount) {
-        boolean useInstancing = count > 1 && caps.contains(Caps.MeshInstancing);
+        boolean useInstancing = count > 1 && glCaps.has(Caps.MeshInstancing);
         if (useInstancing) {
             glext.glDrawArraysInstancedARB(convertElementMode(mode), 0,
                     vertCount, count);
@@ -2453,7 +2077,7 @@ public final class GLRenderer implements Renderer {
                 break;
             case UnsignedInt:
                 // Requres extension on OpenGL ES 2.
-                if (!caps.contains(Caps.IntegerIndexBuffer)) {
+                if (!glCaps.has(Caps.IntegerIndexBuffer)) {
                     throw new RendererException("32-bit index buffers are not supported by the video hardware");
                 }
                 break;
@@ -2478,7 +2102,7 @@ public final class GLRenderer implements Renderer {
         }
 
         int vertCount = mesh.getVertexCount();
-        boolean useInstancing = count > 1 && caps.contains(Caps.MeshInstancing);
+        boolean useInstancing = count > 1 && glCaps.has(Caps.MeshInstancing);
 
         if (mesh.getMode() == Mode.Hybrid) {
             int[] modeStart = mesh.getModeStart();
@@ -2700,7 +2324,7 @@ public final class GLRenderer implements Renderer {
 
     public void setMainFrameBufferSrgb(boolean enableSrgb) {
         // Gamma correction
-        if (!caps.contains(Caps.Srgb) && enableSrgb) {
+        if (!glCaps.has(Caps.Srgb) && enableSrgb) {
             // Not supported, sorry.
             logger.warning("sRGB framebuffer is not supported " +
                     "by video hardware, but was requested.");
@@ -2725,8 +2349,14 @@ public final class GLRenderer implements Renderer {
     }
 
     public void setLinearizeSrgbImages(boolean linearize) {
-        if (caps.contains(Caps.Srgb)) {
+        if (glCaps.has(Caps.Srgb)) {
             linearizeSrgbImages = linearize;
         }
+    }
+
+    private int getInteger(int en) {
+        intBuf16.clear();
+        gl.glGetInteger(en, intBuf16);
+        return intBuf16.get(0);
     }
 }

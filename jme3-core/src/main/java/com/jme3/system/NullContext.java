@@ -31,13 +31,14 @@
  */
 package com.jme3.system;
 
-import com.jme3.input.JoyInput;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.TouchInput;
+import com.jme3.input.*;
 import com.jme3.input.dummy.DummyKeyInput;
 import com.jme3.input.dummy.DummyMouseInput;
 import com.jme3.renderer.Renderer;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,8 @@ public class NullContext implements JmeContext, Runnable {
     protected Timer timer;
     protected SystemListener listener;
     protected NullRenderer renderer;
+
+    protected List<Input> inputs;
 
     public Type getType() {
         return Type.Headless;
@@ -173,6 +176,20 @@ public class NullContext implements JmeContext, Runnable {
 
     public JoyInput getJoyInput() {
         return null;
+    }
+
+    public java.util.List<Input> getInput() {
+        if(inputs == null) {
+            inputs = new ArrayList<>();
+            inputs.add(getKeyInput());
+            inputs.add(getMouseInput());
+            if(!settings.getBoolean("DisableJoysticks")) {
+                inputs.add(getJoyInput());
+            }
+            inputs.add(getTouchInput());
+            inputs.removeAll(Collections.singleton(null));
+        }
+        return inputs;
     }
 
     public TouchInput getTouchInput() {

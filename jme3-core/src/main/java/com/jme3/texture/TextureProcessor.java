@@ -56,9 +56,9 @@ public class TextureProcessor implements AssetProcessor {
             }
             tex = new TextureCubeMap();
         } else if (texKey.getTextureTypeHint() == Texture.Type.ThreeDimensional) {
-            tex = new Texture3D();
+            tex = new TextureDefault3D();
         } else {
-            tex = new Texture2D();
+            tex = new TextureDefault2D();
         }
 
         // enable mipmaps if image has them

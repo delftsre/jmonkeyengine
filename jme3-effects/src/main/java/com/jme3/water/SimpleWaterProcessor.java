@@ -47,9 +47,8 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
-import com.jme3.util.TempVars;
 
 /**
  *
@@ -99,11 +98,11 @@ public class SimpleWaterProcessor implements SceneProcessor {
     protected FrameBuffer refractionBuffer;
     protected Camera reflectionCam;
     protected Camera refractionCam;
-    protected Texture2D reflectionTexture;
-    protected Texture2D refractionTexture;
-    protected Texture2D depthTexture;
-    protected Texture2D normalTexture;
-    protected Texture2D dudvTexture;
+    protected TextureDefault2D reflectionTexture;
+    protected TextureDefault2D refractionTexture;
+    protected TextureDefault2D depthTexture;
+    protected TextureDefault2D normalTexture;
+    protected TextureDefault2D dudvTexture;
     protected int renderWidth = 512;
     protected int renderHeight = 512;
     protected Plane plane = new Plane(Vector3f.UNIT_Y, Vector3f.ZERO.dot(Vector3f.UNIT_Y));
@@ -238,15 +237,15 @@ public class SimpleWaterProcessor implements SceneProcessor {
     }
 
     protected void loadTextures(AssetManager manager) {
-        normalTexture = (Texture2D) manager.loadTexture("Common/MatDefs/Water/Textures/water_normalmap.png");
-        dudvTexture = (Texture2D) manager.loadTexture("Common/MatDefs/Water/Textures/dudv_map.jpg");
+        normalTexture = (TextureDefault2D) manager.loadTexture("Common/MatDefs/Water/Textures/water_normalmap.png");
+        dudvTexture = (TextureDefault2D) manager.loadTexture("Common/MatDefs/Water/Textures/dudv_map.jpg");
         normalTexture.setWrap(WrapMode.Repeat);
         dudvTexture.setWrap(WrapMode.Repeat);
     }
 
     protected void createTextures() {
-        reflectionTexture = new Texture2D(renderWidth, renderHeight, Format.RGBA8);
-        refractionTexture = new Texture2D(renderWidth, renderHeight, Format.RGBA8);
+        reflectionTexture = new TextureDefault2D(renderWidth, renderHeight, Format.RGBA8);
+        refractionTexture = new TextureDefault2D(renderWidth, renderHeight, Format.RGBA8);
         
         reflectionTexture.setMinFilter(Texture.MinFilter.Trilinear);
         reflectionTexture.setMagFilter(Texture.MagFilter.Bilinear);
@@ -254,7 +253,7 @@ public class SimpleWaterProcessor implements SceneProcessor {
         refractionTexture.setMinFilter(Texture.MinFilter.Trilinear);
         refractionTexture.setMagFilter(Texture.MagFilter.Bilinear);
         
-        depthTexture = new Texture2D(renderWidth, renderHeight, Format.Depth);
+        depthTexture = new TextureDefault2D(renderWidth, renderHeight, Format.Depth);
     }
 
     protected void applyTextures(Material mat) {

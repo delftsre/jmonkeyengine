@@ -42,6 +42,10 @@ import com.jme3.renderer.opengl.GLDebugES;
 import com.jme3.renderer.opengl.GLExt;
 import com.jme3.renderer.opengl.GLFbo;
 import com.jme3.renderer.opengl.GLRenderer;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,6 +122,20 @@ public class IGLESContext implements JmeContext {
         return androidSensorJoyInput;
         */
         return null;//  new DummySensorJoyInput();
+    }
+
+    public java.util.List<Input> getInput() {
+        List<Input> inputs = new ArrayList<>();
+
+        inputs.add(getKeyInput());
+        inputs.add(getMouseInput());
+        if(!settings.getBoolean("DisableJoysticks")) {
+            inputs.add(getJoyInput());
+        }
+        inputs.add(getTouchInput());
+        inputs.removeAll(Collections.singleton(null));
+
+        return inputs;
     }
 
     @Override

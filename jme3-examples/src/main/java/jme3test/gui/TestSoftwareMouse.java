@@ -38,7 +38,7 @@ import com.jme3.input.event.*;
 import com.jme3.math.FastMath;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 
 public class TestSoftwareMouse extends SimpleApplication {
@@ -95,7 +95,7 @@ public class TestSoftwareMouse extends SimpleApplication {
         Texture tex = assetManager.loadTexture("Interface/Logo/Cursor.png");
 
         cursor = new Picture("cursor");
-        cursor.setTexture(assetManager, (Texture2D) tex, true);
+        cursor.setTexture(assetManager, (TextureDefault2D) tex, true);
         cursor.setWidth(64);
         cursor.setHeight(64);
         guiNode.attachChild(cursor);

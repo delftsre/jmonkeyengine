@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.jme3.texture.TextureDefault2D;
 import jme3tools.converters.ImageToAwt;
 
 import com.jme3.math.ColorRGBA;
@@ -33,7 +34,6 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
 import com.jme3.texture.TextureCubeMap;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
@@ -96,7 +96,7 @@ public class CombinedTexture {
      *            the blender context
      */
     public void add(Texture texture, TextureBlender textureBlender, int uvCoordinatesType, int projectionType, Structure textureStructure, String uvCoordinatesName, BlenderContext blenderContext) {
-        if (!(texture instanceof GeneratedTexture) && !(texture instanceof Texture2D)) {
+        if (!(texture instanceof GeneratedTexture) && !(texture instanceof TextureDefault2D)) {
             throw new IllegalArgumentException("Unsupported texture type: " + (texture == null ? "null" : texture.getClass()));
         }
         if (!(texture instanceof GeneratedTexture) || blenderContext.getBlenderKey().isLoadGeneratedTextures()) {
@@ -120,7 +120,7 @@ public class CombinedTexture {
     }
 
     /**
-     * This method flattens the texture and creates a single result of Texture2D
+     * This method flattens the texture and creates a single result of TextureDefault2D
      * type.
      * 
      * @param geometry
@@ -149,7 +149,7 @@ public class CombinedTexture {
             if (previousTexture == null) {// the first texture will lead the others to its shape
                 if (textureData.texture instanceof GeneratedTexture) {
                     resultTexture = ((GeneratedTexture) textureData.texture).triangulate(mesh, geometriesOMA, textureData.uvCoordinatesType, blenderContext);
-                } else if (textureData.texture instanceof Texture2D) {
+                } else if (textureData.texture instanceof TextureDefault2D) {
                     resultTexture = textureData.texture;
 
                     if (textureData.uvCoordinatesType == UVCoordinatesType.TEXCO_UV && userDefinedUVCoordinates != null && userDefinedUVCoordinates.size() > 0) {
@@ -174,7 +174,7 @@ public class CombinedTexture {
             } else {
                 if (textureData.texture instanceof GeneratedTexture) {
                     if (!(resultTexture instanceof TriangulatedTexture)) {
-                        resultTexture = new TriangulatedTexture((Texture2D) resultTexture, resultUVS, blenderContext);
+                        resultTexture = new TriangulatedTexture((TextureDefault2D) resultTexture, resultUVS, blenderContext);
                         resultUVS = null;
                         previousTexture = resultTexture;
                     }
@@ -183,14 +183,14 @@ public class CombinedTexture {
                     triangulatedTexture.castToUVS((TriangulatedTexture) resultTexture, blenderContext);
                     triangulatedTexture.blend(textureData.textureBlender, (TriangulatedTexture) resultTexture, blenderContext);
                     resultTexture = previousTexture = triangulatedTexture;
-                } else if (textureData.texture instanceof Texture2D) {
-                    if (this.isUVTypesMatch(masterUVCoordinatesType, masterUserUVSetName, textureData.uvCoordinatesType, textureData.uvCoordinatesName) && resultTexture instanceof Texture2D) {
-                        this.scale((Texture2D) textureData.texture, resultTexture.getImage().getWidth(), resultTexture.getImage().getHeight());
+                } else if (textureData.texture instanceof TextureDefault2D) {
+                    if (this.isUVTypesMatch(masterUVCoordinatesType, masterUserUVSetName, textureData.uvCoordinatesType, textureData.uvCoordinatesName) && resultTexture instanceof TextureDefault2D) {
+                        this.scale((TextureDefault2D) textureData.texture, resultTexture.getImage().getWidth(), resultTexture.getImage().getHeight());
                         ImageUtils.merge(resultTexture.getImage(), textureData.texture.getImage());
                         previousTexture = resultTexture;
                     } else {
                         if (!(resultTexture instanceof TriangulatedTexture)) {
-                            resultTexture = new TriangulatedTexture((Texture2D) resultTexture, resultUVS, blenderContext);
+                            resultTexture = new TriangulatedTexture((TextureDefault2D) resultTexture, resultUVS, blenderContext);
                             resultUVS = null;
                         }
                         // first triangulate the current texture
@@ -205,7 +205,7 @@ public class CombinedTexture {
                             TemporalMesh geometries = (TemporalMesh) blenderContext.getLoadedFeature(geometriesOMA, LoadedDataType.TEMPORAL_MESH);
                             textureUVS = UVCoordinatesGenerator.generateUVCoordinatesFor2DTexture(mesh, textureData.uvCoordinatesType, textureData.projectionType, geometries);
                         }
-                        TriangulatedTexture triangulatedTexture = new TriangulatedTexture((Texture2D) textureData.texture, textureUVS, blenderContext);
+                        TriangulatedTexture triangulatedTexture = new TriangulatedTexture((TextureDefault2D) textureData.texture, textureUVS, blenderContext);
                         // then move the texture to different UV's
                         triangulatedTexture.castToUVS((TriangulatedTexture) resultTexture, blenderContext);
                         // merge triangulated textures
@@ -259,7 +259,7 @@ public class CombinedTexture {
         LOGGER.fine("Computing the texture size.");
         int size = -1;
         for (TextureData textureData : textureDatas) {
-            if (textureData.texture instanceof Texture2D) {
+            if (textureData.texture instanceof TextureDefault2D) {
                 size = Math.max(textureData.texture.getImage().getWidth(), size);
                 size = Math.max(textureData.texture.getImage().getHeight(), size);
             }
@@ -354,7 +354,7 @@ public class CombinedTexture {
     private void blend(Texture texture, TextureBlender textureBlender, BlenderContext blenderContext) {
         if (texture instanceof TriangulatedTexture) {
             ((TriangulatedTexture) texture).blend(textureBlender, null, blenderContext);
-        } else if (texture instanceof Texture2D) {
+        } else if (texture instanceof TextureDefault2D) {
             Image blendedImage = textureBlender.blend(texture.getImage(), null, blenderContext);
             texture.setImage(blendedImage);
         } else {
@@ -490,7 +490,7 @@ public class CombinedTexture {
      * @param height
      *            new height of the texture
      */
-    private void scale(Texture2D texture, int width, int height) {
+    private void scale(TextureDefault2D texture, int width, int height) {
         // first determine if scaling is required
         boolean scaleRequired = texture.getImage().getWidth() != width || texture.getImage().getHeight() != height;
 
