@@ -41,7 +41,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 
 /**
@@ -69,7 +69,7 @@ public class TestFBOPassthrough extends SimpleApplication {
         //setup framebuffer
         fb = new FrameBuffer(w, h, 1);
 
-        Texture2D fbTex = new Texture2D(w, h, Format.RGBA8);
+        TextureDefault2D fbTex = new TextureDefault2D(w, h, Format.RGBA8);
         fb.setDepthBuffer(Format.Depth);
         fb.setColorTexture(fbTex);
 

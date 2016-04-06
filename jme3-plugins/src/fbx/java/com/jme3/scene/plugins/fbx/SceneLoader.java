@@ -78,7 +78,7 @@ import com.jme3.scene.plugins.fbx.file.FbxFile;
 import com.jme3.scene.plugins.fbx.file.FbxReader;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -838,7 +838,7 @@ public class SceneLoader implements AssetLoader {
 	}
 	
 	private Texture createTexture(TextureData data) {
-		Texture tex = new Texture2D();
+		Texture tex = new TextureDefault2D();
 		tex.setName(data.name);
 		return tex;
 	}

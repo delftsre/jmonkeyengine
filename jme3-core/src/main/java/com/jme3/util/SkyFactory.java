@@ -67,7 +67,7 @@ public class SkyFactory {
          */
         CubeMap,
         /**
-         * The env map is a Sphere map. The texture is a Texture2D with the pixels arranged for
+         * The env map is a Sphere map. The texture is a TextureDefault2D with the pixels arranged for
          * <a href="http://en.wikipedia.org/wiki/Sphere_mapping">sphere
          * mapping</a>.
          */
@@ -94,11 +94,11 @@ public class SkyFactory {
      * transformation to the normal.
      * @param sphereMap determines how the texture is used:<br>
      * <ul>
-     * <li>true: The texture is a Texture2D with the pixels arranged for
+     * <li>true: The texture is a TextureDefault2D with the pixels arranged for
      * <a href="http://en.wikipedia.org/wiki/Sphere_mapping">sphere
      * mapping</a>.</li>
-     * <li>false: The texture is either a TextureCubeMap or Texture2D. If it is
-     * a Texture2D then the image is taken from it and is inserted into a
+     * <li>false: The texture is either a TextureCubeMap or TextureDefault2D. If it is
+     * a TextureDefault2D then the image is taken from it and is inserted into a
      * TextureCubeMap</li>
      * </ul>
      * @return a new spatial representing the sky, ready to be attached to the
@@ -140,11 +140,11 @@ public class SkyFactory {
      * transformation to the normal.
      * @param sphereMap determines how the texture is used:<br>
      * <ul>
-     * <li>true: The texture is a Texture2D with the pixels arranged for
+     * <li>true: The texture is a TextureDefault2D with the pixels arranged for
      * <a href="http://en.wikipedia.org/wiki/Sphere_mapping">sphere
      * mapping</a>.</li>
-     * <li>false: The texture is either a TextureCubeMap or Texture2D. If it is
-     * a Texture2D then the image is taken from it and is inserted into a
+     * <li>false: The texture is either a TextureCubeMap or TextureDefault2D. If it is
+     * a TextureDefault2D then the image is taken from it and is inserted into a
      * TextureCubeMap</li>
      * </ul>
      * @param sphereRadius the sky sphere's radius: for the sky to be visible,
@@ -222,11 +222,11 @@ public class SkyFactory {
     * @param texture to use    *
     * @param sphereMap determines how the texture is used:<br>
     * <ul>
-    * <li>true: The texture is a Texture2D with the pixels arranged for
+    * <li>true: The texture is a TextureDefault2D with the pixels arranged for
     * <a href="http://en.wikipedia.org/wiki/Sphere_mapping">sphere
     * mapping</a>.</li>
-    * <li>false: The texture is either a TextureCubeMap or Texture2D. If it is
-    * a Texture2D then the image is taken from it and is inserted into a
+    * <li>false: The texture is either a TextureCubeMap or TextureDefault2D. If it is
+    * a TextureDefault2D then the image is taken from it and is inserted into a
     * TextureCubeMap</li>
     * </ul> 
     * @return a new spatial representing the sky, ready to be attached to the
@@ -245,11 +245,11 @@ public class SkyFactory {
     * @param textureName the path to the texture asset to use    
     * @param sphereMap determines how the texture is used:<br>
     * <ul>
-    * <li>true: The texture is a Texture2D with the pixels arranged for
+    * <li>true: The texture is a TextureDefault2D with the pixels arranged for
     * <a href="http://en.wikipedia.org/wiki/Sphere_mapping">sphere
     * mapping</a>.</li>
-    * <li>false: The texture is either a TextureCubeMap or Texture2D. If it is
-    * a Texture2D then the image is taken from it and is inserted into a
+    * <li>false: The texture is either a TextureCubeMap or TextureDefault2D. If it is
+    * a TextureDefault2D then the image is taken from it and is inserted into a
     * TextureCubeMap</li>
     * </ul> 
     * @return a new spatial representing the sky, ready to be attached to the

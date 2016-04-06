@@ -54,7 +54,7 @@ import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
 
@@ -85,7 +85,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
   private RenderManager renderManager;
   private NiftyJmeDisplay display;
-  private Map<Integer, Texture2D> textures = new HashMap<Integer, Texture2D>();
+  private Map<Integer, TextureDefault2D> textures = new HashMap<Integer, TextureDefault2D>();
   private int textureAtlasId = 1;
   private Batch currentBatch;
   private Matrix4f tempMat = new Matrix4f();
@@ -213,7 +213,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     key.setAnisotropy(0);
     key.setGenerateMips(false);
 
-    Texture2D texture = (Texture2D) display.getAssetManager().loadTexture(key);
+    TextureDefault2D texture = (TextureDefault2D) display.getAssetManager().loadTexture(key);
     return new ImageImpl(texture.getImage());
   }
 
@@ -232,7 +232,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
   public int createNonAtlasTexture(final Image image) {
     ImageImpl imageImpl = (ImageImpl) image;
 
-    Texture2D texture = new Texture2D(imageImpl.image);
+    TextureDefault2D texture = new TextureDefault2D(imageImpl.image);
     texture.setMinFilter(MinFilter.NearestNoMipMaps);
     texture.setMagFilter(MagFilter.Nearest);
     return addTexture(texture);
@@ -332,21 +332,21 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
   // internal implementations
 
-  private Texture2D createAtlasTextureInternal(final int width, final int height) throws Exception {
+  private TextureDefault2D createAtlasTextureInternal(final int width, final int height) throws Exception {
     ByteBuffer initialData = BufferUtils.createByteBuffer(width*height*4);
     for (int i=0; i<width*height*4; i++) {
       initialData.put((byte) 0x00);
     }
     initialData.rewind();
 
-    Texture2D texture = new Texture2D(new com.jme3.texture.Image(Format.RGBA8, width, height, initialData, ColorSpace.sRGB));
+    TextureDefault2D texture = new TextureDefault2D(new com.jme3.texture.Image(Format.RGBA8, width, height, initialData, ColorSpace.sRGB));
     texture.setMinFilter(MinFilter.NearestNoMipMaps);
     texture.setMagFilter(MagFilter.Nearest);
     return texture;
   }
 
   private void modifyTexture(
-      final Texture2D textureAtlas,
+      final TextureDefault2D textureAtlas,
       final com.jme3.texture.Image image,
       final int x,
       final int y) {
@@ -361,11 +361,11 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     renderer.modifyTexture(textureAtlas, image, x, y);
   }
 
-  private Texture2D getTextureAtlas(final int atlasId) {
+  private TextureDefault2D getTextureAtlas(final int atlasId) {
     return textures.get(atlasId);
   }
 
-  private int addTexture(final Texture2D texture) {
+  private int addTexture(final TextureDefault2D texture) {
     final int atlasId = textureAtlasId++;
     textures.put(atlasId, texture);
     return atlasId;
@@ -386,7 +386,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
     public void modifyTexture(
         final JmeBatchRenderBackend backend,
-        final Texture2D textureAtlas,
+        final TextureDefault2D textureAtlas,
         final int x,
         final int y) {
       backend.modifyTexture(textureAtlas, image, x, y);
@@ -408,12 +408,12 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
    * @author void
    */
   private static class ModifyTexture {
-    private Texture2D atlas;
+    private TextureDefault2D atlas;
     private com.jme3.texture.Image image;
     private int x;
     private int y;
 
-    private ModifyTexture(final Texture2D atlas, final com.jme3.texture.Image image, final int x, final int y) {
+    private ModifyTexture(final TextureDefault2D atlas, final com.jme3.texture.Image image, final int x, final int y) {
       this.atlas = atlas;
       this.image = image;
       this.x = x;
@@ -466,7 +466,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
     // current blend mode
     private BlendMode blendMode = BlendMode.BLEND;
-    private Texture2D texture;
+    private TextureDefault2D texture;
     private Material material;
 
     public Batch() {
@@ -494,7 +494,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
       renderState.setDepthWrite(false);
     }
 
-    public void begin(final BlendMode blendMode, final Texture2D texture) {
+    public void begin(final BlendMode blendMode, final TextureDefault2D texture) {
       this.blendMode = blendMode;
       this.texture = texture;
 

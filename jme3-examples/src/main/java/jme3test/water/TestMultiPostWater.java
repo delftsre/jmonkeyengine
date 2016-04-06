@@ -18,7 +18,7 @@ import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class TestMultiPostWater extends SimpleApplication {
         water.setWaveScale(0.003f);
         water.setMaxAmplitude(2f);
         water.setFoamExistence(new Vector3f(1f, 4, 0.5f));
-        water.setFoamTexture((Texture2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
+        water.setFoamTexture((TextureDefault2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
         water.setRefractionStrength(0.2f);
         water.setWaterHeight(WATER_HEIGHT);
         fpp.addFilter(water);
@@ -121,7 +121,7 @@ public class TestMultiPostWater extends SimpleApplication {
         water3.setWaveScale(0.003f);
         water3.setMaxAmplitude(2f);
         water3.setFoamExistence(new Vector3f(1f, 4, 0.5f));
-        water3.setFoamTexture((Texture2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
+        water3.setFoamTexture((TextureDefault2D) assetManager.loadTexture("Common/MatDefs/Water/Textures/foam2.jpg"));
         water3.setRefractionStrength(0.2f);
         water3.setDeepWaterColor(ColorRGBA.Red);
         water3.setWaterColor(ColorRGBA.Red.mult(2.0f));

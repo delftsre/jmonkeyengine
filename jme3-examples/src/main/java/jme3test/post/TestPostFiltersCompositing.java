@@ -44,7 +44,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.SkyFactory;
 
 /**
@@ -77,7 +77,7 @@ public class TestPostFiltersCompositing extends SimpleApplication {
 
         //creating a frame buffer for the mainviewport
         FrameBuffer mainVPFrameBuffer = new FrameBuffer(cam.getWidth(), cam.getHeight(), 1);
-        Texture2D mainVPTexture = new Texture2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
+        TextureDefault2D mainVPTexture = new TextureDefault2D(cam.getWidth(), cam.getHeight(), Image.Format.RGBA8);
         mainVPFrameBuffer.addColorTexture(mainVPTexture);
         mainVPFrameBuffer.setDepthBuffer(Image.Format.Depth);
         viewPort.setOutputFrameBuffer(mainVPFrameBuffer);     

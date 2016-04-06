@@ -32,6 +32,7 @@
 
 package com.jme3.system.lwjgl;
 
+import com.jme3.input.Input;
 import com.jme3.input.lwjgl.GlfwJoystickInput;
 import com.jme3.input.lwjgl.GlfwKeyInput;
 import com.jme3.input.lwjgl.GlfwMouseInput;
@@ -48,6 +49,9 @@ import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.EXTFramebufferMultisample;
 import org.lwjgl.opengl.GLCapabilities;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,6 +76,7 @@ public abstract class LwjglContext implements JmeContext {
 
     protected AppSettings settings = new AppSettings(true);
     protected Renderer renderer;
+    protected List<Input> inputs;
     protected GlfwKeyInput keyInput;
     protected GlfwMouseInput mouseInput;
     protected GlfwJoystickInput joyInput;
@@ -114,6 +119,20 @@ public abstract class LwjglContext implements JmeContext {
             }
         }
         return samples;
+    }
+
+    public java.util.List<Input> getInput() {
+        if(inputs == null) {
+            inputs = new ArrayList<>();
+            inputs.add(getKeyInput());
+            inputs.add(getMouseInput());
+            if(!settings.getBoolean("DisableJoysticks")) {
+                inputs.add(getJoyInput());
+            }
+            inputs.add(getTouchInput());
+            inputs.removeAll(Collections.singleton(null));
+        }
+        return inputs;
     }
 
     protected void loadNatives() {

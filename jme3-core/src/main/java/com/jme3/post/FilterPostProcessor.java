@@ -39,7 +39,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 import com.jme3.util.SafeArrayList;
 import java.io.IOException;
@@ -62,8 +62,8 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
     private FrameBuffer renderFrameBufferMS;
     private int numSamples = 1;
     private FrameBuffer renderFrameBuffer;
-    private Texture2D filterTexture;
-    private Texture2D depthTexture;
+    private TextureDefault2D filterTexture;
+    private TextureDefault2D depthTexture;
     private SafeArrayList<Filter> filters = new SafeArrayList<Filter>(Filter.class);
     private AssetManager assetManager;        
     private Picture fsQuad;
@@ -167,7 +167,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
         filter.setProcessor(this);
         if (filter.isRequiresDepthTexture()) {
             if (!computeDepth && renderFrameBuffer != null) {
-                depthTexture = new Texture2D(width, height, Format.Depth24);
+                depthTexture = new TextureDefault2D(width, height, Format.Depth24);
                 renderFrameBuffer.setDepthTexture(depthTexture);
             }
             computeDepth = true;
@@ -239,7 +239,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
      * @param sceneFb 
      */
     private void renderFilterChain(Renderer r, FrameBuffer sceneFb) {
-        Texture2D tex = filterTexture;
+        TextureDefault2D tex = filterTexture;
         FrameBuffer buff = sceneFb;
         boolean msDepth = depthTexture != null && depthTexture.getImage().getMultiSamples() > 1;
         for (int i = 0; i < filters.size(); i++) {
@@ -458,8 +458,8 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
         if (numSamples > 1 && caps.contains(Caps.FrameBufferMultisample)) {
             renderFrameBufferMS = new FrameBuffer(width, height, numSamples);
             if (caps.contains(Caps.OpenGL32)) {
-                Texture2D msColor = new Texture2D(width, height, numSamples, fbFormat);
-                Texture2D msDepth = new Texture2D(width, height, numSamples, Format.Depth);
+                TextureDefault2D msColor = new TextureDefault2D(width, height, numSamples, fbFormat);
+                TextureDefault2D msDepth = new TextureDefault2D(width, height, numSamples, Format.Depth);
                 renderFrameBufferMS.setDepthTexture(msDepth);
                 renderFrameBufferMS.setColorTexture(msColor);
                 filterTexture = msColor;
@@ -473,7 +473,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
         if (numSamples <= 1 || !caps.contains(Caps.OpenGL32)) {
             renderFrameBuffer = new FrameBuffer(width, height, 1);
             renderFrameBuffer.setDepthBuffer(Format.Depth);
-            filterTexture = new Texture2D(width, height, fbFormat);
+            filterTexture = new TextureDefault2D(width, height, fbFormat);
             renderFrameBuffer.setColorTexture(filterTexture);
         }
 
@@ -542,7 +542,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
      * returns the depth texture of the scene
      * @return the depth texture
      */
-    public Texture2D getDepthTexture() {
+    public TextureDefault2D getDepthTexture() {
         return depthTexture;
     }
 
@@ -551,7 +551,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
      * returns the rendered texture of the scene
      * @return the filter texture
      */
-    public Texture2D getFilterTexture() {
+    public TextureDefault2D getFilterTexture() {
         return filterTexture;
     }
     

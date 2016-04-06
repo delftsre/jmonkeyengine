@@ -40,7 +40,7 @@ import com.jme3.material.MaterialList;
 import com.jme3.scene.plugins.ogre.MaterialLoader;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.PlaceholderAssets;
 import com.jme3.util.blockparser.Statement;
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class MaterialExtensionLoader {
                 tex.setWrap(WrapMode.Repeat);
             } catch (AssetNotFoundException ex){
                 logger.log(Level.WARNING, "Cannot locate {0} for material {1}", new Object[]{texKey, key});
-                tex = new Texture2D( PlaceholderAssets.getPlaceholderImage(assetManager) );
+                tex = new TextureDefault2D( PlaceholderAssets.getPlaceholderImage(assetManager) );
                 tex.setWrap(WrapMode.Repeat);
                 tex.setKey(texKey);
             }

@@ -42,7 +42,7 @@ import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture.WrapAxis;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.PlaceholderAssets;
 
 public class FbxTexture extends FbxObject<Texture> {
@@ -82,7 +82,7 @@ public class FbxTexture extends FbxObject<Texture> {
         if (image == null) {
             image = PlaceholderAssets.getPlaceholderImage(assetManager);
         }
-        Texture2D tex = new Texture2D(image);
+        TextureDefault2D tex = new TextureDefault2D(image);
         if (key != null) {
             tex.setKey(key);
             tex.setName(key.getName());

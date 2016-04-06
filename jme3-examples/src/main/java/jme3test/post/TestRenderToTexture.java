@@ -48,7 +48,7 @@ import com.jme3.scene.shape.Box;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 
 /**
  * This test renders a scene to a texture, then displays the texture on a cube.
@@ -81,7 +81,7 @@ public class TestRenderToTexture extends SimpleApplication implements ActionList
         offCamera.lookAt(new Vector3f(0f, 0f, 0f), Vector3f.UNIT_Y);
 
         //setup framebuffer's texture
-        Texture2D offTex = new Texture2D(512, 512, Format.RGBA8);
+        TextureDefault2D offTex = new TextureDefault2D(512, 512, Format.RGBA8);
         offTex.setMinFilter(Texture.MinFilter.Trilinear);
         offTex.setMagFilter(Texture.MagFilter.Bilinear);
 

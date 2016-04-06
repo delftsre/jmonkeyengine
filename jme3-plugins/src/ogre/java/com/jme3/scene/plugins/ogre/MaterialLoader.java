@@ -41,7 +41,7 @@ import com.jme3.scene.plugins.ogre.matext.MaterialExtensionSet;
 import com.jme3.scene.plugins.ogre.matext.OgreMaterialKey;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.PlaceholderAssets;
 import com.jme3.util.blockparser.BlockLanguageParser;
 import com.jme3.util.blockparser.Statement;
@@ -203,7 +203,7 @@ public class MaterialLoader implements AssetLoader {
             texName = null;
         }
 
-        textures[texUnit] = new Texture2D();
+        textures[texUnit] = new TextureDefault2D();
         for (Statement texUnitStat : statement.getContents()){
             readTextureUnitStatement(texUnitStat);
         }

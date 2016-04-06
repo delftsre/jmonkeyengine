@@ -44,7 +44,7 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
 import java.lang.reflect.InvocationTargetException;
@@ -403,7 +403,7 @@ public class TextureAtlas {
         byte[] image = images.get(mapName);
         if (image != null) {
             //TODO check if color space shouldn't be sRGB
-            Texture2D tex = new Texture2D(new Image(format, atlasWidth, atlasHeight, BufferUtils.createByteBuffer(image), null, ColorSpace.Linear));
+            TextureDefault2D tex = new TextureDefault2D(new Image(format, atlasWidth, atlasHeight, BufferUtils.createByteBuffer(image), null, ColorSpace.Linear));
             tex.setMagFilter(Texture.MagFilter.Bilinear);
             tex.setMinFilter(Texture.MinFilter.BilinearNearestMipMap);
             tex.setWrap(Texture.WrapMode.EdgeClamp);

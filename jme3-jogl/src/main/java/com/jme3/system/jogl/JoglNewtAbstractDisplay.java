@@ -32,6 +32,7 @@
 
 package com.jme3.system.jogl;
 
+import com.jme3.input.Input;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.TouchInput;
@@ -43,6 +44,8 @@ import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
@@ -141,7 +144,8 @@ public abstract class JoglNewtAbstractDisplay extends JoglContext implements GLE
         }
         return mouseInput;
     }
-    
+
+    @Override
     public TouchInput getTouchInput() {
         return null;
     }

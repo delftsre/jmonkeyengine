@@ -34,14 +34,15 @@ package com.jme3.texture.image;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.texture.Image;
+
 import java.nio.ByteBuffer;
 
 public class MipMapImageRaster extends ImageRaster {
 
-    private final int[] components = new int[4];
+    protected final int[] components = new int[4];
     private ByteBuffer buffer;
-    private final Image image;
-    private final ImageCodec codec;
+    protected final Image image;
+    protected final ImageCodec codec;
     private int width[];
     private int height[];
     private final byte[] temp;
@@ -49,7 +50,7 @@ public class MipMapImageRaster extends ImageRaster {
     private int mipLevel;
     private int[] offsets;
 
-    private void rangeCheck(int x, int y) {
+    protected void rangeCheck(int x, int y) {
         if (x < 0 || y < 0 || x >= width[mipLevel] || y >= height[mipLevel]) {
             throw new IllegalArgumentException("x and y must be inside the image dimensions");
         }
@@ -99,36 +100,18 @@ public class MipMapImageRaster extends ImageRaster {
     @Override
     public void setPixel(int x, int y, ColorRGBA color) {
         rangeCheck(x, y);
+        grayscaleCheck(color, codec);
+        setComponents(color, codec, components);
+        writeComponents(x, y);
+        setImageUpdateNeeded(image);
+    }
 
-        // Check flags for grayscale
-        if (codec.isGray) {
-            float gray = color.r * 0.27f + color.g * 0.67f + color.b * 0.06f;
-            color = new ColorRGBA(gray, gray, gray, color.a);
-        }
-
-        switch (codec.type) {
-            case ImageCodec.FLAG_F16:
-                components[0] = (int) FastMath.convertFloatToHalf(color.a);
-                components[1] = (int) FastMath.convertFloatToHalf(color.r);
-                components[2] = (int) FastMath.convertFloatToHalf(color.g);
-                components[3] = (int) FastMath.convertFloatToHalf(color.b);
-                break;
-            case ImageCodec.FLAG_F32:
-                components[0] = (int) Float.floatToIntBits(color.a);
-                components[1] = (int) Float.floatToIntBits(color.r);
-                components[2] = (int) Float.floatToIntBits(color.g);
-                components[3] = (int) Float.floatToIntBits(color.b);
-                break;
-            case 0:
-                // Convert color to bits by multiplying by size
-                components[0] = Math.min((int) (color.a * codec.maxAlpha + 0.5f), codec.maxAlpha);
-                components[1] = Math.min((int) (color.r * codec.maxRed + 0.5f), codec.maxRed);
-                components[2] = Math.min((int) (color.g * codec.maxGreen + 0.5f), codec.maxGreen);
-                components[3] = Math.min((int) (color.b * codec.maxBlue + 0.5f), codec.maxBlue);
-                break;
-        }
+    protected void writeComponents(int x, int y) {
         codec.writeComponents(getBuffer(), x, y, width[mipLevel], offsets[mipLevel], components, temp);
-        image.setUpdateNeeded();
+    }
+
+    protected void readComponents(int x, int y) {
+        codec.readComponents(getBuffer(), x, y, width[mipLevel], offsets[mipLevel], components, temp);
     }
 
     private ByteBuffer getBuffer() {
@@ -141,48 +124,12 @@ public class MipMapImageRaster extends ImageRaster {
     @Override
     public ColorRGBA getPixel(int x, int y, ColorRGBA store) {
         rangeCheck(x, y);
-
-        codec.readComponents(getBuffer(), x, y, width[mipLevel], offsets[mipLevel], components, temp);
+        readComponents(x, y);
         if (store == null) {
             store = new ColorRGBA();
         }
-        switch (codec.type) {
-            case ImageCodec.FLAG_F16:
-                store.set(FastMath.convertHalfToFloat((short) components[1]),
-                        FastMath.convertHalfToFloat((short) components[2]),
-                        FastMath.convertHalfToFloat((short) components[3]),
-                        FastMath.convertHalfToFloat((short) components[0]));
-                break;
-            case ImageCodec.FLAG_F32:
-                store.set(Float.intBitsToFloat((int) components[1]),
-                        Float.intBitsToFloat((int) components[2]),
-                        Float.intBitsToFloat((int) components[3]),
-                        Float.intBitsToFloat((int) components[0]));
-                break;
-            case 0:
-                // Convert to float and divide by bitsize to get into range 0.0 - 1.0.
-                store.set((float) components[1] / codec.maxRed,
-                        (float) components[2] / codec.maxGreen,
-                        (float) components[3] / codec.maxBlue,
-                        (float) components[0] / codec.maxAlpha);
-                break;
-        }
-        if (codec.isGray) {
-            store.g = store.b = store.r;
-        } else {
-            if (codec.maxRed == 0) {
-                store.r = 1;
-            }
-            if (codec.maxGreen == 0) {
-                store.g = 1;
-            }
-            if (codec.maxBlue == 0) {
-                store.b = 1;
-            }
-            if (codec.maxAlpha == 0) {
-                store.a = 1;
-            }
-        }
+        setStoreComponents(store, codec, components);
+        setStoreRGBA(store, codec);
         return store;
     }
 

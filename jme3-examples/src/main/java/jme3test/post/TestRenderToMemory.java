@@ -48,9 +48,8 @@ import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext.Type;
 import com.jme3.texture.FrameBuffer;
-import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.Screenshots;
 import java.awt.Color;
@@ -77,7 +76,7 @@ public class TestRenderToMemory extends SimpleApplication implements SceneProces
 
     private FrameBuffer offBuffer;
     private ViewPort offView;
-    private Texture2D offTex;
+    private TextureDefault2D offTex;
     private Camera offCamera;
     private ImageDisplay display;
 
@@ -190,7 +189,7 @@ public class TestRenderToMemory extends SimpleApplication implements SceneProces
         offCamera.lookAt(new Vector3f(0f, 0f, 0f), Vector3f.UNIT_Y);
 
         //setup framebuffer's texture
-//        offTex = new Texture2D(width, height, Format.RGBA8);
+//        offTex = new TextureDefault2D(width, height, Format.RGBA8);
 
         //setup framebuffer to use renderbuffer
         // this is faster for gpu -> cpu copies

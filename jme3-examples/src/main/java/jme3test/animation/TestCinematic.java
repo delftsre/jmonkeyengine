@@ -41,6 +41,7 @@ import com.jme3.cinematic.PlayState;
 import com.jme3.cinematic.events.*;
 import com.jme3.font.BitmapText;
 import com.jme3.input.ChaseCamera;
+import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
@@ -245,9 +246,9 @@ public class TestCinematic extends SimpleApplication {
     }
 
     private void initInputs() {
-        inputManager.addMapping("togglePause", new KeyTrigger(keyInput.KEY_RETURN));
-        inputManager.addMapping("navFwd", new KeyTrigger(keyInput.KEY_RIGHT));
-        inputManager.addMapping("navBack", new KeyTrigger(keyInput.KEY_LEFT));
+        inputManager.addMapping("togglePause", new KeyTrigger(KeyInput.KEY_RETURN));
+        inputManager.addMapping("navFwd", new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addMapping("navBack", new KeyTrigger(KeyInput.KEY_LEFT));
         ActionListener acl = new ActionListener() {
 
             public void onAction(String name, boolean keyPressed, float tpf) {

@@ -43,7 +43,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.shader.Shader;
 import com.jme3.shader.VarType;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.PlaceholderAssets;
 import com.jme3.util.blockparser.BlockLanguageParser;
@@ -263,7 +263,7 @@ public class J3MLoader implements AssetLoader {
         }
 
         if (texture == null){
-            texture = new Texture2D(PlaceholderAssets.getPlaceholderImage(assetManager));
+            texture = new TextureDefault2D(PlaceholderAssets.getPlaceholderImage(assetManager));
             texture.setKey(textureKey);
             texture.setName(textureKey.getName());
         }

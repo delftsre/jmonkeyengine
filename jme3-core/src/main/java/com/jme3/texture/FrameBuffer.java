@@ -319,7 +319,7 @@ public class FrameBuffer extends NativeObject {
      * 
      * @param tex The color texture to set.
      */
-    public void setColorTexture(Texture2D tex){
+    public void setColorTexture(TextureDefault2D tex){
         clearColorTargets();
         addColorTexture(tex);
     }
@@ -354,7 +354,7 @@ public class FrameBuffer extends NativeObject {
      * 
      * @param tex The texture to add.
      */
-    public void addColorTexture(Texture2D tex) {
+    public void addColorTexture(TextureDefault2D tex) {
         if (id != -1)
             throw new UnsupportedOperationException("FrameBuffer already initialized.");
 
@@ -400,7 +400,7 @@ public class FrameBuffer extends NativeObject {
      * 
      * @param tex The color texture to set.
      */
-    public void setDepthTexture(Texture2D tex){
+    public void setDepthTexture(TextureDefault2D tex){
         if (id != -1)
             throw new UnsupportedOperationException("FrameBuffer already initialized.");
 

@@ -16,8 +16,9 @@ import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.texture.image.ColorSpace;
+import com.jme3.texture.image.DefaultImageRaster;
 import com.jme3.texture.image.ImageRaster;
 import com.jme3.util.BufferUtils;
 import java.nio.ByteBuffer;
@@ -30,8 +31,8 @@ public class TestImageRaster extends SimpleApplication {
         ByteBuffer data = BufferUtils.createByteBuffer( (int)Math.ceil(newFormat.getBitsPerPixel() / 8.0) * width * height);
         Image convertedImage = new Image(newFormat, width, height, data,null, image.getColorSpace());
         
-        ImageRaster sourceReader = ImageRaster.create(image);
-        ImageRaster targetWriter = ImageRaster.create(convertedImage);
+        ImageRaster sourceReader = DefaultImageRaster.create(image);
+        ImageRaster targetWriter = DefaultImageRaster.create(convertedImage);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 ColorRGBA color = sourceReader.getPixel(x, y);
@@ -43,7 +44,7 @@ public class TestImageRaster extends SimpleApplication {
     }
     
     private void convertAndPutImage(Image image, float posX, float posY) {
-        Texture tex = new Texture2D(image);
+        Texture tex = new TextureDefault2D(image);
         tex.setMagFilter(MagFilter.Nearest);
         tex.setMinFilter(MinFilter.NearestNoMipMaps);
         tex.setAnisotropicFilter(16);
@@ -69,7 +70,7 @@ public class TestImageRaster extends SimpleApplication {
     private Image createTestImage() {
         Image testImage = new Image(Format.BGR8, 4, 3, BufferUtils.createByteBuffer(4 * 4 * 3), null, ColorSpace.Linear);
         
-        ImageRaster io = ImageRaster.create(testImage);
+        ImageRaster io = DefaultImageRaster.create(testImage);
         io.setPixel(0, 0, ColorRGBA.Black);
         io.setPixel(1, 0, ColorRGBA.Gray);
         io.setPixel(2, 0, ColorRGBA.White);

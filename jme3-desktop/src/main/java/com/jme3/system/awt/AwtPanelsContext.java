@@ -31,15 +31,14 @@
  */
 package com.jme3.system.awt;
 
-import com.jme3.input.JoyInput;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.TouchInput;
+import com.jme3.input.*;
 import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.awt.AwtMouseInput;
 import com.jme3.renderer.Renderer;
 import com.jme3.system.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AwtPanelsContext implements JmeContext {
 
@@ -49,6 +48,7 @@ public class AwtPanelsContext implements JmeContext {
     protected ArrayList<AwtPanel> panels = new ArrayList<AwtPanel>();
     protected AwtPanel inputSource;
 
+    protected List<Input> inputs;
     protected AwtMouseInput mouseInput = new AwtMouseInput();
     protected AwtKeyInput keyInput = new AwtKeyInput();
 
@@ -131,6 +131,20 @@ public class AwtPanelsContext implements JmeContext {
 
     public TouchInput getTouchInput() {
         return null;
+    }
+
+    public java.util.List<Input> getInput() {
+        if(inputs == null) {
+            inputs = new ArrayList<>();
+            inputs.add(getKeyInput());
+            inputs.add(getMouseInput());
+            if(!settings.getBoolean("DisableJoysticks")) {
+                inputs.add(getJoyInput());
+            }
+            inputs.add(getTouchInput());
+            inputs.removeAll(Collections.singleton(null));
+        }
+        return inputs;
     }
 
     public Timer getTimer() {

@@ -31,6 +31,7 @@
  */
 package com.jme3.system.lwjgl;
 
+import com.jme3.input.Input;
 import com.jme3.input.lwjgl.JInputJoyInput;
 import com.jme3.input.lwjgl.LwjglKeyInput;
 import com.jme3.input.lwjgl.LwjglMouseInput;
@@ -54,6 +55,9 @@ import com.jme3.renderer.opengl.GLTracer;
 import com.jme3.system.*;
 import java.io.File;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,6 +80,7 @@ public abstract class LwjglContext implements JmeContext {
 
     protected AppSettings settings = new AppSettings(true);
     protected Renderer renderer;
+    protected List<Input> inputs;
     protected LwjglKeyInput keyInput;
     protected LwjglMouseInput mouseInput;
     protected JInputJoyInput joyInput;
@@ -112,6 +117,20 @@ public abstract class LwjglContext implements JmeContext {
         } else {
             return null;
         }
+    }
+
+    public java.util.List<Input> getInput() {
+        if(inputs == null) {
+            inputs = new ArrayList<>();
+            inputs.add(getKeyInput());
+            inputs.add(getMouseInput());
+            if(!settings.getBoolean("DisableJoysticks")) {
+                inputs.add(getJoyInput());
+            }
+            inputs.add(getTouchInput());
+            inputs.removeAll(Collections.singleton(null));
+        }
+        return inputs;
     }
 
     protected int determineMaxSamples(int requestedSamples) {

@@ -42,7 +42,8 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -82,8 +83,8 @@ public abstract class Filter implements Savable {
     public class Pass {
 
         protected FrameBuffer renderFrameBuffer;
-        protected Texture2D renderedTexture;
-        protected Texture2D depthTexture;
+        protected TextureDefault2D renderedTexture;
+        protected TextureDefault2D depthTexture;
         protected Material passMaterial;
 
         /**
@@ -99,18 +100,18 @@ public abstract class Filter implements Savable {
             Collection<Caps> caps = renderer.getCaps();
             if (numSamples > 1 && caps.contains(Caps.FrameBufferMultisample) && caps.contains(Caps.OpenGL31)) {
                 renderFrameBuffer = new FrameBuffer(width, height, numSamples);                
-                renderedTexture = new Texture2D(width, height, numSamples, textureFormat);
+                renderedTexture = new TextureDefault2D(width, height, numSamples, textureFormat);
                 renderFrameBuffer.setDepthBuffer(depthBufferFormat);
                 if (renderDepth) {
-                    depthTexture = new Texture2D(width, height, numSamples, depthBufferFormat);
+                    depthTexture = new TextureDefault2D(width, height, numSamples, depthBufferFormat);
                     renderFrameBuffer.setDepthTexture(depthTexture);
                 }
             } else {
                 renderFrameBuffer = new FrameBuffer(width, height, 1);
-                renderedTexture = new Texture2D(width, height, textureFormat);
+                renderedTexture = new TextureDefault2D(width, height, textureFormat);
                 renderFrameBuffer.setDepthBuffer(depthBufferFormat);
                 if (renderDepth) {
-                    depthTexture = new Texture2D(width, height, depthBufferFormat);
+                    depthTexture = new TextureDefault2D(width, height, depthBufferFormat);
                     renderFrameBuffer.setDepthTexture(depthTexture);
                 }
             }
@@ -170,15 +171,15 @@ public abstract class Filter implements Savable {
             this.renderFrameBuffer = renderFrameBuffer;
         }
 
-        public Texture2D getDepthTexture() {
+        public TextureDefault2D getDepthTexture() {
             return depthTexture;
         }
 
-        public Texture2D getRenderedTexture() {
+        public TextureDefault2D getRenderedTexture() {
             return renderedTexture;
         }
 
-        public void setRenderedTexture(Texture2D renderedTexture) {
+        public void setRenderedTexture(TextureDefault2D renderedTexture) {
             this.renderedTexture = renderedTexture;
         }
 
@@ -379,7 +380,7 @@ public abstract class Filter implements Savable {
      * returns the rendered texture of this filter
      * @return
      */
-    protected Texture2D getRenderedTexture() {
+    protected TextureDefault2D getRenderedTexture() {
         return defaultPass.renderedTexture;
     }
 
@@ -387,7 +388,7 @@ public abstract class Filter implements Savable {
      * sets the rendered texture of this filter
      * @param renderedTexture
      */
-    protected void setRenderedTexture(Texture2D renderedTexture) {
+    protected void setRenderedTexture(TextureDefault2D renderedTexture) {
         this.defaultPass.renderedTexture = renderedTexture;
     }
 

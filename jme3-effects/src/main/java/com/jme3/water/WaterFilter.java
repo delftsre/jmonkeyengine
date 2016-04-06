@@ -41,7 +41,6 @@ import com.jme3.light.Light;
 import com.jme3.material.Material;
 import com.jme3.math.*;
 import com.jme3.post.Filter;
-import com.jme3.post.Filter.Pass;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
@@ -50,8 +49,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.texture.Texture2D;
-import com.jme3.util.TempVars;
+import com.jme3.texture.TextureDefault2D;
+
 import java.io.IOException;
 
 /**
@@ -67,10 +66,10 @@ public class WaterFilter extends Filter {
     private Pass reflectionPass;
     protected Spatial reflectionScene;
     protected ViewPort reflectionView;
-    private Texture2D normalTexture;
-    private Texture2D foamTexture;
-    private Texture2D causticsTexture;
-    private Texture2D heightTexture;
+    private TextureDefault2D normalTexture;
+    private TextureDefault2D foamTexture;
+    private TextureDefault2D causticsTexture;
+    private TextureDefault2D heightTexture;
     private Camera reflectionCam;
     protected Ray ray = new Ray();
     private Vector3f targetLocation = new Vector3f();
@@ -227,14 +226,14 @@ public class WaterFilter extends Filter {
         reflectionProcessor.setReflectionClipPlane(plane);
         reflectionView.addProcessor(reflectionProcessor);
 
-        normalTexture = (Texture2D) manager.loadTexture("Common/MatDefs/Water/Textures/water_normalmap.dds");
+        normalTexture = (TextureDefault2D) manager.loadTexture("Common/MatDefs/Water/Textures/water_normalmap.dds");
         if (foamTexture == null) {
-            foamTexture = (Texture2D) manager.loadTexture("Common/MatDefs/Water/Textures/foam.jpg");
+            foamTexture = (TextureDefault2D) manager.loadTexture("Common/MatDefs/Water/Textures/foam.jpg");
         }
         if (causticsTexture == null) {
-            causticsTexture = (Texture2D) manager.loadTexture("Common/MatDefs/Water/Textures/caustics.jpg");
+            causticsTexture = (TextureDefault2D) manager.loadTexture("Common/MatDefs/Water/Textures/caustics.jpg");
         }
-        heightTexture = (Texture2D) manager.loadTexture("Common/MatDefs/Water/Textures/heightmap.jpg");
+        heightTexture = (TextureDefault2D) manager.loadTexture("Common/MatDefs/Water/Textures/heightmap.jpg");
 
         normalTexture.setWrap(WrapMode.Repeat);
         foamTexture.setWrap(WrapMode.Repeat);
@@ -689,7 +688,7 @@ public class WaterFilter extends Filter {
      * Sets the foam texture
      * @param foamTexture
      */
-    public void setFoamTexture(Texture2D foamTexture) {
+    public void setFoamTexture(TextureDefault2D foamTexture) {
         this.foamTexture = foamTexture;
         foamTexture.setWrap(WrapMode.Repeat);
         if (material != null) {
@@ -701,7 +700,7 @@ public class WaterFilter extends Filter {
      * Sets the height texture
      * @param heightTexture
      */
-    public void setHeightTexture(Texture2D heightTexture) {
+    public void setHeightTexture(TextureDefault2D heightTexture) {
         this.heightTexture = heightTexture;
         heightTexture.setWrap(WrapMode.Repeat);
         if (material != null) {
@@ -713,7 +712,7 @@ public class WaterFilter extends Filter {
      * Sets the normal Texture
      * @param normalTexture
      */
-    public void setNormalTexture(Texture2D normalTexture) {
+    public void setNormalTexture(TextureDefault2D normalTexture) {
         this.normalTexture = normalTexture;
         normalTexture.setWrap(WrapMode.Repeat);
         if (material != null) {
@@ -871,7 +870,7 @@ public class WaterFilter extends Filter {
      * sets the texture to use to render caustics on the ground underwater
      * @param causticsTexture 
      */
-    public void setCausticsTexture(Texture2D causticsTexture) {
+    public void setCausticsTexture(TextureDefault2D causticsTexture) {
         this.causticsTexture = causticsTexture;
         if (material != null) {
             material.setTexture("causticsMap", causticsTexture);

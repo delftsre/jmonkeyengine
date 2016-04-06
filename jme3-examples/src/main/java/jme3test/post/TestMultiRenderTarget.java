@@ -47,13 +47,13 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
-import com.jme3.texture.Texture2D;
+import com.jme3.texture.TextureDefault2D;
 import com.jme3.ui.Picture;
 
 public class TestMultiRenderTarget extends SimpleApplication implements SceneProcessor {
 
     private FrameBuffer fb;
-    private Texture2D diffuseData, normalData, specularData, depthData;
+    private TextureDefault2D diffuseData, normalData, specularData, depthData;
     private Picture display1, display2, display3, display4;
     
     private Picture display;
@@ -133,10 +133,10 @@ public class TestMultiRenderTarget extends SimpleApplication implements ScenePro
     }
 
     public void reshape(ViewPort vp, int w, int h) {
-        diffuseData  = new Texture2D(w, h, Format.RGBA8);
-        normalData   = new Texture2D(w, h, Format.RGBA8);
-        specularData = new Texture2D(w, h, Format.RGBA8);
-        depthData    = new Texture2D(w, h, Format.Depth);
+        diffuseData  = new TextureDefault2D(w, h, Format.RGBA8);
+        normalData   = new TextureDefault2D(w, h, Format.RGBA8);
+        specularData = new TextureDefault2D(w, h, Format.RGBA8);
+        depthData    = new TextureDefault2D(w, h, Format.Depth);
 
         mat = new Material(assetManager, "Common/MatDefs/Light/Deferred.j3md");
         mat.setTexture("DiffuseData",  diffuseData);

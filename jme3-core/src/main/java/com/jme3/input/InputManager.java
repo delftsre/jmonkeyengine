@@ -42,6 +42,7 @@ import com.jme3.util.IntMap.Entry;
 import com.jme3.util.SafeArrayList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,6 +90,7 @@ public class InputManager implements RawInputListener {
     private final MouseInput mouse;
     private final JoyInput joystick;
     private final TouchInput touch;
+    private final List<Input> inputs;
     private float frameTPF;
     private long lastLastUpdateTime = 0;
     private long lastUpdateTime = 0;
@@ -123,31 +125,39 @@ public class InputManager implements RawInputListener {
      *
      * <p>This should only be called internally in {@link Application}.
      *
-     * @param mouse
-     * @param keys
-     * @param joystick
-     * @param touch
+     * @param inputs
      * @throws IllegalArgumentException If either mouseInput or keyInput are null.
      */
-    public InputManager(MouseInput mouse, KeyInput keys, JoyInput joystick, TouchInput touch) {
+    public InputManager(List<Input> inputs) {
+        KeyInput keys = null;
+        MouseInput mouse = null;
+        JoyInput joystick = null;
+        TouchInput touch = null;
+
+        for (Input input : inputs) {
+            input.initialize();
+            input.setInputListener(this);
+            if(input instanceof MouseInput) {
+                mouse = (MouseInput) input;
+            } else if (input instanceof KeyInput) {
+                keys = (KeyInput) input;
+            } else if (input instanceof JoyInput) {
+                joystick = (JoyInput) input;
+                joysticks = joystick.loadJoysticks(this);
+            } else if (input instanceof TouchInput) {
+                touch = (TouchInput) input;
+            }
+        }
+
         if (keys == null || mouse == null) {
             throw new IllegalArgumentException("Mouse or keyboard cannot be null");
         }
 
+        this.inputs = inputs;
         this.keys = keys;
         this.mouse = mouse;
         this.joystick = joystick;
         this.touch = touch;
-
-        keys.setInputListener(this);
-        mouse.setInputListener(this);
-        if (joystick != null) {
-            joystick.setInputListener(this);
-            joysticks = joystick.loadJoysticks(this);
-        }
-        if (touch != null) {
-            touch.setInputListener(this);
-        }
 
         firstTime = keys.getInputTimeNanos();
     }
@@ -893,13 +903,8 @@ public class InputManager implements RawInputListener {
 
         eventsPermitted = true;
 
-        keys.update();
-        mouse.update();
-        if (joystick != null) {
-            joystick.update();
-        }
-        if (touch != null) {
-            touch.update();
+        for(Input input : inputs){
+            input.update();
         }
 
         eventsPermitted = false;
@@ -945,5 +950,31 @@ public class InputManager implements RawInputListener {
         }
         cursorPos.set(evt.getX(), evt.getY());
         inputQueue.add(evt);
+    }
+
+    public void destroyInput() {
+        for(Input input : inputs){
+            input.destroy();
+        }
+    }
+
+    public List<Input> getInputs() {
+        return inputs;
+    }
+
+    public TouchInput getTouch() {
+        return touch;
+    }
+
+    public JoyInput getJoystick() {
+        return joystick;
+    }
+
+    public MouseInput getMouse() {
+        return mouse;
+    }
+
+    public KeyInput getKeys() {
+        return keys;
     }
 }

@@ -34,14 +34,15 @@ package com.jme3.texture.image;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.texture.Image;
+
 import java.nio.ByteBuffer;
 
 public class DefaultImageRaster extends ImageRaster {
-    
-    private final int[] components = new int[4];
+
+    protected final int[] components = new int[4];
     private ByteBuffer buffer;
-    private final Image image;
-    private final ImageCodec codec;
+    protected final Image image;
+    protected final ImageCodec codec;
     private final int width;
     private final int height;
     private final int offset;
@@ -49,13 +50,47 @@ public class DefaultImageRaster extends ImageRaster {
     private final boolean convertToLinear;
     private int slice;
     
-    private void rangeCheck(int x, int y) {
+
+
+    protected void rangeCheck(int x, int y) {
         if (x < 0 || y < 0 || x >= width || y >= height) {
             throw new IllegalArgumentException("x and y must be inside the image dimensions:" 
                                                 + x + ", " + y + " in:" + width + ", " + height);
         }
     }
-    
+
+    /**
+     * Create new image reader / writer.
+     *
+     * @param image The image to read / write to.
+     * @param slice Which slice to use. Only applies to 3D images, 2D image
+     * arrays or cubemaps.
+     * @param mipMapLevel The mipmap level to read / write to. To access levels
+     * other than 0, the image must have
+     * {@link Image#setMipMapSizes(int[]) mipmap sizes} set.
+     * @param convertToLinear If true, the application expects read or written
+     * colors to be in linear color space (<code>ImageRaster</code> will
+     * automatically perform a conversion as needed). If false, the application expects
+     * colors to be in the image's native {@link Image#getColorSpace() color space}.
+     * @return An ImageRaster to read / write to the image.
+     */
+    public static DefaultImageRaster create(Image image, int slice, int mipMapLevel, boolean convertToLinear) {
+        return new DefaultImageRaster(image, slice, mipMapLevel, convertToLinear);
+    }
+
+    /**
+     * Create new image reader / writer for 2D images.
+     *
+     * @param image The image to read / write to.
+     * @return An ImageRaster to read / write to the image.
+     */
+    public static DefaultImageRaster create(Image image) {
+        if (image.getData().size() > 1) {
+            throw new IllegalStateException("Use constructor that takes slices argument to read from multislice image");
+        }
+        return new DefaultImageRaster(image, 0, 0, false);
+    }
+
     public DefaultImageRaster(Image image, int slice, int mipMapLevel, boolean convertToLinear) {
         int[] mipMapSizes = image.getMipMapSizes();
         int availableMips = mipMapSizes != null ? mipMapSizes.length : 1;
@@ -115,42 +150,32 @@ public class DefaultImageRaster extends ImageRaster {
     @Override
     public void setPixel(int x, int y, ColorRGBA color) {
         rangeCheck(x, y);
-        
+        getSRGB(color);
+        grayscaleCheck(color, codec);
+        setComponents(color, codec, components);
+        writeComponents(x, y);
+        setImageUpdateNeeded(image);
+    }
+
+    /**
+     * Input is linear, needs to be converted to sRGB before writing into image.
+     * @param color
+     */
+
+    protected void getSRGB(ColorRGBA color) {
         if (convertToLinear) {
-            // Input is linear, needs to be converted to sRGB before writing
-            // into image.
             color = color.getAsSrgb();
         }
-        
-        // Check flags for grayscale
-        if (codec.isGray) {
-            float gray = color.r * 0.27f + color.g * 0.67f + color.b * 0.06f;
-            color = new ColorRGBA(gray, gray, gray, color.a);
-        }
+    }
 
-        switch (codec.type) {
-            case ImageCodec.FLAG_F16:
-                components[0] = (int) FastMath.convertFloatToHalf(color.a);
-                components[1] = (int) FastMath.convertFloatToHalf(color.r);
-                components[2] = (int) FastMath.convertFloatToHalf(color.g);
-                components[3] = (int) FastMath.convertFloatToHalf(color.b);
-                break;
-            case ImageCodec.FLAG_F32:
-                components[0] = (int) Float.floatToIntBits(color.a);
-                components[1] = (int) Float.floatToIntBits(color.r);
-                components[2] = (int) Float.floatToIntBits(color.g);
-                components[3] = (int) Float.floatToIntBits(color.b);
-                break;
-            case 0:
-                // Convert color to bits by multiplying by size
-                components[0] = Math.min( (int) (color.a * codec.maxAlpha + 0.5f), codec.maxAlpha);
-                components[1] = Math.min( (int) (color.r * codec.maxRed + 0.5f), codec.maxRed);
-                components[2] = Math.min( (int) (color.g * codec.maxGreen + 0.5f), codec.maxGreen);
-                components[3] = Math.min( (int) (color.b * codec.maxBlue + 0.5f), codec.maxBlue);
-                break;
-        }     
+
+    protected void writeComponents(int x, int y) {
         codec.writeComponents(getBuffer(), x, y, width, offset, components, temp);
-        image.setUpdateNeeded();
+    }
+
+
+    protected void readComponents(int x, int y) {
+        codec.readComponents(getBuffer(), x, y, width, offset, components, temp);
     }
     
     private ByteBuffer getBuffer(){
@@ -163,54 +188,21 @@ public class DefaultImageRaster extends ImageRaster {
     @Override
     public ColorRGBA getPixel(int x, int y, ColorRGBA store) {
         rangeCheck(x, y);
-        
-        codec.readComponents(getBuffer(), x, y, width, offset, components, temp);
+        readComponents(x, y);
         if (store == null) {
             store = new ColorRGBA();
         }
-        switch (codec.type) {
-            case ImageCodec.FLAG_F16:
-                store.set(FastMath.convertHalfToFloat((short)components[1]),
-                          FastMath.convertHalfToFloat((short)components[2]),
-                          FastMath.convertHalfToFloat((short)components[3]),
-                          FastMath.convertHalfToFloat((short)components[0]));
-                break;
-            case ImageCodec.FLAG_F32:
-                store.set(Float.intBitsToFloat((int)components[1]),
-                          Float.intBitsToFloat((int)components[2]),
-                          Float.intBitsToFloat((int)components[3]),
-                          Float.intBitsToFloat((int)components[0]));
-                break;
-            case 0:
-                // Convert to float and divide by bitsize to get into range 0.0 - 1.0.
-                store.set((float)components[1] / codec.maxRed,
-                          (float)components[2] / codec.maxGreen,
-                          (float)components[3] / codec.maxBlue,
-                          (float)components[0] / codec.maxAlpha);
-                break;
-        }
-        if (codec.isGray) {
-            store.g = store.b = store.r;
-        } else {
-            if (codec.maxRed == 0) {
-                store.r = 1;
-            }
-            if (codec.maxGreen == 0) {
-                store.g = 1;
-            }
-            if (codec.maxBlue == 0) {
-                store.b = 1;
-            }
-            if (codec.maxAlpha == 0) {
-                store.a = 1;
-            }
-        }
+        setStoreComponents(store, codec, components);
+        setStoreRGBA(store, codec);
+        setSRGB(store);
         
+        return store;
+    }
+
+    protected void setSRGB(ColorRGBA store) {
         if (convertToLinear) {
             // Input image is sRGB, need to convert to linear.
             store.setAsSrgb(store.r, store.g, store.b, store.a);
         }
-        
-        return store;
     }
 }
