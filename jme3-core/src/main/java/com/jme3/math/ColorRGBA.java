@@ -632,4 +632,22 @@ public final class ColorRGBA implements Savable, Cloneable, java.io.Serializable
         return srgb;
     }
     
+    /**
+     * Gets the colors that are stored in the given data array.
+     * @param data an array of doubles. The amount of entries should be divisable by 4.
+     * @return an array of ColorRGBA objects
+     */
+    public static ColorRGBA[] toColorRGBA(double[] data) {
+        assert data.length % 4 == 0;
+        ColorRGBA[] colors = new ColorRGBA[data.length / 4];
+        for (int i = 0; i < colors.length; i++) {
+            float r = (float) data[i * 4];
+            float g = (float) data[i * 4 + 1];
+            float b = (float) data[i * 4 + 2];
+            float a = (float) data[i * 4 + 3];
+            colors[i] = new ColorRGBA(r, g, b, a);
+        }
+        return colors;
+    }
+    
 }

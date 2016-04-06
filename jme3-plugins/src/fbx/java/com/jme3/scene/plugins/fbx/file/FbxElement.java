@@ -32,10 +32,18 @@
 package com.jme3.scene.plugins.fbx.file;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.jme3.scene.plugins.fbx.misc.FbxClassTypeDispatcher;
+import com.jme3.scene.plugins.fbx.obj.FbxObject;
+import com.jme3.scene.plugins.fbx.obj.FbxUnknownObject;
 
 public class FbxElement {
-	
+    private static final Logger logger = Logger.getLogger(FbxElement.class.getName()); 
+
 	public String id;
 	public List<Object> properties;
 	/*
@@ -56,7 +64,6 @@ public class FbxElement {
 	 */
 	public char[] propertiesTypes;
 	public List<FbxElement> children = new ArrayList<FbxElement>();
-	
 	public FbxElement(int propsCount) {
 		this.properties = new ArrayList<Object>(propsCount);
 		this.propertiesTypes = new char[propsCount];
@@ -115,6 +122,33 @@ public class FbxElement {
             }
             
             return props;
+        }
+        
+        /**
+         * @return string: the subclassname of this element, as stored in the properties.
+         */
+        public String getSubclassName() {
+            String subclassName = null;
+            if (this.propertiesTypes.length == 3) {
+                // FBX 7.x (all objects start with Long ID)
+                subclassName = (String) this.properties.get(2);
+            } else if (this.propertiesTypes.length == 2) {
+                // FBX 6.x (objects only have name and subclass)
+                subclassName = (String) this.properties.get(1);
+            }
+            return subclassName;
+        }
+        
+        /**
+         * Resolves the class that belongs to this FbxElement given its properties
+         */
+        public Class<? extends FbxObject> resolveFbxClass() {
+            String subclassName = getSubclassName();
+            Class<? extends FbxObject> res = FbxClassTypeDispatcher.getInstance().dispatchType(this.id, subclassName);
+            if(res.equals(FbxUnknownObject.class)) {
+                logger.log(Level.WARNING, "Unknown object subclass: {0}. Ignoring.", subclassName);
+            }
+            return res;
         }
         
         @Override

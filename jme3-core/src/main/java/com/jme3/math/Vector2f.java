@@ -753,4 +753,20 @@ public final class Vector2f implements Savable, Cloneable, java.io.Serializable 
         x = newX;
         y = newY;
     }
+    
+    /**
+     * Gets the Vector2f's that are stored in the given data array.
+     * @param data an array of doubles. The amount of entries should be divisable by 2.
+     * @return an array of Vector2f objects
+     */
+    public static Vector2f[] toVector2(double[] data) {
+        assert data.length % 2 == 0;
+        Vector2f[] vectors = new Vector2f[data.length / 2];
+        for (int i = 0; i < vectors.length; i++) {
+            float x = (float) data[i * 2];
+            float y = (float) data[i * 2 + 1];
+            vectors[i] = new Vector2f(x, y);
+        }
+        return vectors;
+    }
 }

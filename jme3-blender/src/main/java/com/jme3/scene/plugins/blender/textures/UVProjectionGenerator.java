@@ -67,6 +67,7 @@ import com.jme3.scene.plugins.blender.textures.UVCoordinatesGenerator.BoundingTu
      * @return UV coordinates after the projection
      */
     public static float[] cubeProjection(float[] positions, BoundingBox bb) {
+    	
         Triangle triangle = new Triangle();
         Vector3f x = new Vector3f(1, 0, 0);
         Vector3f y = new Vector3f(0, 1, 0);
