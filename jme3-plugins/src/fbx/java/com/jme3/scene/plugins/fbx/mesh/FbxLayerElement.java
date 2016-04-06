@@ -152,7 +152,7 @@ public class FbxLayerElement {
         layerElement.type = Type.Position;
         layerElement.mapInfoType = MappingInformationType.ByVertex;
         layerElement.refInfoType = ReferenceInformationType.Direct;
-        layerElement.data = toVector3(positionData);
+        layerElement.data = Vector3f.toVector3(positionData);
         layerElement.dataIndices = null;
         return layerElement;
     }
@@ -184,11 +184,11 @@ public class FbxLayerElement {
                 }
                 layerElement.refInfoType = ReferenceInformationType.valueOf(refInfoTypeVal);
             } else if (child.id.equals("Normals") || child.id.equals("Tangents") || child.id.equals("Binormals")) {
-                layerElement.data = toVector3(FbxMeshUtil.getDoubleArray(child));
+                layerElement.data = Vector3f.toVector3(FbxMeshUtil.getDoubleArray(child));
             } else if (child.id.equals("Colors")) {
-                layerElement.data = toColorRGBA(FbxMeshUtil.getDoubleArray(child));
+                layerElement.data = ColorRGBA.toColorRGBA(FbxMeshUtil.getDoubleArray(child));
             } else if (child.id.equals("UV")) {
-                layerElement.data = toVector2(FbxMeshUtil.getDoubleArray(child));
+                layerElement.data = Vector2f.toVector2(FbxMeshUtil.getDoubleArray(child));
             } else if (indexTypes.contains(child.id)) {
                 layerElement.dataIndices = FbxMeshUtil.getIntArray(child);
             } else if (child.id.equals("Name")) {
@@ -206,38 +206,4 @@ public class FbxLayerElement {
         }
         return layerElement;
     }
-    
-    static Vector3f[] toVector3(double[] data) {
-        Vector3f[] vectors = new Vector3f[data.length / 3];
-        for (int i = 0; i < vectors.length; i++) {
-            float x = (float) data[i * 3];
-            float y = (float) data[i * 3 + 1];
-            float z = (float) data[i * 3 + 2];
-            vectors[i] = new Vector3f(x, y, z);
-        }
-        return vectors;
-    }
-
-    static Vector2f[] toVector2(double[] data) {
-        Vector2f[] vectors = new Vector2f[data.length / 2];
-        for (int i = 0; i < vectors.length; i++) {
-            float x = (float) data[i * 2];
-            float y = (float) data[i * 2 + 1];
-            vectors[i] = new Vector2f(x, y);
-        }
-        return vectors;
-    }
-    
-    static ColorRGBA[] toColorRGBA(double[] data) {
-        ColorRGBA[] colors = new ColorRGBA[data.length / 4];
-        for (int i = 0; i < colors.length; i++) {
-            float r = (float) data[i * 4];
-            float g = (float) data[i * 4 + 1];
-            float b = (float) data[i * 4 + 2];
-            float a = (float) data[i * 4 + 3];
-            colors[i] = new ColorRGBA(r, g, b, a);
-        }
-        return colors;
-    }
 }
-
