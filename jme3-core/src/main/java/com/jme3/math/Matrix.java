@@ -238,11 +238,11 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
     {
         for (int c = 0; c < M; c++)
         {
-            for (int r = 0; r < M; r++)
+            for (int r = 0; r< M; r++)
             {
             	if(r == i && c == j)
             	{
-            		return matrix[r][c];
+            		return matrix[c][r];
             	}
             }
         }
@@ -470,7 +470,7 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
             logger.warning("Invalid matrix index.");
             throw new IllegalArgumentException("Invalid indices into matrix.");
         }
-    	matrix[i][j] = value;
+    	matrix[j][i] = value;
     }
     
     /**
@@ -499,7 +499,7 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
      */
     public Matrix set(Matrix matrix) 
     {
-        if (null == matrix) 
+        if (null == matrix)
         {
             loadIdentity();
         }
@@ -574,9 +574,9 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
         return quaternion.toRotationMatrix(this);
     }
     
-    public Matrix transpose(int row, int column) 
+    public Matrix transpose() 
     {
-        float[] tmp = new float[row*column];
+        float[] tmp = new float[M*M];
         get(tmp, true);
         Matrix mat = new Matrix(tmp);
         return mat;
@@ -946,10 +946,8 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
         {
             for (int c = 0; c < M; c++)
             {
-		        for (int i = 0; i < M; i++)
-		        {
-		        	store.matrix[r][c] += matrix[r][i] *in2.matrix[i][c];
-		        }
+		       	store.matrix[r][c] += matrix[r][c] *in2.matrix[r][c];
+		  
             }
         }
         return store;
@@ -2037,7 +2035,7 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
         {
             return false;
         }
-        if (this == o) 
+        if (this.matrix == ((Matrix) o).matrix) 
         {
             return true;
         }
@@ -2126,8 +2124,7 @@ public final class Matrix  implements Savable, Cloneable, java.io.Serializable
     static boolean equalIdentity(Matrix mat) 
     {
     	Matrix identity = new Matrix(mat.M);
-    	mat.equals(identity);
-        return mat.equals(identity);
+        return mat.isIdentity();
     }  
     
     // XXX: This tests more solid than converting the q to a matrix and multiplying... why?
