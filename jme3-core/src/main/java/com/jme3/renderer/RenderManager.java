@@ -71,10 +71,8 @@ public class RenderManager {
 
     private static final Logger logger = Logger.getLogger(RenderManager.class.getName());
     private Renderer renderer;
+    private ViewPortManager viewportManager;
     private UniformBindingManager uniformBindingManager = new UniformBindingManager();
-    private ArrayList<ViewPort> preViewPorts = new ArrayList<ViewPort>();
-    private ArrayList<ViewPort> viewPorts = new ArrayList<ViewPort>();
-    private ArrayList<ViewPort> postViewPorts = new ArrayList<ViewPort>();
     private Camera prevCam = null;
     private Material forcedMaterial = null;
     private String forcedTechnique = null;
@@ -96,209 +94,7 @@ public class RenderManager {
      */
     public RenderManager(Renderer renderer) {
         this.renderer = renderer;
-    }
-
-    /**
-     * Returns the pre ViewPort with the given name.
-     * 
-     * @param viewName The name of the pre ViewPort to look up
-     * @return The ViewPort, or null if not found.
-     * 
-     * @see #createPreView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public ViewPort getPreView(String viewName) {
-        for (int i = 0; i < preViewPorts.size(); i++) {
-            if (preViewPorts.get(i).getName().equals(viewName)) {
-                return preViewPorts.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes the pre ViewPort with the specified name.
-     *
-     * @param viewName The name of the pre ViewPort to remove
-     * @return True if the ViewPort was removed successfully.
-     *
-     * @see #createPreView(java.lang.String, com.jme3.renderer.Camera)
-     */
-    public boolean removePreView(String viewName) {
-        for (int i = 0; i < preViewPorts.size(); i++) {
-            if (preViewPorts.get(i).getName().equals(viewName)) {
-                preViewPorts.remove(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes the specified pre ViewPort.
-     * 
-     * @param view The pre ViewPort to remove
-     * @return True if the ViewPort was removed successfully.
-     * 
-     * @see #createPreView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public boolean removePreView(ViewPort view) {
-        return preViewPorts.remove(view);
-    }
-
-    /**
-     * Returns the main ViewPort with the given name.
-     * 
-     * @param viewName The name of the main ViewPort to look up
-     * @return The ViewPort, or null if not found.
-     * 
-     * @see #createMainView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public ViewPort getMainView(String viewName) {
-        for (int i = 0; i < viewPorts.size(); i++) {
-            if (viewPorts.get(i).getName().equals(viewName)) {
-                return viewPorts.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes the main ViewPort with the specified name.
-     * 
-     * @param viewName The main ViewPort name to remove
-     * @return True if the ViewPort was removed successfully.
-     * 
-     * @see #createMainView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public boolean removeMainView(String viewName) {
-        for (int i = 0; i < viewPorts.size(); i++) {
-            if (viewPorts.get(i).getName().equals(viewName)) {
-                viewPorts.remove(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes the specified main ViewPort.
-     * 
-     * @param view The main ViewPort to remove
-     * @return True if the ViewPort was removed successfully.
-     * 
-     * @see #createMainView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public boolean removeMainView(ViewPort view) {
-        return viewPorts.remove(view);
-    }
-
-    /**
-     * Returns the post ViewPort with the given name.
-     * 
-     * @param viewName The name of the post ViewPort to look up
-     * @return The ViewPort, or null if not found.
-     * 
-     * @see #createPostView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public ViewPort getPostView(String viewName) {
-        for (int i = 0; i < postViewPorts.size(); i++) {
-            if (postViewPorts.get(i).getName().equals(viewName)) {
-                return postViewPorts.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes the post ViewPort with the specified name.
-     * 
-     * @param viewName The post ViewPort name to remove
-     * @return True if the ViewPort was removed successfully.
-     * 
-     * @see #createPostView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public boolean removePostView(String viewName) {
-        for (int i = 0; i < postViewPorts.size(); i++) {
-            if (postViewPorts.get(i).getName().equals(viewName)) {
-                postViewPorts.remove(i);
-
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes the specified post ViewPort.
-     * 
-     * @param view The post ViewPort to remove
-     * @return True if the ViewPort was removed successfully.
-     * 
-     * @see #createPostView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public boolean removePostView(ViewPort view) {
-        return postViewPorts.remove(view);
-    }
-
-    /**
-     * Returns a read-only list of all pre ViewPorts
-     * @return a read-only list of all pre ViewPorts
-     * @see #createPreView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public List<ViewPort> getPreViews() {
-        return Collections.unmodifiableList(preViewPorts);
-    }
-
-    /**
-     * Returns a read-only list of all main ViewPorts
-     * @return a read-only list of all main ViewPorts
-     * @see #createMainView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public List<ViewPort> getMainViews() {
-        return Collections.unmodifiableList(viewPorts);
-    }
-
-    /**
-     * Returns a read-only list of all post ViewPorts
-     * @return a read-only list of all post ViewPorts
-     * @see #createPostView(java.lang.String, com.jme3.renderer.Camera) 
-     */
-    public List<ViewPort> getPostViews() {
-        return Collections.unmodifiableList(postViewPorts);
-    }
-
-    /**
-     * Creates a new pre ViewPort, to display the given camera's content.
-     * <p>
-     * The view will be processed before the main and post viewports.
-     */
-    public ViewPort createPreView(String viewName, Camera cam) {
-        ViewPort vp = new ViewPort(viewName, cam);
-        preViewPorts.add(vp);
-        return vp;
-    }
-
-    /**
-     * Creates a new main ViewPort, to display the given camera's content.
-     * <p>
-     * The view will be processed before the post viewports but after
-     * the pre viewports.
-     */
-    public ViewPort createMainView(String viewName, Camera cam) {
-        ViewPort vp = new ViewPort(viewName, cam);
-        viewPorts.add(vp);
-        return vp;
-    }
-
-    /**
-     * Creates a new post ViewPort, to display the given camera's content.
-     * <p>
-     * The view will be processed after the pre and main viewports.
-     */
-    public ViewPort createPostView(String viewName, Camera cam) {
-        ViewPort vp = new ViewPort(viewName, cam);
-        postViewPorts.add(vp);
-        return vp;
+        this.viewportManager = new ViewPortManager();
     }
 
     private void notifyReshape(ViewPort vp, int w, int h) {
@@ -311,28 +107,28 @@ public class RenderManager {
             }
         }
     }
-
+    
     /**
      * Internal use only.
      * Updates the resolution of all on-screen cameras to match
      * the given width and height.
      */
     public void notifyReshape(int w, int h) {
-        for (ViewPort vp : preViewPorts) {
+        for (ViewPort vp : viewportManager.getPreViewPorts()) {
             if (vp.getOutputFrameBuffer() == null) {
                 Camera cam = vp.getCamera();
                 cam.resize(w, h, true);
             }
             notifyReshape(vp, w, h);
         }
-        for (ViewPort vp : viewPorts) {
+        for (ViewPort vp : viewportManager.getViewPorts()) {
             if (vp.getOutputFrameBuffer() == null) {
                 Camera cam = vp.getCamera();
                 cam.resize(w, h, true);
             }
             notifyReshape(vp, w, h);
         }
-        for (ViewPort vp : postViewPorts) {
+        for (ViewPort vp : viewportManager.getPostViewPorts()) {
             if (vp.getOutputFrameBuffer() == null) {
                 Camera cam = vp.getCamera();
                 cam.resize(w, h, true);
@@ -340,7 +136,7 @@ public class RenderManager {
             notifyReshape(vp, w, h);
         }
     }
-
+    
     /**
      * Set the material to use to render all future objects.
      * This overrides the material set on the geometry and renders
@@ -597,26 +393,40 @@ public class RenderManager {
      */
     public void preloadScene(Spatial scene) {
         if (scene instanceof Node) {
-            // recurse for all children
-            Node n = (Node) scene;
-            List<Spatial> children = n.getChildren();
-            for (int i = 0; i < children.size(); i++) {
-                preloadScene(children.get(i));
-            }
+            preloadNode((Node) scene);
         } else if (scene instanceof Geometry) {
-            // add to the render queue
-            Geometry gm = (Geometry) scene;
-            if (gm.getMaterial() == null) {
-                throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
-            }
+            preloadGeometry((Geometry) scene);
+        }
+    }
+    
+    /**
+     * 
+     * @param node - the Node to preload
+     */
+    private void preloadNode(Node node) {
+    	// recurse for all children
+        List<Spatial> children = node.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            preloadScene(children.get(i));
+        }
+    }
+    
+    /**
+     * 
+     * @param geometry - the Geometry to preload
+     */
+    private void preloadGeometry(Geometry geometry) {
+    	// add to the render queue
+        if (geometry.getMaterial() == null) {
+            throw new IllegalStateException("No material is set for Geometry: " + geometry.getName());
+        }
 
-            gm.getMaterial().preload(this);
-            Mesh mesh = gm.getMesh();
-            if (mesh != null) {
-                for (VertexBuffer vb : mesh.getBufferList().getArray()) {
-                    if (vb.getData() != null && vb.getUsage() != VertexBuffer.Usage.CpuOnly) {
-                        renderer.updateBufferData(vb);
-                    }
+        geometry.getMaterial().preload(this);
+        Mesh mesh = geometry.getMesh();
+        if (mesh != null) {
+            for (VertexBuffer vb : mesh.getBufferList().getArray()) {
+                if (vb.getData() != null && vb.getUsage() != VertexBuffer.Usage.CpuOnly) {
+                    renderer.updateBufferData(vb);
                 }
             }
         }
@@ -666,25 +476,33 @@ public class RenderManager {
 
         scene.runControlRender(this, vp);
         if (scene instanceof Node) {
-            // Recurse for all children
-            Node n = (Node) scene;
-            List<Spatial> children = n.getChildren();
-            // Saving cam state for culling
-            int camState = vp.getCamera().getPlaneState();
-            for (int i = 0; i < children.size(); i++) {
-                // Restoring cam state before proceeding children recusively
-                vp.getCamera().setPlaneState(camState);
-                renderSubScene(children.get(i), vp);
-            }
+            renderSubSceneNode((Node) scene, vp);
+            
         } else if (scene instanceof Geometry) {
-            // add to the render queue
-            Geometry gm = (Geometry) scene;
-            if (gm.getMaterial() == null) {
-                throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
-            }
-
-            vp.getQueue().addToQueue(gm, scene.getQueueBucket());
+            renderSubSceneGeometry(scene, vp);
         }
+    }
+    
+    private void renderSubSceneNode(Node node, ViewPort vp) {
+    	// Recurse for all children
+        List<Spatial> children = node.getChildren();
+        // Saving cam state for culling
+        int camState = vp.getCamera().getPlaneState();
+        for (int i = 0; i < children.size(); i++) {
+            // Restoring cam state before proceeding children recusively
+            vp.getCamera().setPlaneState(camState);
+            renderSubScene(children.get(i), vp);
+        }
+    }
+    
+    private void renderSubSceneGeometry(Spatial scene, ViewPort vp) {
+    	// add to the render queue
+        Geometry gm = (Geometry) scene;
+        if (gm.getMaterial() == null) {
+            throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
+        }
+
+        vp.getQueue().addToQueue(gm, scene.getQueueBucket());
     }
 
     /**
@@ -1074,27 +892,27 @@ public class RenderManager {
         uniformBindingManager.newFrame();        
 
         if (prof!=null) prof.appStep(AppStep.RenderPreviewViewPorts);        
-        for (int i = 0; i < preViewPorts.size(); i++) {
-            ViewPort vp = preViewPorts.get(i);
-            if (vp.getOutputFrameBuffer() != null || mainFrameBufferActive) {
-                renderViewPort(vp, tpf);
-            }
-        }
-        
+        callRenderViewPort(viewportManager.getPreViewPorts(),tpf,mainFrameBufferActive);        
         if (prof!=null) prof.appStep(AppStep.RenderMainViewPorts);
-        for (int i = 0; i < viewPorts.size(); i++) {
-            ViewPort vp = viewPorts.get(i);
-            if (vp.getOutputFrameBuffer() != null || mainFrameBufferActive) {
-                renderViewPort(vp, tpf);
-            }
-        }
-        
+        callRenderViewPort(viewportManager.getViewPorts(),tpf,mainFrameBufferActive);        
         if (prof!=null) prof.appStep(AppStep.RenderPostViewPorts);
-        for (int i = 0; i < postViewPorts.size(); i++) {
-            ViewPort vp = postViewPorts.get(i);
+        callRenderViewPort(viewportManager.getPostViewPorts(),tpf,mainFrameBufferActive);
+    }
+    
+    private void callRenderViewPort(ArrayList<ViewPort> viewports,float tpf,boolean mainFrameBufferActive){
+    	for (int i = 0; i < viewports.size(); i++) {
+            ViewPort vp = viewports.get(i);
             if (vp.getOutputFrameBuffer() != null || mainFrameBufferActive) {
                 renderViewPort(vp, tpf);
-            }
-        }
+            }	
+    	}
+    }
+
+    /**
+     * Get the viewportManager to access relevant ViewPorts
+     * @return ViewportManager viewportManager
+     */
+    public ViewPortManager getViewportManager(){
+    	return viewportManager;
     }
 }

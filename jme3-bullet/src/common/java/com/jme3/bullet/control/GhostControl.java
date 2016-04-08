@@ -144,8 +144,6 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl {
         setPhysicsRotation(getSpatialRotation());
     }
 
-    public void render(RenderManager rm, ViewPort vp) {
-    }
 
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {

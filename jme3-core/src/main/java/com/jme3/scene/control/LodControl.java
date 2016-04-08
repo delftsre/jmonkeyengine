@@ -56,7 +56,7 @@ import java.io.IOException;
  * and will update the spatial's LOD if the camera has moved by a specified
  * amount.
  */
-public class LodControl extends AbstractControl implements Cloneable {
+public class LodControl extends AbstractControl implements Cloneable, RenderControl{
 
     private float trisPerPixel = 1f;
     private float distTolerance = 1f;
@@ -146,7 +146,11 @@ public class LodControl extends AbstractControl implements Cloneable {
     protected void controlUpdate(float tpf) {
     }
 
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void render(RenderManager rm, ViewPort vp) {
+    	if(!enabled){
+    		return;
+    	}
+    	
         BoundingVolume bv = spatial.getWorldBound();
 
         Camera cam = vp.getCamera();

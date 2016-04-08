@@ -443,8 +443,6 @@ public class MotionEvent extends AbstractCinematicEvent implements Control {
         return playState != PlayState.Stopped;
     }
 
-    public void render(RenderManager rm, ViewPort vp) {
-    }
 
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;

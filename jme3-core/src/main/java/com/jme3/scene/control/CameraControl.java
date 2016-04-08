@@ -131,10 +131,6 @@ public class CameraControl extends AbstractControl {
         }
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-        // nothing to do
-    }
 
     @Override
     public Control cloneForSpatial(Spatial newSpatial) {

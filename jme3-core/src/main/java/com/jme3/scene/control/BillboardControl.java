@@ -46,7 +46,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
 
-public class BillboardControl extends AbstractControl {
+public class BillboardControl extends AbstractControl implements RenderControl {
 
     private Matrix3f orient;
     private Vector3f look;
@@ -97,8 +97,11 @@ public class BillboardControl extends AbstractControl {
     protected void controlUpdate(float tpf) {
     }
 
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void render(RenderManager rm, ViewPort vp) {
+    	if(!enabled){
+    		return;
+    	}
+    	
         Camera cam = vp.getCamera();
         rotateBillboard(cam);
     }

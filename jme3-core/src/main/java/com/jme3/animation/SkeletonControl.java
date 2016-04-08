@@ -43,6 +43,7 @@ import com.jme3.scene.*;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
+import com.jme3.scene.control.RenderControl;
 import com.jme3.shader.VarType;
 import com.jme3.util.SafeArrayList;
 import com.jme3.util.TempVars;
@@ -63,7 +64,7 @@ import java.util.logging.Logger;
  *
  * @author Rémy Bouquet Based on AnimControl by Kirill Vainer
  */
-public class SkeletonControl extends AbstractControl implements Cloneable {
+public class SkeletonControl extends AbstractControl implements Cloneable, RenderControl {
 
     /**
      * The skeleton of the model.
@@ -261,9 +262,11 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
         }
     }
 
-    
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
+    public void render(RenderManager rm, ViewPort vp) {
+    	if(!enabled){
+    		return;
+    	}
+    	
         if (!wasMeshUpdated) {
             updateTargetsAndMaterials(spatial);
             

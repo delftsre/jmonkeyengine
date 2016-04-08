@@ -338,12 +338,6 @@ public final class AnimControl extends AbstractControl implements Cloneable {
         }
     }
 
-    /**
-     * Internal use only.
-     */
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-    }
 
     @Override
     public void write(JmeExporter ex) throws IOException {

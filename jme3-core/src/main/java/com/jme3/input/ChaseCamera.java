@@ -596,14 +596,6 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
         updateCamera(tpf);
     }
 
-    /**
-     * renders the camera control, should only be used internally
-     * @param rm
-     * @param vp
-     */
-    public void render(RenderManager rm, ViewPort vp) {
-        //nothing to render
-    }
 
     /**
      * Write the camera

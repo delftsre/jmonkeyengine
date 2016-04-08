@@ -275,9 +275,5 @@ public class TestManyLightsSingle extends SimpleApplication {
             time += tpf;
             spatial.setLocalTranslation(origPos.x + FastMath.cos(time) * direction, origPos.y, origPos.z + FastMath.sin(time) * direction);
         }
-
-        @Override
-        protected void controlRender(RenderManager rm, ViewPort vp) {
-        }
     }
 }

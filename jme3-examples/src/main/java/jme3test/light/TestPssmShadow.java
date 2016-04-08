@@ -249,9 +249,6 @@ public class TestPssmShadow extends SimpleApplication implements ActionListener 
             time = 0;
         }
 
-        @Override
-        protected void controlRender(RenderManager rm, ViewPort vp) {
-        }
 
         public Control cloneForSpatial(Spatial spatial) {
             return null;

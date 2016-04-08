@@ -197,8 +197,6 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl {
         }
     }
 
-    public void render(RenderManager rm, ViewPort vp) {
-    }
 
     public void setPhysicsSpace(PhysicsSpace space) {
         createVehicle(space);

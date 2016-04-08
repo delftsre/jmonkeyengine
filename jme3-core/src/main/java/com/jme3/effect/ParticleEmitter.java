@@ -53,6 +53,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
+import com.jme3.scene.control.RenderControl;
 import com.jme3.util.TempVars;
 import java.io.IOException;
 
@@ -108,7 +109,7 @@ public class ParticleEmitter extends Geometry {
     private transient Vector3f temp = new Vector3f();
     private transient Vector3f lastPos;
 
-    public static class ParticleEmitterControl implements Control {
+    public static class ParticleEmitterControl implements Control, RenderControl {
 
         ParticleEmitter parentEmitter;
 

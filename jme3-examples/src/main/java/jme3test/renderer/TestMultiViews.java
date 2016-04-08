@@ -71,7 +71,7 @@ public class TestMultiViews extends SimpleApplication {
         cam2.setLocation(new Vector3f(-0.10947256f, 1.5760219f, 4.81758f));
         cam2.setRotation(new Quaternion(0.0010108891f, 0.99857414f, -0.04928594f, 0.020481428f));
 
-        ViewPort view2 = renderManager.createMainView("Bottom Left", cam2);
+        ViewPort view2 = renderManager.getViewportManager().createMainView("Bottom Left", cam2);
         view2.setClearFlags(true, true, true);
         view2.attachScene(rootNode);
 
@@ -81,7 +81,7 @@ public class TestMultiViews extends SimpleApplication {
         cam3.setLocation(new Vector3f(0.2846221f, 6.4271426f, 0.23380789f));
         cam3.setRotation(new Quaternion(0.004381671f, 0.72363687f, -0.69015175f, 0.0045953835f));
 
-        ViewPort view3 = renderManager.createMainView("Top Left", cam3);
+        ViewPort view3 = renderManager.getViewportManager().createMainView("Top Left", cam3);
         view3.setClearFlags(true, true, true);
         view3.attachScene(rootNode);
 
@@ -91,7 +91,7 @@ public class TestMultiViews extends SimpleApplication {
         cam4.setLocation(new Vector3f(4.775564f, 1.4548365f, 0.11491505f));
         cam4.setRotation(new Quaternion(0.02356979f, -0.74957186f, 0.026729556f, 0.66096294f));
 
-        ViewPort view4 = renderManager.createMainView("Top Right", cam4);
+        ViewPort view4 = renderManager.getViewportManager().createMainView("Top Right", cam4);
         view4.setClearFlags(true, true, true);
         view4.attachScene(rootNode);
 
@@ -101,7 +101,7 @@ public class TestMultiViews extends SimpleApplication {
         // Setup second gui view
         Camera guiCam2 = guiViewPort.getCamera().clone();
         guiCam2.setViewPort(0f, 0.5f, 0f, 0.5f);
-        ViewPort guiViewPort2 = renderManager.createPostView("Gui 2", guiCam2);
+        ViewPort guiViewPort2 = renderManager.getViewportManager().createPostView("Gui 2", guiCam2);
         guiViewPort2.setClearFlags(false, false, false);
         guiViewPort2.attachScene(guiViewPort.getScenes().get(0));
 

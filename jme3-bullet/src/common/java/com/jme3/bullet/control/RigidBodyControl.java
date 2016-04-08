@@ -227,8 +227,6 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         }
     }
 
-    public void render(RenderManager rm, ViewPort vp) {
-    }
 
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {

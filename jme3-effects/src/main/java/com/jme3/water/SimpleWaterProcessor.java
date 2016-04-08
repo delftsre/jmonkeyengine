@@ -304,7 +304,7 @@ public class SimpleWaterProcessor implements SceneProcessor {
 
     protected void destroyViews() {
         //  rm.removePreView(reflectionView);
-        rm.removePreView(refractionView);
+        rm.getViewportManager().removePreView(refractionView);
     }
 
     /**

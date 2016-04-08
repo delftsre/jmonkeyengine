@@ -174,7 +174,7 @@ public class ScreenshotAppState extends AbstractAppState implements ActionListen
             inputManager.addMapping("ScreenShot", new KeyTrigger(KeyInput.KEY_SYSRQ));
             inputManager.addListener(this, "ScreenShot");
 
-            List<ViewPort> vps = app.getRenderManager().getPostViews();
+            List<ViewPort> vps = app.getRenderManager().getViewportManager().getPostViews();
             ViewPort last = vps.get(vps.size()-1);
             last.addProcessor(this);
 

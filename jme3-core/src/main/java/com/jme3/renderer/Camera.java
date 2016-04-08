@@ -1237,40 +1237,16 @@ public class Camera implements Savable, Cloneable {
         float dirDotLocation = direction.dot(location);
 
         // left plane
-        Vector3f leftPlaneNormal = worldPlane[LEFT_PLANE].getNormal();
-        leftPlaneNormal.x = left.x * coeffLeft[0];
-        leftPlaneNormal.y = left.y * coeffLeft[0];
-        leftPlaneNormal.z = left.z * coeffLeft[0];
-        leftPlaneNormal.addLocal(direction.x * coeffLeft[1], direction.y
-                * coeffLeft[1], direction.z * coeffLeft[1]);
-        worldPlane[LEFT_PLANE].setConstant(location.dot(leftPlaneNormal));
+        computeVectorPlane(LEFT_PLANE, coeffLeft, left, direction);
 
         // right plane
-        Vector3f rightPlaneNormal = worldPlane[RIGHT_PLANE].getNormal();
-        rightPlaneNormal.x = left.x * coeffRight[0];
-        rightPlaneNormal.y = left.y * coeffRight[0];
-        rightPlaneNormal.z = left.z * coeffRight[0];
-        rightPlaneNormal.addLocal(direction.x * coeffRight[1], direction.y
-                * coeffRight[1], direction.z * coeffRight[1]);
-        worldPlane[RIGHT_PLANE].setConstant(location.dot(rightPlaneNormal));
+        computeVectorPlane(RIGHT_PLANE, coeffRight, left, direction);
 
         // bottom plane
-        Vector3f bottomPlaneNormal = worldPlane[BOTTOM_PLANE].getNormal();
-        bottomPlaneNormal.x = up.x * coeffBottom[0];
-        bottomPlaneNormal.y = up.y * coeffBottom[0];
-        bottomPlaneNormal.z = up.z * coeffBottom[0];
-        bottomPlaneNormal.addLocal(direction.x * coeffBottom[1], direction.y
-                * coeffBottom[1], direction.z * coeffBottom[1]);
-        worldPlane[BOTTOM_PLANE].setConstant(location.dot(bottomPlaneNormal));
+        computeVectorPlane(BOTTOM_PLANE, coeffBottom, up, direction);
 
         // top plane
-        Vector3f topPlaneNormal = worldPlane[TOP_PLANE].getNormal();
-        topPlaneNormal.x = up.x * coeffTop[0];
-        topPlaneNormal.y = up.y * coeffTop[0];
-        topPlaneNormal.z = up.z * coeffTop[0];
-        topPlaneNormal.addLocal(direction.x * coeffTop[1], direction.y
-                * coeffTop[1], direction.z * coeffTop[1]);
-        worldPlane[TOP_PLANE].setConstant(location.dot(topPlaneNormal));
+        computeVectorPlane(TOP_PLANE, coeffTop, up, direction);
 
         if (isParallelProjection()) {
             worldPlane[LEFT_PLANE].setConstant(worldPlane[LEFT_PLANE].getConstant() + frustumLeft);
@@ -1294,6 +1270,23 @@ public class Camera implements Savable, Cloneable {
         
 //        viewMatrix.transposeLocal();
         updateViewProjection();
+    }
+    
+    /**
+     * Helper method to compute the vector plane and set the new x,y,z values and constant.
+     * @param POSITION
+     * @param coeff
+     * @param vector
+     * @param direction
+     */
+    private void computeVectorPlane(int POSITION, float[] coeff, Vector3f vector, Vector3f direction) {
+    	Vector3f planeNormal = worldPlane[POSITION].getNormal();
+        planeNormal.x = vector.x * coeff[0];
+        planeNormal.y = vector.y * coeff[0];
+        planeNormal.z = vector.z * coeff[0];
+        planeNormal.addLocal(direction.x * coeff[1], direction.y
+                * coeff[1], direction.z * coeff[1]);
+        worldPlane[POSITION].setConstant(location.dot(planeNormal));
     }
 
     /**
