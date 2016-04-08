@@ -2,7 +2,7 @@ package com.jme3.scene.plugins.blender.constraints.definitions;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Transform;
 import com.jme3.scene.plugins.blender.BlenderContext;
 import com.jme3.scene.plugins.blender.BlenderContext.LoadedDataType;
@@ -44,7 +44,7 @@ public class ConstraintDefinitionTransLike extends ConstraintDefinition {
             ConstraintHelper constraintHelper = blenderContext.getHelper(ConstraintHelper.class);
 
             TempVars tempVars = TempVars.get();
-            Matrix4f m = constraintHelper.toMatrix(targetTransform, tempVars.tempMat4);
+            Matrix m = constraintHelper.toMatrix(targetTransform, tempVars.tempMat4);
             tempVars.tempMat42.set(BoneContext.BONE_ARMATURE_TRANSFORMATION_MATRIX);
             if (target instanceof Bone) {
                 tempVars.tempMat42.invertLocal();

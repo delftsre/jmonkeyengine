@@ -44,7 +44,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -213,7 +213,7 @@ public class TestPhysicsCar extends SimpleApplication implements ActionListener 
             if (value) {
                 System.out.println("Reset");
                 vehicle.setPhysicsLocation(Vector3f.ZERO);
-                vehicle.setPhysicsRotation(new Matrix3f());
+                vehicle.setPhysicsRotation(new Matrix(3));
                 vehicle.setLinearVelocity(Vector3f.ZERO);
                 vehicle.setAngularVelocity(Vector3f.ZERO);
                 vehicle.resetSuspension();

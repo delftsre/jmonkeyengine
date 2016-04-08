@@ -34,7 +34,7 @@ package com.jme3.bullet.util;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.*;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
@@ -255,7 +255,7 @@ public class CollisionShapeFactory {
             ChildCollisionShape childCollisionShape = it.next();
             CollisionShape child = childCollisionShape.shape;
             Vector3f location = childCollisionShape.location;
-            Matrix3f rotation = childCollisionShape.rotation;
+            Matrix rotation = childCollisionShape.rotation;
             compoundShape.removeChildShape(child);
             compoundShape.addChildShape(child, location.add(vector), rotation);
         }

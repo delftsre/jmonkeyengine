@@ -43,7 +43,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -1089,14 +1089,14 @@ public class ParticleEmitter extends Geometry {
         Camera cam = vp.getCamera();
 
         if (meshType == ParticleMesh.Type.Point) {
-            float C = cam.getProjectionMatrix().m00;
+            float C = cam.getProjectionMatrix().matrix[0][0];
             C *= cam.getWidth() * 0.5f;
 
             // send attenuation params
             this.getMaterial().setFloat("Quadratic", C);
         }
 
-        Matrix3f inverseRotation = Matrix3f.IDENTITY;
+        Matrix inverseRotation = new Matrix(3);
         TempVars vars = null;
         if (!worldSpace) {
             vars = TempVars.get();
@@ -1111,7 +1111,7 @@ public class ParticleEmitter extends Geometry {
 
     public void preload(RenderManager rm, ViewPort vp) {
         this.updateParticleState(0);
-        particleMesh.updateParticleData(particles, vp.getCamera(), Matrix3f.IDENTITY);
+        particleMesh.updateParticleData(particles, vp.getCamera(), new Matrix(3));
     }
 
     @Override

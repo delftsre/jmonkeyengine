@@ -43,7 +43,7 @@ import com.jme3.asset.AssetLoadException;
 import com.jme3.asset.AssetLoader;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.ModelKey;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Transform;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -282,9 +282,9 @@ public class FbxLoader implements AssetLoader {
      */
     private void applyBindPoses() {
         for (FbxBindPose bindPose : bindPoses) {
-            Map<FbxId, Matrix4f> bindPoseData = bindPose.getJmeObject();
+            Map<FbxId, Matrix> bindPoseData = bindPose.getJmeObject();
             logger.log(Level.INFO, "Applying {0} bind poses", bindPoseData.size());
-            for (Map.Entry<FbxId, Matrix4f> entry : bindPoseData.entrySet()) {
+            for (Map.Entry<FbxId, Matrix> entry : bindPoseData.entrySet()) {
                 FbxObject obj = objectMap.get(entry.getKey());
                 if (obj instanceof FbxNode) {
                     FbxNode node = (FbxNode) obj;

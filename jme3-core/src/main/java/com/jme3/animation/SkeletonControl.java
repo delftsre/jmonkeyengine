@@ -35,7 +35,7 @@ import com.jme3.export.*;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.RendererException;
 import com.jme3.renderer.ViewPort;
@@ -104,7 +104,7 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
     /**
      * Bone offset matrices, recreated each frame
      */
-    private transient Matrix4f[] offsetMatrices;
+    private transient Matrix[] offsetMatrices;
     /**
      * Material references used for hardware skinning
      */
@@ -427,7 +427,7 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
      * @param mesh then mesh
      * @param offsetMatrices the transformation matrices to apply
      */
-    private void softwareSkinUpdate(Mesh mesh, Matrix4f[] offsetMatrices) {
+    private void softwareSkinUpdate(Mesh mesh, Matrix[] offsetMatrices) {
 
         VertexBuffer tb = mesh.getBuffer(Type.Tangent);
         if (tb == null) {
@@ -447,7 +447,7 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
      * @param mesh the mesh
      * @param offsetMatrices the offset matices to apply
      */
-    private void applySkinning(Mesh mesh, Matrix4f[] offsetMatrices) {
+    private void applySkinning(Mesh mesh, Matrix[] offsetMatrices) {
         int maxWeightsPerVert = mesh.getMaxNumWeights();
         if (maxWeightsPerVert <= 0) {
             throw new IllegalStateException("Max weights per vert is incorrectly set!");
@@ -511,15 +511,15 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
 
                 for (int w = maxWeightsPerVert - 1; w >= 0; w--) {
                     float weight = weights[idxWeights];
-                    Matrix4f mat = offsetMatrices[indices[idxWeights++] & 0xff];
+                    Matrix mat = offsetMatrices[indices[idxWeights++] & 0xff];
 
-                    rx += (mat.m00 * vtx + mat.m01 * vty + mat.m02 * vtz + mat.m03) * weight;
-                    ry += (mat.m10 * vtx + mat.m11 * vty + mat.m12 * vtz + mat.m13) * weight;
-                    rz += (mat.m20 * vtx + mat.m21 * vty + mat.m22 * vtz + mat.m23) * weight;
+                    rx += (mat.matrix[0][0] * vtx + mat.matrix[0][1] * vty + mat.matrix[0][2] * vtz + mat.matrix[0][3]) * weight;
+                    ry += (mat.matrix[1][0] * vtx + mat.matrix[1][1] * vty + mat.matrix[1][2] * vtz + mat.matrix[1][3]) * weight;
+                    rz += (mat.matrix[2][0] * vtx + mat.matrix[2][1] * vty + mat.matrix[2][2] * vtz + mat.matrix[2][3]) * weight;
 
-                    rnx += (nmx * mat.m00 + nmy * mat.m01 + nmz * mat.m02) * weight;
-                    rny += (nmx * mat.m10 + nmy * mat.m11 + nmz * mat.m12) * weight;
-                    rnz += (nmx * mat.m20 + nmy * mat.m21 + nmz * mat.m22) * weight;
+                    rnx += (nmx * mat.matrix[0][0] + nmy * mat.matrix[0][1] + nmz * mat.matrix[0][2]) * weight;
+                    rny += (nmx * mat.matrix[1][0] + nmy * mat.matrix[1][1] + nmz * mat.matrix[1][2]) * weight;
+                    rnz += (nmx * mat.matrix[2][0] + nmy * mat.matrix[2][1] + nmz * mat.matrix[2][2]) * weight;
                 }
 
                 idxWeights += fourMinusMaxWeights;
@@ -558,7 +558,7 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
      * @param offsetMatrices the offsetMaytrices to apply
      * @param tb the tangent vertexBuffer
      */
-    private void applySkinningTangents(Mesh mesh, Matrix4f[] offsetMatrices, VertexBuffer tb) {
+    private void applySkinningTangents(Mesh mesh, Matrix[] offsetMatrices, VertexBuffer tb) {
         int maxWeightsPerVert = mesh.getMaxNumWeights();
 
         if (maxWeightsPerVert <= 0) {
@@ -644,19 +644,19 @@ public class SkeletonControl extends AbstractControl implements Cloneable {
 
                 for (int w = maxWeightsPerVert - 1; w >= 0; w--) {
                     float weight = weights[idxWeights];
-                    Matrix4f mat = offsetMatrices[indices[idxWeights++] & 0xff];
+                    Matrix mat = offsetMatrices[indices[idxWeights++] & 0xff];
 
-                    rx += (mat.m00 * vtx + mat.m01 * vty + mat.m02 * vtz + mat.m03) * weight;
-                    ry += (mat.m10 * vtx + mat.m11 * vty + mat.m12 * vtz + mat.m13) * weight;
-                    rz += (mat.m20 * vtx + mat.m21 * vty + mat.m22 * vtz + mat.m23) * weight;
+                    rx += (mat.matrix[0][0] * vtx + mat.matrix[0][1] * vty + mat.matrix[0][2] * vtz + mat.matrix[0][3]) * weight;
+                    ry += (mat.matrix[1][0] * vtx + mat.matrix[1][1] * vty + mat.matrix[1][2] * vtz + mat.matrix[1][3]) * weight;
+                    rz += (mat.matrix[2][0] * vtx + mat.matrix[2][1] * vty + mat.matrix[2][2] * vtz + mat.matrix[2][3]) * weight;
 
-                    rnx += (nmx * mat.m00 + nmy * mat.m01 + nmz * mat.m02) * weight;
-                    rny += (nmx * mat.m10 + nmy * mat.m11 + nmz * mat.m12) * weight;
-                    rnz += (nmx * mat.m20 + nmy * mat.m21 + nmz * mat.m22) * weight;
+                    rnx += (nmx * mat.matrix[0][0] + nmy * mat.matrix[0][1] + nmz * mat.matrix[0][2]) * weight;
+                    rny += (nmx * mat.matrix[1][0] + nmy * mat.matrix[1][1] + nmz * mat.matrix[1][2]) * weight;
+                    rnz += (nmx * mat.matrix[2][0] + nmy * mat.matrix[2][1] + nmz * mat.matrix[2][2]) * weight;
 
-                    rtx += (tnx * mat.m00 + tny * mat.m01 + tnz * mat.m02) * weight;
-                    rty += (tnx * mat.m10 + tny * mat.m11 + tnz * mat.m12) * weight;
-                    rtz += (tnx * mat.m20 + tny * mat.m21 + tnz * mat.m22) * weight;
+                    rtx += (tnx * mat.matrix[0][0] + tny * mat.matrix[0][1] + tnz * mat.matrix[0][2]) * weight;
+                    rty += (tnx * mat.matrix[1][0] + tny * mat.matrix[1][1] + tnz * mat.matrix[1][2]) * weight;
+                    rtz += (tnx * mat.matrix[2][0] + tny * mat.matrix[2][1] + tnz * mat.matrix[2][2]) * weight;
                 }
 
                 idxWeights += fourMinusMaxWeights;

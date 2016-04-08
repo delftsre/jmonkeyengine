@@ -43,7 +43,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.SceneProcessor;
@@ -85,7 +85,7 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
     protected Texture2D dummyTex;
     protected Material preshadowMat;
     protected Material postshadowMat;
-    protected Matrix4f[] lightViewProjectionsMatrices;
+    protected Matrix[] lightViewProjectionsMatrices;
     protected AssetManager assetManager;
     protected boolean debug = false;
     protected float edgesThickness = 1.0f;
@@ -149,7 +149,7 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
         shadowFB = new FrameBuffer[nbShadowMaps];
         shadowMaps = new Texture2D[nbShadowMaps];
         dispPic = new Picture[nbShadowMaps];
-        lightViewProjectionsMatrices = new Matrix4f[nbShadowMaps];
+        lightViewProjectionsMatrices = new Matrix[nbShadowMaps];
         shadowMapStringCache = new String[nbShadowMaps];
         lightViewStringCache = new String[nbShadowMaps];
 
@@ -160,7 +160,7 @@ public abstract class AbstractShadowRenderer implements SceneProcessor, Savable 
         postshadowMat.setFloat("ShadowMapSize", shadowMapSize);
 
         for (int i = 0; i < nbShadowMaps; i++) {
-            lightViewProjectionsMatrices[i] = new Matrix4f();
+            lightViewProjectionsMatrices[i] = new Matrix(4);
             shadowFB[i] = new FrameBuffer(shadowMapSize, shadowMapSize, 1);
             shadowMaps[i] = new Texture2D(shadowMapSize, shadowMapSize, Format.Depth);
 

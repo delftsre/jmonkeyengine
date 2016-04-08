@@ -63,7 +63,7 @@ public class VehicleWheel implements Savable {
     protected Vector3f wheelWorldLocation = new Vector3f();
     protected Quaternion wheelWorldRotation = new Quaternion();
     protected Spatial wheelSpatial;
-    protected com.jme3.math.Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
+    protected com.jme3.math.Matrix tmp_Matrix = new com.jme3.math.Matrix(3);
     protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
     private boolean applyLocal = false;
 

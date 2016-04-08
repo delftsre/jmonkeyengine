@@ -32,16 +32,16 @@
 package com.jme3.scene.plugins.fbx.anim;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.scene.plugins.fbx.file.FbxElement;
 import com.jme3.scene.plugins.fbx.file.FbxId;
 import com.jme3.scene.plugins.fbx.obj.FbxObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FbxBindPose extends FbxObject<Map<FbxId, Matrix4f>> {
+public class FbxBindPose extends FbxObject<Map<FbxId, Matrix>> {
 
-    private final Map<FbxId, Matrix4f> bindPose = new HashMap<FbxId, Matrix4f>();
+    private final Map<FbxId, Matrix> bindPose = new HashMap<FbxId, Matrix>();
     
     public FbxBindPose(AssetManager assetManager, String sceneFolderName) {
         super(assetManager, sceneFolderName);
@@ -79,14 +79,14 @@ public class FbxBindPose extends FbxObject<Map<FbxId, Matrix4f>> {
             }
             
             if (node != null && matData != null) {
-                Matrix4f matrix = new Matrix4f(matData);
+                Matrix matrix = new Matrix(matData);
                 bindPose.put(node, matrix);
             }
         }
     }
     
     @Override
-    protected Map<FbxId, Matrix4f> toJmeObject() {
+    protected Map<FbxId, Matrix> toJmeObject() {
         return bindPose;
     }
 

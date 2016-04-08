@@ -36,7 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -48,7 +48,7 @@ import java.io.IOException;
 
 public class BillboardControl extends AbstractControl {
 
-    private Matrix3f orient;
+    private Matrix orient;
     private Vector3f look;
     private Vector3f left;
     private Alignment alignment;
@@ -80,7 +80,7 @@ public class BillboardControl extends AbstractControl {
 
     public BillboardControl() {
         super();
-        orient = new Matrix3f();
+        orient = new Matrix(3);
         look = new Vector3f();
         left = new Vector3f();
         alignment = Alignment.Screen;
@@ -298,7 +298,7 @@ public class BillboardControl extends AbstractControl {
     public void read(JmeImporter e) throws IOException {
         super.read(e);
         InputCapsule capsule = e.getCapsule(this);
-        orient = (Matrix3f) capsule.readSavable("orient", null);
+        orient = (Matrix) capsule.readSavable("orient", null);
         look = (Vector3f) capsule.readSavable("look", null);
         left = (Vector3f) capsule.readSavable("left", null);
         alignment = capsule.readEnum("alignment", Alignment.class, Alignment.Screen);

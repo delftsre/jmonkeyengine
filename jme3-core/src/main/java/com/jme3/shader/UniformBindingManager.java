@@ -58,22 +58,22 @@ public class UniformBindingManager {
             camLeft = new Vector3f(),
             camDir = new Vector3f(),
             camLoc = new Vector3f();
-    private Matrix4f tempMatrix = new Matrix4f();
-    private Matrix4f viewMatrix = new Matrix4f();
-    private Matrix4f projMatrix = new Matrix4f();
-    private Matrix4f viewProjMatrix = new Matrix4f();
-    private Matrix4f worldMatrix = new Matrix4f();
-    private Matrix4f worldViewMatrix = new Matrix4f();
-    private Matrix4f worldViewProjMatrix = new Matrix4f();
-    private Matrix3f normalMatrix = new Matrix3f();
-    private Matrix4f worldMatrixInv = new Matrix4f();
-    private Matrix3f worldMatrixInvTrsp = new Matrix3f();
-    private Matrix4f viewMatrixInv = new Matrix4f();
-    private Matrix4f projMatrixInv = new Matrix4f();
-    private Matrix4f viewProjMatrixInv = new Matrix4f();
-    private Matrix4f worldViewMatrixInv = new Matrix4f();
-    private Matrix3f normalMatrixInv = new Matrix3f();
-    private Matrix4f worldViewProjMatrixInv = new Matrix4f();
+    private Matrix tempMatrix = new Matrix(4);
+    private Matrix viewMatrix = new Matrix(4);
+    private Matrix projMatrix = new Matrix(4);
+    private Matrix viewProjMatrix = new Matrix(4);
+    private Matrix worldMatrix = new Matrix(4);
+    private Matrix worldViewMatrix = new Matrix(4);
+    private Matrix worldViewProjMatrix = new Matrix(4);
+    private Matrix normalMatrix = new Matrix(3);
+    private Matrix worldMatrixInv = new Matrix(4);
+    private Matrix worldMatrixInvTrsp = new Matrix(3);
+    private Matrix viewMatrixInv = new Matrix(4);
+    private Matrix projMatrixInv = new Matrix(4);
+    private Matrix viewProjMatrixInv = new Matrix(4);
+    private Matrix worldViewMatrixInv = new Matrix(4);
+    private Matrix normalMatrixInv = new Matrix(3);
+    private Matrix worldViewProjMatrixInv = new Matrix(4);
     private Vector4f viewPort = new Vector4f();
     private Vector2f resolution = new Vector2f();
     private Vector2f resolutionInv = new Vector2f();
@@ -218,7 +218,7 @@ public class UniformBindingManager {
      * 
      * @param mat The world matrix to set
      */
-    public void setWorldMatrix(Matrix4f mat) {
+    public void setWorldMatrix(Matrix mat) {
         worldMatrix.set(mat);
     }
 
@@ -232,7 +232,7 @@ public class UniformBindingManager {
         this.timer = timer;
     }
 
-    public void setCamera(Camera cam, Matrix4f viewMatrix, Matrix4f projMatrix, Matrix4f viewProjMatrix) {
+    public void setCamera(Camera cam, Matrix viewMatrix, Matrix projMatrix, Matrix viewProjMatrix) {
         this.viewMatrix.set(viewMatrix);
         this.projMatrix.set(projMatrix);
         this.viewProjMatrix.set(viewProjMatrix);

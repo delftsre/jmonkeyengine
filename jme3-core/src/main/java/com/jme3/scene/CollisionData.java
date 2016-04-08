@@ -35,7 +35,7 @@ import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.export.Savable;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 
 /**
  * <code>CollisionData</code> is an interface that can be used to 
@@ -45,7 +45,7 @@ import com.jme3.math.Matrix4f;
  */
 public interface CollisionData extends Savable, Cloneable {
     public int collideWith(Collidable other,
-                           Matrix4f worldMatrix,
+                           Matrix worldMatrix,
                            BoundingVolume worldBound,
                            CollisionResults results);
 }

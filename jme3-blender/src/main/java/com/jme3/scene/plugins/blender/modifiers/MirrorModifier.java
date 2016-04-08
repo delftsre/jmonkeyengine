@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.plugins.blender.BlenderContext;
@@ -172,8 +172,8 @@ import com.jme3.scene.plugins.blender.objects.ObjectHelper;
      *            the node
      * @return the node's world transformation matrix
      */
-    private Matrix4f getWorldMatrix(Node node) {
-        Matrix4f result = new Matrix4f();
+    private Matrix getWorldMatrix(Node node) {
+        Matrix result = new Matrix(4);
         result.setTranslation(node.getWorldTranslation());
         result.setRotationQuaternion(node.getWorldRotation());
         result.setScale(node.getWorldScale());

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -224,9 +224,9 @@ public class ConstraintHelper extends AbstractBlenderHelper {
             switch (space) {
                 case CONSTRAINT_SPACE_WORLD:
                     Spatial model = (Spatial) blenderContext.getLoadedFeature(targetBoneContext.getSkeletonOwnerOma(), LoadedDataType.FEATURE);
-                    Matrix4f boneModelMatrix = this.toMatrix(bone.getModelSpacePosition(), bone.getModelSpaceRotation(), bone.getModelSpaceScale(), tempVars.tempMat4);
-                    Matrix4f modelWorldMatrix = this.toMatrix(model.getWorldTransform(), tempVars.tempMat42);
-                    Matrix4f boneMatrixInWorldSpace = modelWorldMatrix.multLocal(boneModelMatrix);
+                    Matrix boneModelMatrix = this.toMatrix(bone.getModelSpacePosition(), bone.getModelSpaceRotation(), bone.getModelSpaceScale(), tempVars.tempMat4);
+                    Matrix modelWorldMatrix = this.toMatrix(model.getWorldTransform(), tempVars.tempMat42);
+                    Matrix boneMatrixInWorldSpace = modelWorldMatrix.multLocal(boneModelMatrix);
                     result = new Transform(boneMatrixInWorldSpace.toTranslationVector(), boneMatrixInWorldSpace.toRotationQuat(), boneMatrixInWorldSpace.toScaleVector());
                     break;
                 case CONSTRAINT_SPACE_LOCAL:
@@ -234,16 +234,16 @@ public class ConstraintHelper extends AbstractBlenderHelper {
                     result = new Transform(bone.getLocalPosition(), bone.getLocalRotation(), bone.getLocalScale());
                     break;
                 case CONSTRAINT_SPACE_POSE: {
-                    Matrix4f boneWorldMatrix = this.toMatrix(this.getTransform(oma, subtargetName, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat4);
-                    Matrix4f armatureInvertedWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat42).invertLocal();
-                    Matrix4f bonePoseMatrix = armatureInvertedWorldMatrix.multLocal(boneWorldMatrix);
+                    Matrix boneWorldMatrix = this.toMatrix(this.getTransform(oma, subtargetName, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat4);
+                    Matrix armatureInvertedWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat42).invertLocal();
+                    Matrix bonePoseMatrix = armatureInvertedWorldMatrix.multLocal(boneWorldMatrix);
                     result = new Transform(bonePoseMatrix.toTranslationVector(), bonePoseMatrix.toRotationQuat(), bonePoseMatrix.toScaleVector());
                     break;
                 }
                 case CONSTRAINT_SPACE_PARLOCAL: {
-                    Matrix4f boneWorldMatrix = this.toMatrix(this.getTransform(oma, subtargetName, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat4);
-                    Matrix4f armatureInvertedWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat42).invertLocal();
-                    Matrix4f bonePoseMatrix = armatureInvertedWorldMatrix.multLocal(boneWorldMatrix);
+                    Matrix boneWorldMatrix = this.toMatrix(this.getTransform(oma, subtargetName, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat4);
+                    Matrix armatureInvertedWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat42).invertLocal();
+                    Matrix bonePoseMatrix = armatureInvertedWorldMatrix.multLocal(boneWorldMatrix);
                     result = new Transform(bonePoseMatrix.toTranslationVector(), bonePoseMatrix.toRotationQuat(), bonePoseMatrix.toScaleVector());
                     Bone parent = bone.getParent();
                     if(parent != null) {
@@ -308,48 +308,48 @@ public class ConstraintHelper extends AbstractBlenderHelper {
                     bone.setBindTransforms(transform.getTranslation(), transform.getRotation(), transform.getScale());
                     break;
                 case CONSTRAINT_SPACE_WORLD: {
-                    Matrix4f boneMatrixInWorldSpace = this.toMatrix(transform, tempVars.tempMat4);
-                    Matrix4f modelWorldMatrix = this.toMatrix(this.getTransform(targetBoneContext.getSkeletonOwnerOma(), null, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat42);
-                    Matrix4f boneMatrixInModelSpace = modelWorldMatrix.invertLocal().multLocal(boneMatrixInWorldSpace);
+                    Matrix boneMatrixInWorldSpace = this.toMatrix(transform, tempVars.tempMat4);
+                    Matrix modelWorldMatrix = this.toMatrix(this.getTransform(targetBoneContext.getSkeletonOwnerOma(), null, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat42);
+                    Matrix boneMatrixInModelSpace = modelWorldMatrix.invertLocal().multLocal(boneMatrixInWorldSpace);
                     Bone parent = bone.getParent();
                     if (parent != null) {
-                        Matrix4f parentMatrixInModelSpace = this.toMatrix(parent.getModelSpacePosition(), parent.getModelSpaceRotation(), parent.getModelSpaceScale(), tempVars.tempMat4);
+                        Matrix parentMatrixInModelSpace = this.toMatrix(parent.getModelSpacePosition(), parent.getModelSpaceRotation(), parent.getModelSpaceScale(), tempVars.tempMat4);
                         boneMatrixInModelSpace = parentMatrixInModelSpace.invertLocal().multLocal(boneMatrixInModelSpace);
                     }
                     bone.setBindTransforms(boneMatrixInModelSpace.toTranslationVector(), boneMatrixInModelSpace.toRotationQuat(), boneMatrixInModelSpace.toScaleVector());
                     break;
                 }
                 case CONSTRAINT_SPACE_POSE: {
-                    Matrix4f armatureWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat4);
-                    Matrix4f boneMatrixInWorldSpace = armatureWorldMatrix.multLocal(this.toMatrix(transform, tempVars.tempMat42));
-                    Matrix4f invertedModelMatrix = this.toMatrix(this.getTransform(targetBoneContext.getSkeletonOwnerOma(), null, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat42).invertLocal();
-                    Matrix4f boneMatrixInModelSpace = invertedModelMatrix.multLocal(boneMatrixInWorldSpace);
+                    Matrix armatureWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat4);
+                    Matrix boneMatrixInWorldSpace = armatureWorldMatrix.multLocal(this.toMatrix(transform, tempVars.tempMat42));
+                    Matrix invertedModelMatrix = this.toMatrix(this.getTransform(targetBoneContext.getSkeletonOwnerOma(), null, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat42).invertLocal();
+                    Matrix boneMatrixInModelSpace = invertedModelMatrix.multLocal(boneMatrixInWorldSpace);
                     Bone parent = bone.getParent();
                     if (parent != null) {
-                        Matrix4f parentMatrixInModelSpace = this.toMatrix(parent.getModelSpacePosition(), parent.getModelSpaceRotation(), parent.getModelSpaceScale(), tempVars.tempMat4);
+                        Matrix parentMatrixInModelSpace = this.toMatrix(parent.getModelSpacePosition(), parent.getModelSpaceRotation(), parent.getModelSpaceScale(), tempVars.tempMat4);
                         boneMatrixInModelSpace = parentMatrixInModelSpace.invertLocal().multLocal(boneMatrixInModelSpace);
                     }
                     bone.setBindTransforms(boneMatrixInModelSpace.toTranslationVector(), boneMatrixInModelSpace.toRotationQuat(), boneMatrixInModelSpace.toScaleVector());
                     break;
                 }
                 case CONSTRAINT_SPACE_PARLOCAL:
-                    Matrix4f armatureWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat4);
-                    Matrix4f boneMatrixInWorldSpace = armatureWorldMatrix.multLocal(this.toMatrix(transform, tempVars.tempMat42));
-                    Matrix4f invertedModelMatrix = this.toMatrix(this.getTransform(targetBoneContext.getSkeletonOwnerOma(), null, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat42).invertLocal();
-                    Matrix4f boneMatrixInModelSpace = invertedModelMatrix.multLocal(boneMatrixInWorldSpace);
+                    Matrix armatureWorldMatrix = this.toMatrix(feature.getWorldTransform(), tempVars.tempMat4);
+                    Matrix boneMatrixInWorldSpace = armatureWorldMatrix.multLocal(this.toMatrix(transform, tempVars.tempMat42));
+                    Matrix invertedModelMatrix = this.toMatrix(this.getTransform(targetBoneContext.getSkeletonOwnerOma(), null, Space.CONSTRAINT_SPACE_WORLD), tempVars.tempMat42).invertLocal();
+                    Matrix boneMatrixInModelSpace = invertedModelMatrix.multLocal(boneMatrixInWorldSpace);
                     Bone parent = bone.getParent();
                     if (parent != null) {
                         //first add the initial parent matrix to the bone's model matrix
                         BoneContext parentContext = blenderContext.getBoneContext(parent);
 
-                        Matrix4f initialParentMatrixInModelSpace = parentContext.getBoneMatrixInModelSpace();
-                        Matrix4f currentParentMatrixInModelSpace = this.toMatrix(parent.getModelSpacePosition(), parent.getModelSpaceRotation(), parent.getModelSpaceScale(), tempVars.tempMat4);
+                        Matrix initialParentMatrixInModelSpace = parentContext.getBoneMatrixInModelSpace();
+                        Matrix currentParentMatrixInModelSpace = this.toMatrix(parent.getModelSpacePosition(), parent.getModelSpaceRotation(), parent.getModelSpaceScale(), tempVars.tempMat4);
                         //the bone will now move with its parent in model space
 
                         //now we need to subtract the difference between current parent's model matrix and its initial model matrix
                         boneMatrixInModelSpace = initialParentMatrixInModelSpace.mult(boneMatrixInModelSpace);
 
-                        Matrix4f diffMatrix = initialParentMatrixInModelSpace.mult(currentParentMatrixInModelSpace.invert());
+                        Matrix diffMatrix = initialParentMatrixInModelSpace.mult(currentParentMatrixInModelSpace.invert());
                         boneMatrixInModelSpace.multLocal(diffMatrix);
                         //now the bone will have its position in model space with initial parent's model matrix added
                     }
@@ -373,8 +373,8 @@ public class ConstraintHelper extends AbstractBlenderHelper {
                         Transform parentWorldTransform = feature.getParent().getWorldTransform();
 
                         TempVars tempVars = TempVars.get();
-                        Matrix4f parentInverseMatrix = this.toMatrix(parentWorldTransform, tempVars.tempMat4).invertLocal();
-                        Matrix4f m = this.toMatrix(transform, tempVars.tempMat42);
+                        Matrix parentInverseMatrix = this.toMatrix(parentWorldTransform, tempVars.tempMat4).invertLocal();
+                        Matrix m = this.toMatrix(transform, tempVars.tempMat42);
                         m = m.multLocal(parentInverseMatrix);
                         tempVars.release();
 
@@ -400,7 +400,7 @@ public class ConstraintHelper extends AbstractBlenderHelper {
      *            the matrix where the result will be stored
      * @return the store matrix
      */
-    public Matrix4f toMatrix(Transform transform, Matrix4f store) {
+    public Matrix toMatrix(Transform transform, Matrix store) {
         if (transform != null) {
             return this.toMatrix(transform.getTranslation(), transform.getRotation(), transform.getScale(), store);
         }
@@ -421,7 +421,7 @@ public class ConstraintHelper extends AbstractBlenderHelper {
      *            the matrix where the result will be stored
      * @return the store matrix
      */
-    private Matrix4f toMatrix(Vector3f position, Quaternion rotation, Vector3f scale, Matrix4f store) {
+    private Matrix toMatrix(Vector3f position, Quaternion rotation, Vector3f scale, Matrix store) {
         store.loadIdentity();
         store.setTranslation(position);
         store.setRotationQuaternion(rotation);

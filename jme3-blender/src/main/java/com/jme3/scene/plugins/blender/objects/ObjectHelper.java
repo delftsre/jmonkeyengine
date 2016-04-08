@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 
 import com.jme3.light.Light;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -366,7 +366,7 @@ public class ObjectHelper extends AbstractBlenderHelper {
     public Transform getTransformation(Structure objectStructure, BlenderContext blenderContext) {
         TempVars tempVars = TempVars.get();
 
-        Matrix4f parentInv = tempVars.tempMat4;
+        Matrix parentInv = tempVars.tempMat4;
         Pointer pParent = (Pointer) objectStructure.getFieldValue("parent");
         if (pParent.isNotNull()) {
             Structure parentObjectStructure = (Structure) blenderContext.getLoadedFeature(pParent.getOldMemoryAddress(), LoadedDataType.STRUCTURE);
@@ -375,8 +375,8 @@ public class ObjectHelper extends AbstractBlenderHelper {
             parentInv.loadIdentity();
         }
 
-        Matrix4f globalMatrix = this.getMatrix(objectStructure, "obmat", fixUpAxis, tempVars.tempMat42);
-        Matrix4f localMatrix = parentInv.multLocal(globalMatrix);
+        Matrix globalMatrix = this.getMatrix(objectStructure, "obmat", fixUpAxis, tempVars.tempMat42);
+        Matrix localMatrix = parentInv.multLocal(globalMatrix);
 
         this.getSizeSignums(objectStructure, tempVars.vect1);
 
@@ -439,7 +439,7 @@ public class ObjectHelper extends AbstractBlenderHelper {
      * @return the required matrix
      */
     @SuppressWarnings("unchecked")
-    private Matrix4f getMatrix(Structure structure, String matrixName, boolean fixUpAxis, Matrix4f store) {
+    private Matrix getMatrix(Structure structure, String matrixName, boolean fixUpAxis, Matrix store) {
         DynamicArray<Number> obmat = (DynamicArray<Number>) structure.getFieldValue(matrixName);
         // the matrix must be square
         int rowAndColumnSize = Math.abs((int) Math.sqrt(obmat.getTotalSize()));
@@ -468,16 +468,16 @@ public class ObjectHelper extends AbstractBlenderHelper {
             }
 
             // multiply the values in the third row by -1
-            store.m20 *= -1;
-            store.m21 *= -1;
-            store.m22 *= -1;
-            store.m23 *= -1;
+            store.matrix[2][0] *= -1;
+            store.matrix[2][1] *= -1;
+            store.matrix[2][2] *= -1;
+            store.matrix[2][3] *= -1;
 
             // multiply the values in the third column by -1
-            store.m02 *= -1;
-            store.m12 *= -1;
-            store.m22 *= -1;
-            store.m32 *= -1;
+            store.matrix[0][2] *= -1;
+            store.matrix[1][2] *= -1;
+            store.matrix[2][2] *= -1;
+            store.matrix[3][2] *= -1;
         }
 
         return store;
@@ -495,8 +495,8 @@ public class ObjectHelper extends AbstractBlenderHelper {
      *            tells if the Y axis is a UP axis
      * @return the required matrix
      */
-    public Matrix4f getMatrix(Structure structure, String matrixName, boolean fixUpAxis) {
-        return this.getMatrix(structure, matrixName, fixUpAxis, new Matrix4f());
+    public Matrix getMatrix(Structure structure, String matrixName, boolean fixUpAxis) {
+        return this.getMatrix(structure, matrixName, fixUpAxis, new Matrix(4));
     }
 
     private static enum ObjectType {

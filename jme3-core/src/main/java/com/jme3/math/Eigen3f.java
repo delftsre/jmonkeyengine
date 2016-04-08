@@ -52,17 +52,17 @@ public class Eigen3f implements java.io.Serializable {
     	
     }
     
-    public Eigen3f(Matrix3f data) {
+    public Eigen3f(Matrix data) {
         calculateEigen(data);
     }
 
-	public void calculateEigen(Matrix3f data) {
+	public void calculateEigen(Matrix data) {
 		// prep work...
         eigenVectors[0] = new Vector3f();
         eigenVectors[1] = new Vector3f();
         eigenVectors[2] = new Vector3f();
 
-        Matrix3f scaledData = new Matrix3f(data);
+        Matrix scaledData = new Matrix(data);
         float maxMagnitude = scaleMatrix(scaledData);
 
         // Compute the eigenvalues using double-precision arithmetic.
@@ -79,10 +79,10 @@ public class Eigen3f implements java.io.Serializable {
         maxRows[2] = new Vector3f();
         
         for (int i = 0; i < 3; i++) {
-            Matrix3f tempMatrix = new Matrix3f(scaledData);
-            tempMatrix.m00 -= eigenValues[i];
-            tempMatrix.m11 -= eigenValues[i];
-            tempMatrix.m22 -= eigenValues[i];
+            Matrix tempMatrix = new Matrix(scaledData);
+            tempMatrix.matrix[0][0] -= eigenValues[i];
+            tempMatrix.matrix[1][1] -= eigenValues[i];
+            tempMatrix.matrix[2][2] -= eigenValues[i];
             float[] val = new float[1];
             val[0] = maxValues[i];
             if (!positiveRank(tempMatrix, val, maxRows[i])) {
@@ -142,27 +142,27 @@ public class Eigen3f implements java.io.Serializable {
      * 
      * @return the max magnitude in this matrix
      */
-    private float scaleMatrix(Matrix3f mat) {
+    private float scaleMatrix(Matrix mat) {
 
-        float max = FastMath.abs(mat.m00);
-        float abs = FastMath.abs(mat.m01);
+        float max = FastMath.abs(mat.matrix[0][0]);
+        float abs = FastMath.abs(mat.matrix[0][1]);
 
         if (abs > max) {
             max = abs;
         }
-        abs = FastMath.abs(mat.m02);
+        abs = FastMath.abs(mat.matrix[0][2]);
         if (abs > max) {
             max = abs;
         }
-        abs = FastMath.abs(mat.m11);
+        abs = FastMath.abs(mat.matrix[1][1]);
         if (abs > max) {
             max = abs;
         }
-        abs = FastMath.abs(mat.m12);
+        abs = FastMath.abs(mat.matrix[1][2]);
         if (abs > max) {
             max = abs;
         }
-        abs = FastMath.abs(mat.m22);
+        abs = FastMath.abs(mat.matrix[2][2]);
         if (abs > max) {
             max = abs;
         }
@@ -183,7 +183,7 @@ public class Eigen3f implements java.io.Serializable {
      * @param index2
      * @param index3
      */
-    private void computeVectors(Matrix3f mat, Vector3f vect, int index1,
+    private void computeVectors(Matrix mat, Vector3f vect, int index1,
             int index2, int index3) {
         Vector3f vectorU = new Vector3f(), vectorV = new Vector3f();
         Vector3f.generateComplementBasis(vectorU, vectorV, vect);
@@ -273,7 +273,7 @@ public class Eigen3f implements java.io.Serializable {
      * max row of the matrix in the Vector store.
      * 
      * @param matrix
-     *            the Matrix3f to analyze.
+     *            the Matrix to analyze.
      * @param maxMagnitudeStore
      *            a float array in which to store (in the 0th position) the max
      *            magnitude entry of the matrix.
@@ -282,7 +282,7 @@ public class Eigen3f implements java.io.Serializable {
      *            containing the max magnitude entry.
      * @return true if the given matrix has a non 0 rank.
      */
-    private boolean positiveRank(Matrix3f matrix, float[] maxMagnitudeStore, Vector3f maxRowStore) {
+    private boolean positiveRank(Matrix matrix, float[] maxMagnitudeStore, Vector3f maxRowStore) {
         // Locate the maximum-magnitude entry of the matrix.
         maxMagnitudeStore[0] = -1f;
         int iRow, iCol, iMaxRow = -1;
@@ -308,16 +308,16 @@ public class Eigen3f implements java.io.Serializable {
      * math.
      * 
      * @param mat
-     *            the Matrix3f to analyze.
+     *            the Matrix to analyze.
      * @param rootsStore
      *            a double array to store the results in. Must be at least
      *            length 3.
      */
-    private void computeRoots(Matrix3f mat, double[] rootsStore) {
+    private void computeRoots(Matrix mat, double[] rootsStore) {
         // Convert the unique matrix entries to double precision.
-        double a = mat.m00, b = mat.m01, c = mat.m02,
-                            d = mat.m11, e = mat.m12,
-                                         f = mat.m22;
+        double a = mat.matrix[0][0], b = mat.matrix[0][1], c = mat.matrix[0][2],
+                            d = mat.matrix[1][1], e = mat.matrix[1][2],
+                                         f = mat.matrix[2][2];
 
         // The characteristic equation is x^3 - c2*x^2 + c1*x - c0 = 0. The
         // eigenvalues are the roots to this equation, all guaranteed to be
@@ -379,7 +379,8 @@ public class Eigen3f implements java.io.Serializable {
     }
 
     public static void main(String[] args) {
-        Matrix3f mat = new Matrix3f(2, 1, 1, 1, 2, 1, 1, 1, 2);
+    	float[] data = {2, 1, 1, 1, 2, 1, 1, 1, 2};
+        Matrix mat = new Matrix(data);
         Eigen3f eigenSystem = new Eigen3f(mat);
 
         logger.info("eigenvalues = ");

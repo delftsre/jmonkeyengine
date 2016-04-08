@@ -610,7 +610,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
      * @param name the name of the matrix defined in the material definition (j3md)
      * @param value the Matrix4f object
      */
-    public void setMatrix4(String name, Matrix4f value) {
+    public void setMatrix4(String name, Matrix value) {
         setParam(name, VarType.Matrix4, value);
     }
 

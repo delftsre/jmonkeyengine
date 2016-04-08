@@ -934,12 +934,12 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
 
     /**
      * <code>setLocalRotation</code> sets the local rotation of this node
-     * by using a {@link Matrix3f}.
+     * by using a {@link Matrix}.
      *
      * @param rotation
      *            the new local rotation.
      */
-    public void setLocalRotation(Matrix3f rotation) {
+    public void setLocalRotation(Matrix rotation) {
         localTransform.getRotation().fromRotationMatrix(rotation);
         setTransformRefresh();
     }
@@ -1597,9 +1597,9 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @see Spatial#getWorldTransform() 
      */
-    public Matrix4f getLocalToWorldMatrix(Matrix4f store) {
+    public Matrix getLocalToWorldMatrix(Matrix store) {
         if (store == null) {
-            store = new Matrix4f();
+            store = new Matrix(4);
         } else {
             store.loadIdentity();
         }

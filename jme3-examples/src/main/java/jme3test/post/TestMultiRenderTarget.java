@@ -37,7 +37,7 @@ import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.SceneProcessor;
@@ -215,7 +215,7 @@ public class TestMultiRenderTarget extends SimpleApplication implements ScenePro
     }
 
     public void preFrame(float tpf) {
-        Matrix4f inverseViewProj = cam.getViewProjectionMatrix().invert();
+        Matrix inverseViewProj = cam.getViewProjectionMatrix().invert();
         mat.setMatrix4("ViewProjectionMatrixInverse", inverseViewProj);
         techOrig = renderManager.getForcedTechnique();
         renderManager.setForcedTechnique("GBuf");

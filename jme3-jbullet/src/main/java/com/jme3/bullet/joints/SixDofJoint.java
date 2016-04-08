@@ -41,7 +41,7 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.Iterator;
@@ -75,7 +75,7 @@ public class SixDofJoint extends PhysicsJoint {
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */
-    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, boolean useLinearReferenceFrameA) {
+    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix rotA, Matrix rotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
 
@@ -99,10 +99,10 @@ public class SixDofJoint extends PhysicsJoint {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
 
-        Transform transA = new Transform(Converter.convert(new Matrix3f()));
+        Transform transA = new Transform(Converter.convert(new Matrix(3)));
         Converter.convert(pivotA, transA.origin);
 
-        Transform transB = new Transform(Converter.convert(new Matrix3f()));
+        Transform transB = new Transform(Converter.convert(new Matrix(3)));
         Converter.convert(pivotB, transB.origin);
 
         constraint = new Generic6DofConstraint(nodeA.getObjectId(), nodeB.getObjectId(), transA, transB, useLinearReferenceFrameA);
@@ -161,10 +161,10 @@ public class SixDofJoint extends PhysicsJoint {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
 
-        Transform transA = new Transform(Converter.convert(new Matrix3f()));
+        Transform transA = new Transform(Converter.convert(new Matrix(3)));
         Converter.convert(pivotA, transA.origin);
 
-        Transform transB = new Transform(Converter.convert(new Matrix3f()));
+        Transform transB = new Transform(Converter.convert(new Matrix(3)));
         Converter.convert(pivotB, transB.origin);
         constraint = new Generic6DofConstraint(nodeA.getObjectId(), nodeB.getObjectId(), transA, transB, useLinearReferenceFrameA);
         gatherMotors();

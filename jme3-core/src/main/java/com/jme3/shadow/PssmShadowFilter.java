@@ -37,7 +37,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.material.Material;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.post.Filter;
@@ -102,8 +102,8 @@ public class PssmShadowFilter extends Filter {
     protected void preFrame(float tpf) {
         pssmRenderer.preFrame(tpf);
         material.setMatrix4("ViewProjectionMatrixInverse", viewPort.getCamera().getViewProjectionMatrix().invert());
-        Matrix4f m = viewPort.getCamera().getViewProjectionMatrix();
-        material.setVector4("ViewProjectionMatrixRow2", tmpv.set(m.m20, m.m21, m.m22, m.m23));
+        Matrix m = viewPort.getCamera().getViewProjectionMatrix();
+        material.setVector4("ViewProjectionMatrixRow2", tmpv.set(m.matrix[2][0], m.matrix[2][1], m.matrix[2][2], m.matrix[2][3]));
 
     }
 

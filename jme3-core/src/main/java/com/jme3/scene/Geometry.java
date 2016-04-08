@@ -40,7 +40,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.material.Material;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.TempVars;
@@ -70,7 +70,7 @@ public class Geometry extends Spatial {
      * When true, the geometry's transform will not be applied.
      */
     protected boolean ignoreTransform = false;
-    protected transient Matrix4f cachedWorldMat = new Matrix4f();
+    protected transient Matrix cachedWorldMat = new Matrix(4);
     
     /**
      * Specifies which {@link GeometryGroupNode} this <code>Geometry</code>
@@ -393,7 +393,7 @@ public class Geometry extends Spatial {
         cachedWorldMat.setTranslation(worldTransform.getTranslation());
 
         TempVars vars = TempVars.get();
-        Matrix4f scaleMat = vars.tempMat4;
+        Matrix scaleMat = vars.tempMat4;
         scaleMat.loadIdentity();
         scaleMat.scale(worldTransform.getScale());
         cachedWorldMat.multLocal(scaleMat);
@@ -409,7 +409,7 @@ public class Geometry extends Spatial {
      * 
      * @return Matrix to transform from local space to world space
      */
-    public Matrix4f getWorldMatrix() {
+    public Matrix getWorldMatrix() {
         return cachedWorldMat;
     }
 

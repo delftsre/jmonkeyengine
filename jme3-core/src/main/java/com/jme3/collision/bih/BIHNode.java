@@ -36,7 +36,7 @@ import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.export.*;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Ray;
 import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
@@ -147,7 +147,7 @@ public final class BIHNode implements Savable {
 
     public final int intersectWhere(Collidable col,
             BoundingBox box,
-            Matrix4f worldMatrix,
+            Matrix worldMatrix,
             BIHTree tree,
             CollisionResults results) {
 
@@ -234,7 +234,7 @@ public final class BIHNode implements Savable {
     }
 
     public final int intersectBrute(Ray r,
-            Matrix4f worldMatrix,
+            Matrix worldMatrix,
             BIHTree tree,
             float sceneMin,
             float sceneMax,
@@ -294,7 +294,7 @@ public final class BIHNode implements Savable {
     }
 
     public final int intersectWhere(Ray r,
-            Matrix4f worldMatrix,
+            Matrix worldMatrix,
             BIHTree tree,
             float sceneMin,
             float sceneMax,
@@ -309,7 +309,7 @@ public final class BIHNode implements Savable {
         Vector3f o = vars.vect1.set(r.getOrigin());
         Vector3f d =  vars.vect2.set(r.getDirection());
 
-        Matrix4f inv =vars.tempMat4.set(worldMatrix).invertLocal();
+        Matrix inv =vars.tempMat4.set(worldMatrix).invertLocal();
 
         inv.mult(r.getOrigin(), r.getOrigin());
 

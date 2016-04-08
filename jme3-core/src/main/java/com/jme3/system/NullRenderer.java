@@ -37,7 +37,7 @@ import java.util.EnumSet;
 import com.jme3.light.LightList;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.renderer.Caps;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.Statistics;
@@ -83,10 +83,10 @@ public class NullRenderer implements Renderer {
     public void postFrame() {
     }
 
-    public void setWorldMatrix(Matrix4f worldMatrix) {
+    public void setWorldMatrix(Matrix worldMatrix) {
     }
 
-    public void setViewProjectionMatrices(Matrix4f viewMatrix, Matrix4f projMatrix) {
+    public void setViewProjectionMatrices(Matrix viewMatrix, Matrix projMatrix) {
     }
 
     public void setViewPort(int x, int y, int width, int height) {
