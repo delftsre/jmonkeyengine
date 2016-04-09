@@ -731,9 +731,9 @@ public class Image extends NativeObject implements Savable /*, Cloneable*/ {
      *            the data that contains the image information.
      */
     public void setData(ByteBuffer data) {
-        this.data = new ArrayList<ByteBuffer>(1);
-        this.data.add(data);
-        setUpdateNeeded();
+        ArrayList<ByteBuffer> list = new ArrayList<ByteBuffer>(1);
+        list.add(data);
+        setData(list);
     }
 
     public void addData(ByteBuffer data) {
