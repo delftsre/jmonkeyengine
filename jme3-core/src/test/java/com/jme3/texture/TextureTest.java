@@ -31,19 +31,22 @@
  */
 package com.jme3.texture;
 
-import com.jme3.texture.*;
-import org.junit.Test;
+import com.jme3.texture.Texture;
+import org.junit.*;
 
 /**
- * Verifies that methods in package {@link Texture} are working correctly.
+ * Verifies that algorithms in {@link Texture} are working correctly.
  * 
  * @author Mart Oude Weernink
- * @author Remco Tjeerdsma
  */
 public class TextureTest {
 
-    @Test
-    public void testNearestPowerOfTwo() {
+    @Before
+    public void initiate(){
 
     }
+
+    @Test
+    public void test(){}
+
 }
