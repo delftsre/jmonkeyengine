@@ -206,6 +206,15 @@ public class Texture3D extends Texture {
     }
 
     @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 53 * hash + (this.wrapS != null ? this.wrapS.hashCode() : 0);
+        hash = 53 * hash + (this.wrapT != null ? this.wrapT.hashCode() : 0);
+        hash = 53 * hash + (this.wrapR != null ? this.wrapR.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
     public void write(JmeExporter e) throws IOException {
         super.write(e);
         OutputCapsule capsule = e.getCapsule(this);
