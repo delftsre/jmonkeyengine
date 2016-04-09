@@ -48,24 +48,26 @@ import static org.junit.Assert.assertNotEquals;
  * @author Remco Tjeerdsma
  */
 public class ImageTest {
-
+    Image myImage;
 
     @Before
     public void initiate() {
+        myImage = new Image(Format.RGB8,300,300, null,ColorSpace.Linear);
     }
 
     @Test
-    public void ImageRasterTest() {
-
-        Image myImage = new Image(Format.RGB8,300,300, null,ColorSpace.Linear);
-        //Testing isUpdateNeeded
+    public void updateNeededTest() {
         assertEquals(myImage.isUpdateNeeded(), true);
         myImage.clearUpdateNeeded();
         assertEquals(myImage.isUpdateNeeded(), false);
         myImage.setUpdateNeeded();
         assertEquals(myImage.isUpdateNeeded(), true);
 
-        //Testing width/height getters/setters
+
+    }
+
+    @Test
+    public void widthHeightGetSetTest() {
         assertEquals(myImage.getWidth(), 300);
         myImage.setWidth(400);
         assertEquals(myImage.getWidth(), 400);
@@ -73,20 +75,26 @@ public class ImageTest {
         assertEquals(myImage.getHeight(), 400);
         assertEquals(myImage.isUpdateNeeded(), true);
 
-        //Testing isNPOT
+    }
+
+    @Test
+    public void NPOTTest() {
         assertEquals(myImage.isNPOT(), true);
         myImage.setHeight(512);
         myImage.setWidth(512);
         assertEquals(myImage.isNPOT(), false);
+    }
 
-        //Testing resetObject
+    @Test
+    public void resetObjectTest(){
         myImage.getLastTextureState().rWrap = Texture.WrapMode.Repeat;
         assertEquals(myImage.getLastTextureState().rWrap,Texture.WrapMode.Repeat);
         myImage.resetObject();
         assertEquals(myImage.getLastTextureState().rWrap,null);
+    }
 
-        //Testing setData
-
+    @Test
+    public void setDataTest(){
         assertEquals(true,myImage.getData().isEmpty());
         ByteBuffer bb = ByteBuffer.allocate(10000).put ((byte)0xff );
         myImage.setData(bb);
