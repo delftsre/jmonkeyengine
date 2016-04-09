@@ -31,30 +31,22 @@
  */
 package com.jme3.texture;
 
-import com.jme3.math.FastMath;
-import org.junit.Test;
+import com.jme3.texture.Texture;
+import org.junit.*;
 
 /**
- * Verifies that algorithms in {@link FastMath} are working correctly.
+ * Verifies that algorithms in {@link Texture} are working correctly.
  * 
- * @author Kirill Vainer
+ * @author Mart Oude Weernink
  */
 public class TextureTest {
-    
-    private int nearestPowerOfTwoSlow(int number) {
-        return (int) Math.pow(2, Math.ceil(Math.log(number) / Math.log(2)));
+
+    @Before
+    public void initiate(){
+
     }
-    
+
     @Test
-    public void testNearestPowerOfTwo() {
-        for (int i = -100; i < 1; i++) {
-            assert FastMath.nearestPowerOfTwo(i) == 1;
-        }
-        for (int i = 1; i < 10000; i++) {
-            int nextPowerOf2 = FastMath.nearestPowerOfTwo(i);
-            assert i <= nextPowerOf2;
-            assert FastMath.isPowerOfTwo(nextPowerOf2);
-            assert nextPowerOf2 == nearestPowerOfTwoSlow(i);
-        }
-    }
+    public void test(){}
+
 }
