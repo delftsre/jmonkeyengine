@@ -27,17 +27,19 @@ public class TestShaderNodes extends SimpleApplication {
         Texture tex = assetManager.loadTexture("Interface/Logo/Monkey.jpg");
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/UnshadedNodes.j3md");
-        mat.selectTechnique("Default", renderManager);
+
+        cube_tex.setMaterial(mat);
+
+        cube_tex.selectTechnique("Default", renderManager);
         Technique t = mat.getActiveTechnique();
 
         for (Shader.ShaderSource shaderSource : t.getShader().getSources()) {
             System.out.println(shaderSource.getSource());
         }
 
-        
+
         mat.setColor("Color", ColorRGBA.Yellow);
         mat.setTexture("ColorMap", tex);
-        cube_tex.setMaterial(mat);
         rootNode.attachChild(cube_tex);
     }
 }

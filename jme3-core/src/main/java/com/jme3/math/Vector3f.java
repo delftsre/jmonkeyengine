@@ -34,6 +34,8 @@ package com.jme3.math;
 
 import com.jme3.export.*;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 /*
@@ -41,7 +43,7 @@ import java.util.logging.Logger;
  */
 
 /**
- * <code>Vector3f</code> defines a Vector for a three float value tuple.
+ * <code>Vector3f</code> defines a VectorNf for a three float value tuple.
  * <code>Vector3f</code> can represent any three dimensional value, such as a
  * vertex, a normal, etc. Utility methods are also included to aid in
  * mathematical calculations.
@@ -49,7 +51,7 @@ import java.util.logging.Logger;
  * @author Mark Powell
  * @author Joshua Slack
  */
-public final class Vector3f implements Savable, Cloneable, java.io.Serializable {
+public final class Vector3f implements VectorNf, Savable, Cloneable, java.io.Serializable {
 
     static final long serialVersionUID = 1;
     
@@ -592,7 +594,7 @@ public final class Vector3f implements Savable, Cloneable, java.io.Serializable 
      *
      * @param scalar
      *            the value to divide this vectors attributes by.
-     * @return the result <code>Vector</code>.
+     * @return the result <code>Vector3f</code>.
      */
     public Vector3f divide(float scalar) {
         scalar = 1f/scalar;
@@ -623,7 +625,7 @@ public final class Vector3f implements Savable, Cloneable, java.io.Serializable 
      *
      * @param scalar
      *            the value to divide this vectors attributes by.
-     * @return the result <code>Vector</code>.
+     * @return the result <code>Vector3f</code>.
      */
     public Vector3f divide(Vector3f scalar) {
         return new Vector3f(x / scalar.x, y / scalar.y, z / scalar.z);
@@ -1079,4 +1081,13 @@ public final class Vector3f implements Savable, Cloneable, java.io.Serializable 
         throw new IllegalArgumentException("index must be either 0, 1 or 2");
     }
 
+    public void setIndex(int index, float value) {
+        this.set(index, value);
+    }
+
+
+    @Override
+    public int size() {
+        return 3;
+    }
 }

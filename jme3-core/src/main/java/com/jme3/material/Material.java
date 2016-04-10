@@ -45,6 +45,10 @@ import com.jme3.renderer.Caps;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.RendererException;
+import com.jme3.renderer.geometryrenderers.GeometryRenderer;
+import com.jme3.renderer.geometryrenderers.MultiPassGeometryRenderer;
+import com.jme3.renderer.geometryrenderers.NoLightGeometryRenderer;
+import com.jme3.renderer.geometryrenderers.SinglePassGeometryRenderer;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -79,7 +83,6 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
     private static final Logger logger = Logger.getLogger(Material.class.getName());
     private static final RenderState additiveLight = new RenderState();
     private static final RenderState depthOnly = new RenderState();
-    private static final Quaternion nullDirLight = new Quaternion(0, -1, 0, -1);
 
     static {
         depthOnly.setDepthTest(true);
@@ -95,7 +98,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
     private MaterialDef def;
     private ListMap<String, MatParam> paramValues = new ListMap<String, MatParam>();
     private Technique technique;
-    private HashMap<String, Technique> techniques = new HashMap<String, Technique>();
+    private Map<String, Technique> techniques = new HashMap<String, Technique>();
     private int nextTexUnit = 0;
     private RenderState additionalState = null;
     private RenderState mergedRenderState = new RenderState();
@@ -307,22 +310,6 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
     }
 
     /**
-     * Returns the currently active technique.
-     * <p>
-     * The technique is selected automatically by the {@link RenderManager}
-     * based on system capabilities. Users may select their own
-     * technique by using
-     * {@link #selectTechnique(java.lang.String, com.jme3.renderer.RenderManager) }.
-     *
-     * @return the currently active technique.
-     *
-     * @see #selectTechnique(java.lang.String, com.jme3.renderer.RenderManager)
-     */
-    public Technique getActiveTechnique() {
-        return technique;
-    }
-
-    /**
      * Check if the transparent value marker is set on this material.
      * @return True if the transparent value marker is set on this material.
      * @see #setTransparent(boolean)
@@ -370,24 +357,6 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
      */
     public void setReceivesShadows(boolean receivesShadows) {
         this.receivesShadows = receivesShadows;
-    }
-
-    /**
-     * Acquire the additional {@link RenderState render state} to apply
-     * for this material.
-     *
-     * <p>The first call to this method will create an additional render
-     * state which can be modified by the user to apply any render
-     * states in addition to the ones used by the renderer. Only render
-     * states which are modified in the additional render state will be applied.
-     *
-     * @return The additional render state.
-     */
-    public RenderState getAdditionalRenderState() {
-        if (additionalState == null) {
-            additionalState = RenderState.ADDITIONAL.clone();
-        }
-        return additionalState;
     }
 
     /**
@@ -695,541 +664,6 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
         setParam(name, VarType.Vector4, value);
     }
 
-    private ColorRGBA getAmbientColor(LightList lightList, boolean removeLights) {
-        ambientLightColor.set(0, 0, 0, 1);
-        for (int j = 0; j < lightList.size(); j++) {
-            Light l = lightList.get(j);
-            if (l instanceof AmbientLight) {
-                ambientLightColor.addLocal(l.getColor());
-                if(removeLights){
-                    lightList.remove(l);
-                }
-            }
-        }
-        ambientLightColor.a = 1.0f;
-        return ambientLightColor;
-    }
-
-    private static void renderMeshFromGeometry(Renderer renderer, Geometry geom) {
-        Mesh mesh = geom.getMesh();
-        int lodLevel = geom.getLodLevel();
-        if (geom instanceof InstancedGeometry) {
-            InstancedGeometry instGeom = (InstancedGeometry) geom;
-            int numInstances = instGeom.getActualNumInstances();
-            if (numInstances == 0) {
-                return;
-            }
-            if (renderer.getCaps().contains(Caps.MeshInstancing)) {
-                renderer.renderMesh(mesh, lodLevel, numInstances, instGeom.getAllInstanceData());
-            } else {
-                throw new RendererException("Mesh instancing is not supported by the video hardware");
-            }
-        } else {
-            renderer.renderMesh(mesh, lodLevel, 1, null);
-        }
-    }
-
-    /**
-     * Uploads the lights in the light list as two uniform arrays.<br/><br/> *
-     * <p>
-     * <code>uniform vec4 g_LightColor[numLights];</code><br/> //
-     * g_LightColor.rgb is the diffuse/specular color of the light.<br/> //
-     * g_Lightcolor.a is the type of light, 0 = Directional, 1 = Point, <br/> //
-     * 2 = Spot. <br/> <br/>
-     * <code>uniform vec4 g_LightPosition[numLights];</code><br/> //
-     * g_LightPosition.xyz is the position of the light (for point lights)<br/>
-     * // or the direction of the light (for directional lights).<br/> //
-     * g_LightPosition.w is the inverse radius (1/r) of the light (for
-     * attenuation) <br/> </p>
-     */
-    protected int updateLightListUniforms(Shader shader, Geometry g, LightList lightList, int numLights, RenderManager rm, int startIndex) {
-        if (numLights == 0) { // this shader does not do lighting, ignore.
-            return 0;
-        }
-
-        Uniform lightData = shader.getUniform("g_LightData");
-        lightData.setVector4Length(numLights * 3);//8 lights * max 3
-        Uniform ambientColor = shader.getUniform("g_AmbientLightColor");
-
-
-        if (startIndex != 0) {
-            // apply additive blending for 2nd and future passes
-            rm.getRenderer().applyRenderState(additiveLight);
-            ambientColor.setValue(VarType.Vector4, ColorRGBA.Black);
-        }else{
-            ambientColor.setValue(VarType.Vector4, getAmbientColor(lightList,true));
-        }
-
-        int lightDataIndex = 0;
-        TempVars vars = TempVars.get();
-        Vector4f tmpVec = vars.vect4f1;
-        int curIndex;
-        int endIndex = numLights + startIndex;
-        for (curIndex = startIndex; curIndex < endIndex && curIndex < lightList.size(); curIndex++) {
-
-
-                Light l = lightList.get(curIndex);
-                if(l.getType() == Light.Type.Ambient){
-                    endIndex++;
-                    continue;
-                }
-                ColorRGBA color = l.getColor();
-                //Color
-                lightData.setVector4InArray(color.getRed(),
-                        color.getGreen(),
-                        color.getBlue(),
-                        l.getType().getId(),
-                        lightDataIndex);
-                lightDataIndex++;
-
-                switch (l.getType()) {
-                    case Directional:
-                        DirectionalLight dl = (DirectionalLight) l;
-                        Vector3f dir = dl.getDirection();
-                        //Data directly sent in view space to avoid a matrix mult for each pixel
-                        tmpVec.set(dir.getX(), dir.getY(), dir.getZ(), 0.0f);
-                        rm.getCurrentCamera().getViewMatrix().mult(tmpVec, tmpVec);
-//                        tmpVec.divideLocal(tmpVec.w);
-//                        tmpVec.normalizeLocal();
-                        lightData.setVector4InArray(tmpVec.getX(), tmpVec.getY(), tmpVec.getZ(), -1, lightDataIndex);
-                        lightDataIndex++;
-                        //PADDING
-                        lightData.setVector4InArray(0,0,0,0, lightDataIndex);
-                        lightDataIndex++;
-                        break;
-                    case Point:
-                        PointLight pl = (PointLight) l;
-                        Vector3f pos = pl.getPosition();
-                        float invRadius = pl.getInvRadius();
-                        tmpVec.set(pos.getX(), pos.getY(), pos.getZ(), 1.0f);
-                        rm.getCurrentCamera().getViewMatrix().mult(tmpVec, tmpVec);
-                        //tmpVec.divideLocal(tmpVec.w);
-                        lightData.setVector4InArray(tmpVec.getX(), tmpVec.getY(), tmpVec.getZ(), invRadius, lightDataIndex);
-                        lightDataIndex++;
-                        //PADDING
-                        lightData.setVector4InArray(0,0,0,0, lightDataIndex);
-                        lightDataIndex++;
-                        break;
-                    case Spot:
-                        SpotLight sl = (SpotLight) l;
-                        Vector3f pos2 = sl.getPosition();
-                        Vector3f dir2 = sl.getDirection();
-                        float invRange = sl.getInvSpotRange();
-                        float spotAngleCos = sl.getPackedAngleCos();
-                        tmpVec.set(pos2.getX(), pos2.getY(), pos2.getZ(),  1.0f);
-                        rm.getCurrentCamera().getViewMatrix().mult(tmpVec, tmpVec);
-                       // tmpVec.divideLocal(tmpVec.w);
-                        lightData.setVector4InArray(tmpVec.getX(), tmpVec.getY(), tmpVec.getZ(), invRange, lightDataIndex);
-                        lightDataIndex++;
-
-                        //We transform the spot direction in view space here to save 5 varying later in the lighting shader
-                        //one vec4 less and a vec4 that becomes a vec3
-                        //the downside is that spotAngleCos decoding happens now in the frag shader.
-                        tmpVec.set(dir2.getX(), dir2.getY(), dir2.getZ(),  0.0f);
-                        rm.getCurrentCamera().getViewMatrix().mult(tmpVec, tmpVec);
-                        tmpVec.normalizeLocal();
-                        lightData.setVector4InArray(tmpVec.getX(), tmpVec.getY(), tmpVec.getZ(), spotAngleCos, lightDataIndex);
-                        lightDataIndex++;
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Unknown type of light: " + l.getType());
-                }
-        }
-        vars.release();
-        //Padding of unsued buffer space
-        while(lightDataIndex < numLights * 3) {
-            lightData.setVector4InArray(0f, 0f, 0f, 0f, lightDataIndex);
-            lightDataIndex++;
-        }
-        return curIndex;
-    }
-
-    protected void renderMultipassLighting(Shader shader, Geometry g, LightList lightList, RenderManager rm) {
-
-        Renderer r = rm.getRenderer();
-        Uniform lightDir = shader.getUniform("g_LightDirection");
-        Uniform lightColor = shader.getUniform("g_LightColor");
-        Uniform lightPos = shader.getUniform("g_LightPosition");
-        Uniform ambientColor = shader.getUniform("g_AmbientLightColor");
-        boolean isFirstLight = true;
-        boolean isSecondLight = false;
-
-        for (int i = 0; i < lightList.size(); i++) {
-            Light l = lightList.get(i);
-            if (l instanceof AmbientLight) {
-                continue;
-            }
-
-            if (isFirstLight) {
-                // set ambient color for first light only
-                ambientColor.setValue(VarType.Vector4, getAmbientColor(lightList, false));
-                isFirstLight = false;
-                isSecondLight = true;
-            } else if (isSecondLight) {
-                ambientColor.setValue(VarType.Vector4, ColorRGBA.Black);
-                // apply additive blending for 2nd and future lights
-                r.applyRenderState(additiveLight);
-                isSecondLight = false;
-            }
-
-            TempVars vars = TempVars.get();
-            Quaternion tmpLightDirection = vars.quat1;
-            Quaternion tmpLightPosition = vars.quat2;
-            ColorRGBA tmpLightColor = vars.color;
-            Vector4f tmpVec = vars.vect4f1;
-
-            ColorRGBA color = l.getColor();
-            tmpLightColor.set(color);
-            tmpLightColor.a = l.getType().getId();
-            lightColor.setValue(VarType.Vector4, tmpLightColor);
-
-            switch (l.getType()) {
-                case Directional:
-                    DirectionalLight dl = (DirectionalLight) l;
-                    Vector3f dir = dl.getDirection();
-                    //FIXME : there is an inconstency here due to backward
-                    //compatibility of the lighting shader.
-                    //The directional light direction is passed in the
-                    //LightPosition uniform. The lighting shader needs to be
-                    //reworked though in order to fix this.
-                    tmpLightPosition.set(dir.getX(), dir.getY(), dir.getZ(), -1);
-                    lightPos.setValue(VarType.Vector4, tmpLightPosition);
-                    tmpLightDirection.set(0, 0, 0, 0);
-                    lightDir.setValue(VarType.Vector4, tmpLightDirection);
-                    break;
-                case Point:
-                    PointLight pl = (PointLight) l;
-                    Vector3f pos = pl.getPosition();
-                    float invRadius = pl.getInvRadius();
-
-                    tmpLightPosition.set(pos.getX(), pos.getY(), pos.getZ(), invRadius);
-                    lightPos.setValue(VarType.Vector4, tmpLightPosition);
-                    tmpLightDirection.set(0, 0, 0, 0);
-                    lightDir.setValue(VarType.Vector4, tmpLightDirection);
-                    break;
-                case Spot:
-                    SpotLight sl = (SpotLight) l;
-                    Vector3f pos2 = sl.getPosition();
-                    Vector3f dir2 = sl.getDirection();
-                    float invRange = sl.getInvSpotRange();
-                    float spotAngleCos = sl.getPackedAngleCos();
-
-                    tmpLightPosition.set(pos2.getX(), pos2.getY(), pos2.getZ(), invRange);
-                    lightPos.setValue(VarType.Vector4, tmpLightPosition);
-
-                    //We transform the spot direction in view space here to save 5 varying later in the lighting shader
-                    //one vec4 less and a vec4 that becomes a vec3
-                    //the downside is that spotAngleCos decoding happens now in the frag shader.
-                    tmpVec.set(dir2.getX(), dir2.getY(), dir2.getZ(), 0);
-                    rm.getCurrentCamera().getViewMatrix().mult(tmpVec, tmpVec);
-                    tmpLightDirection.set(tmpVec.getX(), tmpVec.getY(), tmpVec.getZ(), spotAngleCos);
-
-                    lightDir.setValue(VarType.Vector4, tmpLightDirection);
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unknown type of light: " + l.getType());
-            }
-            vars.release();
-            r.setShader(shader);
-            renderMeshFromGeometry(r, g);
-        }
-
-        if (isFirstLight) {
-            // Either there are no lights at all, or only ambient lights.
-            // Render a dummy "normal light" so we can see the ambient color.
-            ambientColor.setValue(VarType.Vector4, getAmbientColor(lightList, false));
-            lightColor.setValue(VarType.Vector4, ColorRGBA.BlackNoAlpha);
-            lightPos.setValue(VarType.Vector4, nullDirLight);
-            r.setShader(shader);
-            renderMeshFromGeometry(r, g);
-        }
-    }
-
-    /**
-     * Select the technique to use for rendering this material.
-     * <p>
-     * If <code>name</code> is "Default", then one of the
-     * {@link MaterialDef#getDefaultTechniques() default techniques}
-     * on the material will be selected. Otherwise, the named technique
-     * will be found in the material definition.
-     * <p>
-     * Any candidate technique for selection (either default or named)
-     * must be verified to be compatible with the system, for that, the
-     * <code>renderManager</code> is queried for capabilities.
-     *
-     * @param name The name of the technique to select, pass "Default" to
-     * select one of the default techniques.
-     * @param renderManager The {@link RenderManager render manager}
-     * to query for capabilities.
-     *
-     * @throws IllegalArgumentException If "Default" is passed and no default
-     * techniques are available on the material definition, or if a name
-     * is passed but there's no technique by that name.
-     * @throws UnsupportedOperationException If no candidate technique supports
-     * the system capabilities.
-     */
-    public void selectTechnique(String name, RenderManager renderManager) {
-        // check if already created
-        Technique tech = techniques.get(name);
-        // When choosing technique, we choose one that
-        // supports all the caps.
-        EnumSet<Caps> rendererCaps = renderManager.getRenderer().getCaps();
-        if (tech == null) {
-
-            if (name.equals("Default")) {
-                List<TechniqueDef> techDefs = def.getDefaultTechniques();
-                if (techDefs == null || techDefs.isEmpty()) {
-                    throw new IllegalArgumentException("No default techniques are available on material '" + def.getName() + "'");
-                }
-
-                TechniqueDef lastTech = null;
-                for (TechniqueDef techDef : techDefs) {
-                    if (rendererCaps.containsAll(techDef.getRequiredCaps())) {
-                        // use the first one that supports all the caps
-                        tech = new Technique(this, techDef);
-                        techniques.put(name, tech);
-                        if(tech.getDef().getLightMode() == renderManager.getPreferredLightMode() ||
-                               tech.getDef().getLightMode() == LightMode.Disable){
-                            break;
-                        }
-                    }
-                    lastTech = techDef;
-                }
-                if (tech == null) {
-                    throw new UnsupportedOperationException("No default technique on material '" + def.getName() + "'\n"
-                            + " is supported by the video hardware. The caps "
-                            + lastTech.getRequiredCaps() + " are required.");
-                }
-
-            } else {
-                // create "special" technique instance
-                TechniqueDef techDef = def.getTechniqueDef(name);
-                if (techDef == null) {
-                    throw new IllegalArgumentException("For material " + def.getName() + ", technique not found: " + name);
-                }
-
-                if (!rendererCaps.containsAll(techDef.getRequiredCaps())) {
-                    throw new UnsupportedOperationException("The explicitly chosen technique '" + name + "' on material '" + def.getName() + "'\n"
-                            + "requires caps " + techDef.getRequiredCaps() + " which are not "
-                            + "supported by the video renderer");
-                }
-
-                tech = new Technique(this, techDef);
-                techniques.put(name, tech);
-            }
-        } else if (technique == tech) {
-            // attempting to switch to an already
-            // active technique.
-            return;
-        }
-
-        technique = tech;
-        tech.makeCurrent(def.getAssetManager(), true, rendererCaps, renderManager);
-
-        // shader was changed
-        sortingId = -1;
-    }
-
-    private void autoSelectTechnique(RenderManager rm) {
-        if (technique == null) {
-            selectTechnique("Default", rm);
-        } else {
-            technique.makeCurrent(def.getAssetManager(), false, rm.getRenderer().getCaps(), rm);
-        }
-    }
-
-    /**
-     * Preloads this material for the given render manager.
-     * <p>
-     * Preloading the material can ensure that when the material is first
-     * used for rendering, there won't be any delay since the material has
-     * been already been setup for rendering.
-     *
-     * @param rm The render manager to preload for
-     */
-    public void preload(RenderManager rm) {
-        autoSelectTechnique(rm);
-
-        Renderer r = rm.getRenderer();
-        TechniqueDef techDef = technique.getDef();
-
-        Collection<MatParam> params = paramValues.values();
-        for (MatParam param : params) {
-            param.apply(r, technique);
-        }
-
-        r.setShader(technique.getShader());
-    }
-
-    private void clearUniformsSetByCurrent(Shader shader) {
-        ListMap<String, Uniform> uniforms = shader.getUniformMap();
-        int size = uniforms.size();
-        for (int i = 0; i < size; i++) {
-            Uniform u = uniforms.getValue(i);
-            u.clearSetByCurrentMaterial();
-        }
-    }
-
-    private void resetUniformsNotSetByCurrent(Shader shader) {
-        ListMap<String, Uniform> uniforms = shader.getUniformMap();
-        int size = uniforms.size();
-        for (int i = 0; i < size; i++) {
-            Uniform u = uniforms.getValue(i);
-            if (!u.isSetByCurrentMaterial()) {
-                if (u.getName().charAt(0) != 'g') {
-                    // Don't reset world globals!
-                    // The benefits gained from this are very minimal
-                    // and cause lots of matrix -> FloatBuffer conversions.
-                    u.clearValue();
-                }
-            }
-        }
-    }
-
-    /**
-     * Called by {@link RenderManager} to render the geometry by
-     * using this material.
-     * <p>
-     * The material is rendered as follows:
-     * <ul>
-     * <li>Determine which technique to use to render the material -
-     * either what the user selected via
-     * {@link #selectTechnique(java.lang.String, com.jme3.renderer.RenderManager)
-     * Material.selectTechnique()},
-     * or the first default technique that the renderer supports
-     * (based on the technique's {@link TechniqueDef#getRequiredCaps() requested rendering capabilities})<ul>
-     * <li>If the technique has been changed since the last frame, then it is notified via
-     * {@link Technique#makeCurrent(com.jme3.asset.AssetManager, boolean, java.util.EnumSet)
-     * Technique.makeCurrent()}.
-     * If the technique wants to use a shader to render the model, it should load it at this part -
-     * the shader should have all the proper defines as declared in the technique definition,
-     * including those that are bound to material parameters.
-     * The technique can re-use the shader from the last frame if
-     * no changes to the defines occurred.</li></ul>
-     * <li>Set the {@link RenderState} to use for rendering. The render states are
-     * applied in this order (later RenderStates override earlier RenderStates):<ol>
-     * <li>{@link TechniqueDef#getRenderState() Technique Definition's RenderState}
-     * - i.e. specific renderstate that is required for the shader.</li>
-     * <li>{@link #getAdditionalRenderState() Material Instance Additional RenderState}
-     * - i.e. ad-hoc renderstate set per model</li>
-     * <li>{@link RenderManager#getForcedRenderState() RenderManager's Forced RenderState}
-     * - i.e. renderstate requested by a {@link com.jme3.post.SceneProcessor} or
-     * post-processing filter.</li></ol>
-     * <li>If the technique {@link TechniqueDef#isUsingShaders() uses a shader}, then the uniforms of the shader must be updated.<ul>
-     * <li>Uniforms bound to material parameters are updated based on the current material parameter values.</li>
-     * <li>Uniforms bound to world parameters are updated from the RenderManager.
-     * Internally {@link UniformBindingManager} is used for this task.</li>
-     * <li>Uniforms bound to textures will cause the texture to be uploaded as necessary.
-     * The uniform is set to the texture unit where the texture is bound.</li></ul>
-     * <li>If the technique uses a shader, the model is then rendered according
-     * to the lighting mode specified on the technique definition.<ul>
-     * <li>{@link LightMode#SinglePass single pass light mode} fills the shader's light uniform arrays
-     * with the first 4 lights and renders the model once.</li>
-     * <li>{@link LightMode#MultiPass multi pass light mode} light mode renders the model multiple times,
-     * for the first light it is rendered opaque, on subsequent lights it is
-     * rendered with {@link BlendMode#AlphaAdditive alpha-additive} blending and depth writing disabled.</li>
-     * </ul>
-     * <li>For techniques that do not use shaders,
-     * fixed function OpenGL is used to render the model (see {@link GL1Renderer} interface):<ul>
-     * <li>OpenGL state ({@link FixedFuncBinding}) that is bound to material parameters is updated. </li>
-     * <li>The texture set on the material is uploaded and bound.
-     * Currently only 1 texture is supported for fixed function techniques.</li>
-     * <li>If the technique uses lighting, then OpenGL lighting state is updated
-     * based on the light list on the geometry, otherwise OpenGL lighting is disabled.</li>
-     * <li>The mesh is uploaded and rendered.</li>
-     * </ul>
-     * </ul>
-     *
-     * @param geom The geometry to render
-     * @param lights Presorted and filtered light list to use for rendering
-     * @param rm The render manager requesting the rendering
-     */
-    public void render(Geometry geom, LightList lights, RenderManager rm) {
-        autoSelectTechnique(rm);
-        TechniqueDef techDef = technique.getDef();
-
-        if (techDef.isNoRender()) return;
-
-        Renderer r = rm.getRenderer();
-
-        if (rm.getForcedRenderState() != null) {
-            r.applyRenderState(rm.getForcedRenderState());
-        } else {
-            if (techDef.getRenderState() != null) {
-                r.applyRenderState(techDef.getRenderState().copyMergedTo(additionalState, mergedRenderState));
-            } else {
-                r.applyRenderState(RenderState.DEFAULT.copyMergedTo(additionalState, mergedRenderState));
-            }
-        }
-
-
-        // update camera and world matrices
-        // NOTE: setWorldTransform should have been called already
-
-        // reset unchanged uniform flag
-        clearUniformsSetByCurrent(technique.getShader());
-        rm.updateUniformBindings(technique.getWorldBindUniforms());
-
-
-        // setup textures and uniforms
-        for (int i = 0; i < paramValues.size(); i++) {
-            MatParam param = paramValues.getValue(i);
-            param.apply(r, technique);
-        }
-
-        Shader shader = technique.getShader();
-
-        // send lighting information, if needed
-        switch (techDef.getLightMode()) {
-            case Disable:
-                break;
-            case SinglePass:
-                int nbRenderedLights = 0;
-                resetUniformsNotSetByCurrent(shader);
-                if (lights.size() == 0) {
-                    nbRenderedLights = updateLightListUniforms(shader, geom, lights, rm.getSinglePassLightBatchSize(), rm, 0);
-                    r.setShader(shader);
-                    renderMeshFromGeometry(r, geom);
-                } else {
-                    while (nbRenderedLights < lights.size()) {
-                        nbRenderedLights = updateLightListUniforms(shader, geom, lights, rm.getSinglePassLightBatchSize(), rm, nbRenderedLights);
-                        r.setShader(shader);
-                        renderMeshFromGeometry(r, geom);
-                    }
-                }
-                return;
-            case FixedPipeline:
-                throw new IllegalArgumentException("OpenGL1 is not supported");
-            case MultiPass:
-                // NOTE: Special case!
-                resetUniformsNotSetByCurrent(shader);
-                renderMultipassLighting(shader, geom, lights, rm);
-                // very important, notice the return statement!
-                return;
-        }
-
-        // upload and bind shader
-        // any unset uniforms will be set to 0
-        resetUniformsNotSetByCurrent(shader);
-        r.setShader(shader);
-
-        renderMeshFromGeometry(r, geom);
-    }
-
-    /**
-     * Called by {@link RenderManager} to render the geometry by
-     * using this material.
-     *
-     * Note that this version of the render method
-     * does not perform light filtering.
-     *
-     * @param geom The geometry to render
-     * @param rm The render manager requesting the rendering
-     */
-    public void render(Geometry geom, RenderManager rm) {
-        render(geom, geom.getWorldLightList(), rm);
-    }
 
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule oc = ex.getCapsule(this);
@@ -1315,7 +749,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
 
             if (def.getMaterialParam(param.getName()) == null) {
                 logger.log(Level.WARNING, "The material parameter is not defined: {0}. Ignoring..",
-                                          param.getName());
+                        param.getName());
             } else {
                 checkSetParam(param.getVarType(), param.getName());
                 paramValues.put(param.getName(), param);
@@ -1352,5 +786,56 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
         if (separateTexCoord) {
             setBoolean("SeparateTexCoord", true);
         }
+    }
+
+    /**
+     * Acquire the additional {@link RenderState render state} to apply
+     * for this material.
+     *
+     * <p>The first call to this method will create an additional render
+     * state which can be modified by the user to apply any render
+     * states in addition to the ones used by the renderer. Only render
+     * states which are modified in the additional render state will be applied.
+     *
+     * @return The additional render state.
+     */
+    public RenderState getAdditionalRenderState() {
+        if (additionalState == null) {
+            additionalState = RenderState.ADDITIONAL.clone();
+        }
+        return additionalState;
+    }
+
+    public Map<String, Technique> getTechiques() {
+        return this.techniques;
+    }
+
+    /**
+     * Returns the currently active technique.
+     * <p>
+     * The technique is selected automatically by the {@link RenderManager}
+     * based on system capabilities. Users may select their own
+     * technique by using
+     * {@link #selectTechnique(java.lang.String, com.jme3.renderer.RenderManager) }.
+     *
+     * @return the currently active technique.
+     *
+     * @see #selectTechnique(java.lang.String, com.jme3.renderer.RenderManager)
+     */
+    public Technique getActiveTechnique() {
+        return technique;
+    }
+
+    /**
+     * Sets the technique this material will be rendered with
+     *
+     * Should only be used by the Geometry, for selecting what technique is used on a Geometry see
+     * {@link Geometry#selectTechnique(String, RenderManager)}. This method is for storage inside this
+     * data object only!
+     *
+     * @param tech
+     */
+    public void setActiveTechnique(Technique tech) {
+        this.technique = tech;
     }
 }

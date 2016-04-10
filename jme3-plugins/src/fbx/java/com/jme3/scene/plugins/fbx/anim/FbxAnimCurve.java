@@ -33,6 +33,7 @@ package com.jme3.scene.plugins.fbx.anim;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.math.FastMath;
+import com.jme3.math.interpolations.impl.LinearFloatInterpolation;
 import com.jme3.scene.plugins.fbx.file.FbxElement;
 import com.jme3.scene.plugins.fbx.obj.FbxObject;
 
@@ -119,8 +120,10 @@ public class FbxAnimCurve extends FbxObject {
         long prevToNextDelta    = keyTime2 - keyTime1;
         long prevToCurrentDelta = time     - keyTime1;
         float lerpAmount = (float)prevToCurrentDelta / prevToNextDelta;
-        
-        return FastMath.interpolateLinear(lerpAmount, keyValue1, keyValue2);
+
+        // TODO: Because of the new Interpolation classes, it is now possible to support
+        // other interpolation modes easily and extensible, consider implementing.
+        return new LinearFloatInterpolation(keyValue1, keyValue2).interpolate(lerpAmount);
     }
 
     @Override

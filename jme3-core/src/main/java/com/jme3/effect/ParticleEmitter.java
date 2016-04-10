@@ -45,6 +45,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.math.interpolations.api.Interpolation;
+import com.jme3.math.interpolations.impl.LinearFloatInterpolation;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -101,8 +103,21 @@ public class ParticleEmitter extends Geometry {
    
     private ColorRGBA startColor = new ColorRGBA(0.4f, 0.4f, 0.4f, 0.5f);
     private ColorRGBA endColor = new ColorRGBA(0.1f, 0.1f, 0.1f, 0.0f);
+
+    /**
+     * Please use an instance of {@link com.jme3.math.interpolations.api.Interpolation}
+     */
+    @Deprecated
     private float startSize = 0.2f;
+
+    /**
+     * Please use an instance of {@link com.jme3.math.interpolations.api.Interpolation}
+     */
+    @Deprecated
     private float endSize = 2f;
+
+    private Interpolation<Float> sizeInterpolation;
+
     private boolean worldSpace = true;
     //variable that helps with computations
     private transient Vector3f temp = new Vector3f();
@@ -196,6 +211,8 @@ public class ParticleEmitter extends Geometry {
 
     public ParticleEmitter(String name, Type type, int numParticles) {
         super(name);
+
+        this.updateSizeInterpolationForStartAndEnd();
         setBatchHint(BatchHint.Never);
         // ignore world transform, unless user sets inLocalSpace
         this.setIgnoreTransform(true);
@@ -237,6 +254,7 @@ public class ParticleEmitter extends Geometry {
      */
     public ParticleEmitter() {
         super();
+        this.updateSizeInterpolationForStartAndEnd();
         setBatchHint(BatchHint.Never);
     }
 
@@ -551,8 +569,12 @@ public class ParticleEmitter extends Geometry {
      * 
      * @return the end size of the particles spawned.
      * 
-     * @see ParticleEmitter#setEndSize(float) 
+     * @see ParticleEmitter#setEndSize(float)
+     *
+     * @Deprecated Please use {ParticleEmitter#getInterpolation} to properly get the interpolation of this particle-
+     * systems particle size.
      */
+    @Deprecated
     public float getEndSize() {
         return endSize;
     }
@@ -566,9 +588,15 @@ public class ParticleEmitter extends Geometry {
      * to its end of life.
      * 
      * @param endSize the end size of the particles spawned.
+     *
+     * @Deprecated Please use {ParticleEmitter#setInterpolation} to properly set the interpolation of this particle-
+     * systems particle size.
      */
+    @Deprecated
     public void setEndSize(float endSize) {
         this.endSize = endSize;
+
+        this.updateSizeInterpolationForStartAndEnd();
     }
 
     /**
@@ -753,8 +781,12 @@ public class ParticleEmitter extends Geometry {
      * 
      * @return the start color of the particles spawned.
      * 
-     * @see ParticleEmitter#setStartSize(float) 
+     * @see ParticleEmitter#setStartSize(float)
+     *
+     * @Deprecated Please use {ParticleEmitter#getInterpolation} to properly get the interpolation of this particle-
+     * systems particle size.
      */
+    @Deprecated
     public float getStartSize() {
         return startSize;
     }
@@ -767,9 +799,15 @@ public class ParticleEmitter extends Geometry {
      * to its end of life.
      * 
      * @param startSize the start size of the particles spawned.
+     *
+     * @Deprecated Please use {ParticleEmitter#setInterpolation} to properly set the interpolation of this particle-
+     * systems particle size.
      */
+    @Deprecated
     public void setStartSize(float startSize) {
         this.startSize = startSize;
+
+        this.updateSizeInterpolationForStartAndEnd();
     }
 
     /**
@@ -954,7 +992,7 @@ public class ParticleEmitter extends Geometry {
         particles[idx2] = p1;
     }
 
-    private void updateParticle(Particle p, float tpf, Vector3f min, Vector3f max){
+    /* Test */ public void updateParticle(Particle p, float tpf, Vector3f min, Vector3f max){
         // applying gravity
         p.velocity.x -= gravity.x * tpf;
         p.velocity.y -= gravity.y * tpf;
@@ -965,7 +1003,7 @@ public class ParticleEmitter extends Geometry {
         // affecting color, size and angle
         float b = (p.startlife - p.life) / p.startlife;
         p.color.interpolateLocal(startColor, endColor, b);
-        p.size = FastMath.interpolateLinear(b, startSize, endSize);
+        p.size = this.getSizeInterpolation().interpolate(b);
         p.angle += p.rotateSpeed * tpf;
 
         // Computing bounding volume
@@ -1068,6 +1106,35 @@ public class ParticleEmitter extends Geometry {
     public boolean isEnabled() {
         return enabled;
     }
+
+
+    /**
+     * Gives the {@link Interpolation} that is used to increase the size of this particle
+     * @param interpolation The new interpolation used for the particles of this system
+     */
+    public void setSizeInterpolation(Interpolation<Float> interpolation) {
+        this.sizeInterpolation = interpolation;
+    }
+
+    /*
+    * Gets the {@link Interpolation} that is used to increase the size of this particle
+    *
+    * @return The used Interpolator
+     */
+    public Interpolation<Float> getSizeInterpolation() {
+        return this.sizeInterpolation;
+    }
+
+    /*
+    * Used to compute a sizeInterpolation when the old {@link setStartSize} and {@link setEndSize} methods are used.
+    *
+    * @deprecated Should be removed together with {@link setStartSize} and family
+     */
+    @Deprecated
+    private void updateSizeInterpolationForStartAndEnd() {
+        this.sizeInterpolation = new LinearFloatInterpolation(this.startSize, this.endSize);
+    }
+
 
     /**
      * Callback from Control.update(), do not use.

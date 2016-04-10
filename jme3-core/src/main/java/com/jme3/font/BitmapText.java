@@ -423,7 +423,7 @@ public class BitmapText extends Node {
             mat.setTexture("ColorMap", page.getTexture());
             //ColorRGBA original = getColor(mat, "Color");            
             //mat.setColor("Color", color);
-            mat.render(page, rm);
+            page.render(rm);
             
             //if( original == null ) {
             //    mat.clearParam("Color");

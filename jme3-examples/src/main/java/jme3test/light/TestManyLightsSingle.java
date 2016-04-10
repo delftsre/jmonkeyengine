@@ -109,7 +109,7 @@ public class TestManyLightsSingle extends SimpleApplication {
                 LightNode ln = new LightNode("l", light);
                 n.attachChild(ln);
                 ln.setLocalTranslation(p.getPosition());
-                int rand = FastMath.nextRandomInt(0, 3);
+                int rand = nb % 4;
                 switch (rand) {
                     case 0:
                         light.setColor(ColorRGBA.Red);

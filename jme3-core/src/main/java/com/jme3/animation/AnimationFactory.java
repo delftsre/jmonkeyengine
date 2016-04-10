@@ -35,6 +35,8 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.math.interpolations.impl.LinearQuaternionInterpolation;
+import com.jme3.math.interpolations.impl.LinearVectorInterpolation;
 
 /**
  * A convenience class to easily setup a spatial keyframed animation
@@ -429,14 +431,22 @@ public class AnimationFactory {
                     //interpolationg depending on the transform type
                     switch (type) {
                         case Translation:
-                            translations[j] = FastMath.interpolateLinear(val, (Vector3f) keyFrames[i], (Vector3f) keyFrames[key]);
+                            // TODO: not very flexible, one should consider allowing to set Interpolations
+                            Vector3f res = new Vector3f();
+                            new LinearVectorInterpolation((Vector3f) keyFrames[i], (Vector3f) keyFrames[key]).interpolate(val, res);
+                            translations[j] = res;
                             break;
                         case Rotation:
+                            // TODO: not very flexible, one should consider allowing to set Interpolations
                             Quaternion rot = new Quaternion();
-                            rotations[j] = rot.slerp(((Rotation) keyFrames[i]).rotation, ((Rotation) keyFrames[key]).rotation, val);
+                            new LinearQuaternionInterpolation(((Rotation) keyFrames[i]).rotation, ((Rotation) keyFrames[key]).rotation).interpolate(val, rot);
+                            rotations[j] = rot;
                             break;
                         case Scale:
-                            scales[j] = FastMath.interpolateLinear(val, (Vector3f) keyFrames[i], (Vector3f) keyFrames[key]);
+                            // TODO: not very flexible, one should consider allowing to set Interpolations
+                            Vector3f scale = new Vector3f();
+                            new LinearVectorInterpolation((Vector3f) keyFrames[i], (Vector3f) keyFrames[key]).interpolate(val, scale);
+                            scales[j] = scale;
                             break;
                     }
                 }

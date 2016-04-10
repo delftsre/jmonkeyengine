@@ -33,17 +33,19 @@ package com.jme3.math;
 
 import com.jme3.export.*;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 /**
- * <code>Vector4f</code> defines a Vector for a four float value tuple.
+ * <code>Vector4f</code> defines a VectorNf for a four float value tuple.
  * <code>Vector4f</code> can represent any four dimensional value, such as a
  * vertex, a normal, etc. Utility methods are also included to aid in
  * mathematical calculations.
  *
  * @author Maarten Steur
  */
-public final class Vector4f implements Savable, Cloneable, java.io.Serializable {
+public final class Vector4f implements VectorNf, Savable, Cloneable, java.io.Serializable {
 
     static final long serialVersionUID = 1;
 
@@ -509,7 +511,7 @@ public final class Vector4f implements Savable, Cloneable, java.io.Serializable 
      *
      * @param scalar
      *            the value to divide this vectors attributes by.
-     * @return the result <code>Vector</code>.
+     * @return the result <code>Vector4f</code>.
      */
     public Vector4f divide(float scalar) {
         scalar = 1f/scalar;
@@ -540,7 +542,7 @@ public final class Vector4f implements Savable, Cloneable, java.io.Serializable 
      *
      * @param scalar
      *            the value to divide this vectors attributes by.
-     * @return the result <code>Vector</code>.
+     * @return the result <code>Vector3f</code>.
      */
     public Vector4f divide(Vector4f scalar) {
         return new Vector4f(x / scalar.x, y / scalar.y, z / scalar.z, w / scalar.w);
@@ -1001,4 +1003,12 @@ public final class Vector4f implements Savable, Cloneable, java.io.Serializable 
         throw new IllegalArgumentException("index must be either 0, 1, 2 or 3");
     }
 
+    public void setIndex(int index, float value) {
+        this.set(index, value);
+    }
+
+    @Override
+    public int size() {
+        return 4;
+    }
 }

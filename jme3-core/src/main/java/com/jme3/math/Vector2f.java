@@ -36,15 +36,19 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 /**
- * <code>Vector2f</code> defines a Vector for a two float value vector.
+ * <code>Vector2f</code> defines a VectorNf for a two float value vector.
  * 
  * @author Mark Powell
  * @author Joshua Slack
  */
-public final class Vector2f implements Savable, Cloneable, java.io.Serializable {
+public final class Vector2f implements VectorNf, Savable, Cloneable, java.io.Serializable {
 
     static final long serialVersionUID = 1;
     private static final Logger logger = Logger.getLogger(Vector2f.class.getName());
@@ -408,7 +412,7 @@ public final class Vector2f implements Savable, Cloneable, java.io.Serializable 
      * 
      * @param scalar
      *            the value to divide this vectors attributes by.
-     * @return the result <code>Vector</code>.
+     * @return the result <code>Vector2f</code>.
      */
     public Vector2f divide(float scalar) {
         return new Vector2f(x / scalar, y / scalar);
@@ -752,5 +756,49 @@ public final class Vector2f implements Savable, Cloneable, java.io.Serializable 
         float newY = FastMath.sin(angle) * x + FastMath.cos(angle) * y;
         x = newX;
         y = newY;
+    }
+
+    @Override
+    public int size() {
+        return 2;
+    }
+
+
+    /**
+     * @param index
+     * @return x value if index == 0, y value if index == 1
+     * @throws IllegalArgumentException
+     *             if index is not one of 0, 1
+     */
+    @Override
+    public float get(int index) {
+        switch (index) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+        }
+        throw new IllegalArgumentException("index must be either 0 or 1");
+    }
+
+    /**
+     * @param index
+     *            which field index in this vector to set.
+     * @param value
+     *            to set to one of x or y.
+     * @throws IllegalArgumentException
+     *             if index is not one of 0, 1
+     */
+    @Override
+    public void setIndex(int index, float value) {
+        switch (index) {
+            case 0:
+                x = value;
+                return;
+            case 1:
+                y = value;
+                return;
+        }
+        throw new IllegalArgumentException("index must be either 0 or 1");
     }
 }

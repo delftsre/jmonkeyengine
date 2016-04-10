@@ -39,13 +39,21 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.material.Material;
+import com.jme3.light.LightList;
+import com.jme3.material.*;
 import com.jme3.math.Matrix4f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.Caps;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.geometryrenderers.GeometryRenderer;
+import com.jme3.renderer.Renderer;
+import com.jme3.renderer.geometryrenderers.MultiPassGeometryRenderer;
+import com.jme3.renderer.geometryrenderers.NoLightGeometryRenderer;
+import com.jme3.renderer.geometryrenderers.SinglePassGeometryRenderer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.TempVars;
 import java.io.IOException;
-import java.util.Queue;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -83,7 +91,16 @@ public class Geometry extends Spatial {
      * the {@link GeometryGroupNode}.
      */
     protected int startIndex = -1;
-        
+
+    /**
+     * The renderer that will render this geometry object
+     */
+    private GeometryRenderer renderer;
+
+    private Material restorableMaterial;
+    private String restorableTechniqueName;
+    private RenderState restorableRenderState;
+
     /**
      * Serialization only. Do not use.
      */
@@ -584,4 +601,222 @@ public class Geometry extends Spatial {
             }
         }
     }
+
+    /**
+     * Preloads this material for the given render manager.
+     * <p>
+     * Preloading the material can ensure that when the material is first
+     * used for rendering, there won't be any delay since the material has
+     * been already been setup for rendering.
+     *
+     * @param rm The render manager to preload for
+     */
+    public void preload(RenderManager rm) {
+
+
+        this.autoSelectRenderer(rm);
+
+        Renderer r = rm.getRenderer();
+
+        Technique technique = material.getActiveTechnique();
+        TechniqueDef techDef = technique.getDef();
+
+        Collection<MatParam> params = material.getParamsMap().values();
+        for (MatParam param : params) {
+            param.apply(r, technique);
+        }
+
+        r.setShader(technique.getShader());
+    }
+
+    public void setGeometryRenderer(GeometryRenderer renderer) {
+        this.renderer = renderer;
+    }
+
+    public GeometryRenderer getGeometryRenderer() {
+        return renderer;
+    }
+
+    public void render(RenderManager rm) {
+        // Firstly lets set the world transforms
+        if (this.isIgnoreTransform()) {
+            rm.setWorldMatrix(Matrix4f.IDENTITY);
+        } else {
+            rm.setWorldMatrix(this.getWorldMatrix());
+        }
+
+        if (rm.getLightFilter() != null) {
+            rm.getFilteredLightList().clear();
+            rm.getLightFilter().filterLights(this, rm.getFilteredLightList());
+        }
+
+        //if forcedTechnique we try to force it for render,
+        //if it does not exists in the mat def, we check for forcedMaterial and render the geom if not null
+        //else the geom is not rendered
+
+        String tmpTech;
+
+        //if forcedTechnique we try to force it for render,
+        //if it does not exists in the mat def, we check for forcedMaterial and render the geom if not null
+        //else the geom is not rendered
+        if (rm.getForcedTechnique() != null) {
+            if (this.getMaterial().getMaterialDef().getTechniqueDef(rm.getForcedTechnique()) != null) {
+                tmpTech = this.getMaterial().getActiveTechnique() != null ? this.getMaterial().getActiveTechnique().getDef().getName() : "Default";
+                this.selectTechnique(rm.getForcedTechnique(), rm);
+                //saving forcedRenderState for future calls
+                RenderState tmpRs = rm.getForcedRenderState();
+                if (this.getMaterial().getActiveTechnique().getDef().getForcedRenderState() != null) {
+                    //forcing forced technique renderState
+                    rm.setForcedRenderState(this.getMaterial().getActiveTechnique().getDef().getForcedRenderState());
+                }
+                // use geometry's material
+                this.getRendererForTechnique(rm).render();
+                this.selectTechnique(tmpTech, rm);
+
+                //restoring forcedRenderState
+                rm.setForcedRenderState(tmpRs);
+
+                //Reverted this part from revision 6197
+                //If forcedTechnique does not exists, and forcedMaterial is not set, the geom MUST NOT be rendered
+            } else if (rm.getForcedMaterial() != null) {
+                // use forced material
+                Material oldMaterial = this.getMaterial();
+
+                this.setMaterial(rm.getForcedMaterial());
+                this.getRendererForTechnique(rm).render();
+
+                this.setMaterial(oldMaterial);
+            }
+        } else if (rm.getForcedMaterial() != null) {
+            // use forced material
+            Material oldMaterial = this.getMaterial();
+
+            this.setMaterial(rm.getForcedMaterial());
+            this.getRendererForTechnique(rm).render();
+
+            this.setMaterial(oldMaterial);
+        } else {
+            this.autoSelectRenderer(rm);
+            this.getRendererForTechnique(rm).render();
+        }
+    }
+
+    public void autoSelectRenderer(RenderManager rm) {
+        if (this.getMaterial().getActiveTechnique() == null) {
+            selectTechnique("Default", rm);
+        } else {
+            this.material.getActiveTechnique().makeCurrent(this.material.getMaterialDef().getAssetManager(), false, rm.getRenderer().getCaps(), rm);
+            this.setGeometryRenderer(this.getRendererForTechnique(rm));
+        }
+    }
+
+    private GeometryRenderer getRendererForTechnique(RenderManager rm) {
+
+        switch (material.getActiveTechnique().getDef().getLightMode()) {
+            case Disable:
+                return new NoLightGeometryRenderer(this, rm);
+            case SinglePass:
+                return new SinglePassGeometryRenderer(this, rm);
+            case MultiPass:
+                return new MultiPassGeometryRenderer(this, rm);
+            default:
+                throw new IllegalArgumentException("OpenGL1 is not supported");
+        }
+    }
+
+    /**
+     * Select the technique to use for rendering this Geometry.
+     * <p>
+     * If <code>name</code> is "Default", then one of the
+     * {@link MaterialDef#getDefaultTechniques() default techniques}
+     * on the material will be selected. Otherwise, the named technique
+     * will be found in the material definition.
+     * <p>
+     * Any candidate technique for selection (either default or named)
+     * must be verified to be compatible with the system, for that, the
+     * <code>renderManager</code> is queried for capabilities.
+     *
+     * @param name The name of the technique to select, pass "Default" to
+     * select one of the default techniques.
+     * @param renderManager The {@link RenderManager render manager}
+     * to query for capabilities.
+     *
+     * @throws IllegalArgumentException If "Default" is passed and no default
+     * techniques are available on the material definition, or if a name
+     * is passed but there's no technique by that name.
+     * @throws UnsupportedOperationException If no candidate technique supports
+     * the system capabilities.
+     */
+    public void selectTechnique(String name, RenderManager renderManager) {
+        Map<String, Technique> techniques = this.material.getTechiques();
+        Technique tech = techniques.get(name);
+        MaterialDef def = this.material.getMaterialDef();
+
+        Technique currentlyUsedTechnique = this.material.getActiveTechnique();
+
+        // When choosing technique, we choose one that
+        // supports all the caps.
+        EnumSet<Caps> rendererCaps = renderManager.getRenderer().getCaps();
+        if (tech == null) {
+
+            if (name.equals("Default")) {
+                List<TechniqueDef> techDefs = def.getDefaultTechniques();
+                if (techDefs == null || techDefs.isEmpty()) {
+                    throw new IllegalArgumentException("No default techniques are available on material '" + def.getName() + "'");
+                }
+
+                TechniqueDef lastTech = null;
+                for (TechniqueDef techDef : techDefs) {
+                    if (rendererCaps.containsAll(techDef.getRequiredCaps())) {
+                        // use the first one that supports all the caps
+                        tech = new Technique(this.material, techDef);
+                        techniques.put(name, tech);
+                        if(tech.getDef().getLightMode() == renderManager.getPreferredLightMode() ||
+                                tech.getDef().getLightMode() == TechniqueDef.LightMode.Disable){
+                            break;
+                        }
+                    }
+                    lastTech = techDef;
+                }
+                if (tech == null) {
+                    throw new UnsupportedOperationException("No default technique on material '" + def.getName() + "'\n"
+                            + " is supported by the video hardware. The caps "
+                            + lastTech.getRequiredCaps() + " are required.");
+                }
+
+            } else {
+                // create "special" technique instance
+                TechniqueDef techDef = def.getTechniqueDef(name);
+                if (techDef == null) {
+                    throw new IllegalArgumentException("For material " + def.getName() + ", technique not found: " + name);
+                }
+
+                if (!rendererCaps.containsAll(techDef.getRequiredCaps())) {
+                    throw new UnsupportedOperationException("The explicitly chosen technique '" + name + "' on material '" + def.getName() + "'\n"
+                            + "requires caps " + techDef.getRequiredCaps() + " which are not "
+                            + "supported by the video renderer");
+                }
+
+                tech = new Technique(this.material, techDef);
+                techniques.put(name, tech);
+            }
+        } else if (currentlyUsedTechnique == tech) {
+            // attempting to switch to an already
+            // active technique.
+            if (this.getGeometryRenderer() == null) {
+                this.setGeometryRenderer(this.getRendererForTechnique(renderManager));
+            }
+
+            return;
+        }
+
+        this.material.setActiveTechnique(tech);
+        tech.makeCurrent(def.getAssetManager(), true, rendererCaps, renderManager);
+
+        this.setGeometryRenderer(this.getRendererForTechnique(renderManager));
+
+        // shader was changed
+        // TODO: sortingId = -1;
+    }
+
 }

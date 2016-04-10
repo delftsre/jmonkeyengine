@@ -166,10 +166,10 @@ public final class TranslucentBucketFilter extends Filter {
                 enabledSoftParticles = enabled;
 
                 if( processor.getNumSamples()>1){
-                    emitter.getMaterial().selectTechnique("SoftParticles15", renderManager);
+                    emitter.selectTechnique("SoftParticles15", renderManager);
                     emitter.getMaterial().setInt("NumSamplesDepth", processor.getNumSamples());
                 }else{
-                    emitter.getMaterial().selectTechnique("SoftParticles", renderManager);
+                    emitter.selectTechnique("SoftParticles", renderManager);
                 }
                 emitter.getMaterial().setTexture("DepthTexture", processor.getDepthTexture());               
                 emitter.setQueueBucket(RenderQueue.Bucket.Translucent);
@@ -177,7 +177,7 @@ public final class TranslucentBucketFilter extends Filter {
                 logger.log(Level.FINE, "Made particle Emitter {0} soft.", emitter.getName());
             } else {
                 emitter.getMaterial().clearParam("DepthTexture");
-                emitter.getMaterial().selectTechnique("Default", renderManager);
+                emitter.selectTechnique("Default", renderManager);
                // emitter.setQueueBucket(RenderQueue.Bucket.Transparent);
                 logger.log(Level.FINE, "Particle Emitter {0} is not soft anymore.", emitter.getName());
             }

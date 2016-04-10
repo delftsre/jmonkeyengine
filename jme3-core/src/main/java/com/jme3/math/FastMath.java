@@ -31,6 +31,8 @@
  */
 package com.jme3.math;
 
+import com.jme3.math.interpolations.impl.*;
+
 import java.util.Random;
 
 /**
@@ -119,18 +121,13 @@ final public class FastMath {
      * @param endValue
      *            ending value. 100% of f
      * @return The interpolated value between startValue and endValue.
+     *
+     * @deprecated This method is deprecated see {@link LinearFloatInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static float interpolateLinear(float scale, float startValue, float endValue) {
-        if (startValue == endValue) {
-            return startValue;
-        }
-        if (scale <= 0f) {
-            return startValue;
-        }
-        if (scale >= 1f) {
-            return endValue;
-        }
-        return ((1f - scale) * startValue) + (scale * endValue);
+        return new LinearFloatInterpolation(startValue, endValue).interpolate(scale);
     }
 
     /**
@@ -145,14 +142,16 @@ final public class FastMath {
      *            ending value. 100% of f
      * @param store a vector3f to store the result
      * @return The interpolated value between startValue and endValue.
+     *
+     * @deprecated This method is deprecated in favor of {@link LinearVectorInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static Vector3f interpolateLinear(float scale, Vector3f startValue, Vector3f endValue, Vector3f store) {
         if (store == null) {
             store = new Vector3f();
         }
-        store.x = interpolateLinear(scale, startValue.x, endValue.x);
-        store.y = interpolateLinear(scale, startValue.y, endValue.y);
-        store.z = interpolateLinear(scale, startValue.z, endValue.z);
+        new LinearVectorInterpolation(startValue, endValue).interpolate(scale, store);
         return store;
     }
 
@@ -166,8 +165,11 @@ final public class FastMath {
      *            Beginning value. 0% of f
      * @param endValue
      *            ending value. 100% of f
-     * @return The interpolated value between startValue and endValue.
+     *
+     * @deprecated This method is deprecated in favor of {@link LinearVectorInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static Vector3f interpolateLinear(float scale, Vector3f startValue, Vector3f endValue) {
         return interpolateLinear(scale, startValue, endValue, null);
     }
@@ -242,15 +244,13 @@ final public class FastMath {
      * @param p2 control point 2
      * @param p3 control point 3
      * @return Catmull–Rom interpolation
+     * 
+     * @deprecated This method is deprecated in favor of {@link CatmullRomFloatInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static float interpolateCatmullRom(float u, float T, float p0, float p1, float p2, float p3) {
-        float c1, c2, c3, c4;
-        c1 = p1;
-        c2 = -1.0f * T * p0 + T * p2;
-        c3 = 2 * T * p0 + (T - 3) * p1 + (3 - 2 * T) * p2 + -T * p3;
-        c4 = -T * p0 + (2 - T) * p1 + (T - 2) * p2 + T * p3;
-
-        return (float) (((c4 * u + c3) * u + c2) * u + c1);
+        return new CatmullRomFloatInterpolation(T, p0, p1, p2, p3).interpolate(u);
     }
 
     /**Interpolate a spline between at least 4 control points following the Catmull-Rom equation.
@@ -269,14 +269,16 @@ final public class FastMath {
      * @param p3 control point 3
      * @param store a Vector3f to store the result
      * @return Catmull–Rom interpolation
+     *
+     * @deprecated This method is deprecated in favor of {@link CatmullRomVectorInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static Vector3f interpolateCatmullRom(float u, float T, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3, Vector3f store) {
         if (store == null) {
             store = new Vector3f();
         }
-        store.x = interpolateCatmullRom(u, T, p0.x, p1.x, p2.x, p3.x);
-        store.y = interpolateCatmullRom(u, T, p0.y, p1.y, p2.y, p3.y);
-        store.z = interpolateCatmullRom(u, T, p0.z, p1.z, p2.z, p3.z);
+        new CatmullRomVectorInterpolation(T, p0, p1, p2, p3).interpolate(u, store);
         return store;
     }
 
@@ -296,7 +298,11 @@ final public class FastMath {
      * @param p2 control point 2
      * @param p3 control point 3
      * @return Catmull–Rom interpolation
+     *
+     * @deprecated This method is deprecated in favor of {@link CatmullRomVectorInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static Vector3f interpolateCatmullRom(float u, float T, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3) {
         return interpolateCatmullRom(u, T, p0, p1, p2, p3, null);
     }
@@ -315,15 +321,13 @@ final public class FastMath {
      * @param p2 control point 2
      * @param p3 control point 3
      * @return Bezier interpolation
+     *
+     * @deprecated This method is deprecated in favor of {@link BezierFloatInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static float interpolateBezier(float u, float p0, float p1, float p2, float p3) {
-        float oneMinusU = 1.0f - u;
-        float oneMinusU2 = oneMinusU * oneMinusU;
-        float u2 = u * u;
-        return p0 * oneMinusU2 * oneMinusU
-                + 3.0f * p1 * u * oneMinusU2
-                + 3.0f * p2 * u2 * oneMinusU
-                + p3 * u2 * u;
+        return new BezierFloatInterpolation(p0, p1, p2, p3).interpolate(u);
     }
 
     /**Interpolate a spline between at least 4 control points following the Bezier equation.
@@ -340,15 +344,16 @@ final public class FastMath {
      * @param p2 control point 2
      * @param p3 control point 3
      * @param store a Vector3f to store the result
-     * @return Bezier interpolation
+     *
+     * @deprecated This method is deprecated in favor of {@link BezierVectorInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static Vector3f interpolateBezier(float u, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3, Vector3f store) {
         if (store == null) {
             store = new Vector3f();
         }
-        store.x = interpolateBezier(u, p0.x, p1.x, p2.x, p3.x);
-        store.y = interpolateBezier(u, p0.y, p1.y, p2.y, p3.y);
-        store.z = interpolateBezier(u, p0.z, p1.z, p2.z, p3.z);
+        new BezierVectorInterpolation(p0, p1, p2, p3).interpolate(u, store);
         return store;
     }
 
@@ -366,7 +371,11 @@ final public class FastMath {
      * @param p2 control point 2
      * @param p3 control point 3
      * @return Bezier interpolation
+     *
+     * @deprecated This method is deprecated in favor of {@link BezierVectorInterpolation}.
+     *            This facade is kept for compatibility.
      */
+    @Deprecated
     public static Vector3f interpolateBezier(float u, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3) {
         return interpolateBezier(u, p0, p1, p2, p3, null);
     }
@@ -416,10 +425,12 @@ final public class FastMath {
      * @return the length of the segment
      */
     public static float getBezierP1toP2Length(Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3) {
+        BezierVectorInterpolation<Vector3f> interpolation = new BezierVectorInterpolation<Vector3f>(p0, p1, p2, p3);
+
         float delta = 0.02f, t = 0.0f, result = 0.0f;
         Vector3f v1 = p0.clone(), v2 = new Vector3f();
         while (t <= 1.0f) {
-            FastMath.interpolateBezier(t, p0, p1, p2, p3, v2);
+            interpolation.interpolate(t, v2);
             result += v1.subtractLocal(v2).length();
             v1.set(v2);
             t += delta;

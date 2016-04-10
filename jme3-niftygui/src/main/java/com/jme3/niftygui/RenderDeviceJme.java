@@ -307,7 +307,9 @@ public class RenderDeviceJme implements RenderDevice {
         
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);
-        textureColorMaterial.render(quadGeom, rm);
+
+        quadGeom.setMaterial(textureColorMaterial);
+        quadGeom.render(rm);
         
         //System.out.format("renderImage2(%s, %d, %d, %d, %d, %d, %d, %d, %d, %s, %f, %d, %d)\n", texture.getKey().toString(),
         //                                                                                       x, y, w, h, srcX, srcY, srcW, srcH,
@@ -334,7 +336,8 @@ public class RenderDeviceJme implements RenderDevice {
         
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);
-        textureColorMaterial.render(quadGeom, rm);
+        quadGeom.setMaterial(textureColorMaterial);
+        quadGeom.render(rm);
         
         //System.out.format("renderImage1(%s, %d, %d, %d, %d, %s, %f)\n", jmeImage.getTexture().getKey().toString(), x, y, width, height, color.toString(), imageScale);
     }
@@ -354,7 +357,9 @@ public class RenderDeviceJme implements RenderDevice {
 
             rm.setWorldMatrix(tempMat);
             rm.setForcedRenderState(renderState);
-            colorMaterial.render(quadGeom, rm);
+
+            quadGeom.setMaterial(colorMaterial);
+            quadGeom.render(rm);
         }
         
         //System.out.format("renderQuad1(%d, %d, %d, %d, %s)\n", x, y, width, height, color.toString());
@@ -381,7 +386,9 @@ public class RenderDeviceJme implements RenderDevice {
         
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);
-        vertexColorMaterial.render(quadGeom, rm);
+
+        quadGeom.setMaterial(vertexColorMaterial);
+        quadGeom.render(rm);
         
         //System.out.format("renderQuad2(%d, %d, %d, %d, %s, %s, %s, %s)\n", x, y, width, height, topLeft.toString(),
         //                                                                                        topRight.toString(),

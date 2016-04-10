@@ -17,6 +17,7 @@ import com.jme3.math.Spline;
 import com.jme3.math.Spline.SplineType;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.jme3.math.interpolations.impl.LinearVectorInterpolation;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.scene.plugins.blender.BlenderContext;
@@ -849,7 +850,10 @@ public class CurvesTemporalMesh extends TemporalMesh {
                 float edgeLength = vertices[i].distance(vertices[i - 1]);
                 if (length + edgeLength > probeLength) {
                     float ratioAlongEdge = (probeLength - length) / edgeLength;
-                    return FastMath.interpolateLinear(ratioAlongEdge, vertices[i - 1], vertices[i]);
+
+                    Vector3f res = new Vector3f();
+                    new LinearVectorInterpolation<Vector3f>(vertices[i - 1], vertices[i]).interpolate(ratioAlongEdge, res);
+                    return res;
                 } else if (length + edgeLength == probeLength) {
                     return vertices[i];
                 }

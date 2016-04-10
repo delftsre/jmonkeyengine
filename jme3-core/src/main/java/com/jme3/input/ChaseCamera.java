@@ -38,6 +38,8 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.input.controls.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.math.interpolations.api.Interpolation;
+import com.jme3.math.interpolations.impl.LinearFloatInterpolation;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -99,7 +101,6 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
     protected Vector3f temp = new Vector3f(0, 0, 0);
     protected boolean invertYaxis = false;
     protected boolean invertXaxis = false;
-    
     /**
      * @deprecated use {@link CameraInput#CHASECAM_DOWN}
      */
@@ -436,7 +437,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
                     //computing lerp factor
                     trailingLerpFactor = Math.min(trailingLerpFactor + tpf * tpf * trailingSensitivity, 1);
                     //computing rotation by linear interpolation
-                    rotation = FastMath.interpolateLinear(trailingLerpFactor, rotation, targetRotation);
+                    rotation = new LinearFloatInterpolation(rotation, targetRotation).interpolate(trailingLerpFactor);
 
                     //if the rotation is near the target rotation we're good, that's over
                     if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
@@ -449,7 +450,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
                 if (chasing) {
                     distance = temp.set(targetLocation).subtractLocal(cam.getLocation()).length();
                     distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * chasingSensitivity * 0.05f), 1);
-                    distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
+                    distance = new LinearFloatInterpolation(distance, targetDistance).interpolate(distanceLerpFactor);
                     if (targetDistance + 0.01f >= distance && targetDistance - 0.01f <= distance) {
                         distanceLerpFactor = 0;
                         chasing = false;
@@ -459,7 +460,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
                 //linear interpolation of the distance while zooming
                 if (zooming) {
                     distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * zoomSensitivity), 1);
-                    distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
+                    distance = new LinearFloatInterpolation(distance, targetDistance).interpolate(distanceLerpFactor);
                     if (targetDistance + 0.1f >= distance && targetDistance - 0.1f <= distance) {
                         zooming = false;
                         distanceLerpFactor = 0;
@@ -469,7 +470,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
                 //linear interpolation of the rotation while rotating horizontally
                 if (rotating) {
                     rotationLerpFactor = Math.min(rotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
-                    rotation = FastMath.interpolateLinear(rotationLerpFactor, rotation, targetRotation);
+                    rotation = new LinearFloatInterpolation(rotation, targetRotation).interpolate(rotationLerpFactor);
                     if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
                         rotating = false;
                         rotationLerpFactor = 0;
@@ -479,7 +480,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
                 //linear interpolation of the rotation while rotating vertically
                 if (vRotating) {
                     vRotationLerpFactor = Math.min(vRotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
-                    vRotation = FastMath.interpolateLinear(vRotationLerpFactor, vRotation, targetVRotation);
+                    vRotation = new LinearFloatInterpolation(vRotation, targetVRotation).interpolate(vRotationLerpFactor);
                     if (targetVRotation + 0.01f >= vRotation && targetVRotation - 0.01f <= vRotation) {
                         vRotating = false;
                         vRotationLerpFactor = 0;

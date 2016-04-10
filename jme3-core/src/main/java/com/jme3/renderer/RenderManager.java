@@ -354,6 +354,26 @@ public class RenderManager {
     }
 
     /**
+     * Returns the material that is forced for the next render pass
+     * @return the forced material
+     */
+    public Material getForcedMaterial() {
+        return this.forcedMaterial;
+    }
+
+    public LightList getFilteredLightList() {
+        return this.filteredLightList;
+    }
+
+    /**
+     * Returns the Light Filter used on the lights that will be rendered.
+     * @return the lightlist
+     */
+    public LightFilter getLightFilter() {
+        return this.lightFilter;
+    }
+
+    /**
      * Returns the forced render state previously set with 
      * {@link #setForcedRenderState(com.jme3.material.RenderState) }.
      * @return the forced render state
@@ -516,53 +536,7 @@ public class RenderManager {
      * @see Material#render(com.jme3.scene.Geometry, com.jme3.renderer.RenderManager) 
      */
     public void renderGeometry(Geometry g) {
-        if (g.isIgnoreTransform()) {
-            setWorldMatrix(Matrix4f.IDENTITY);
-        } else {
-            setWorldMatrix(g.getWorldMatrix());
-        }
-        
-        // Perform light filtering if we have a light filter.
-        LightList lightList = g.getWorldLightList();
-        
-        if (lightFilter != null) {
-            filteredLightList.clear();
-            lightFilter.filterLights(g, filteredLightList);
-            lightList = filteredLightList;
-        }
-
-        //if forcedTechnique we try to force it for render,
-        //if it does not exists in the mat def, we check for forcedMaterial and render the geom if not null
-        //else the geom is not rendered
-        if (forcedTechnique != null) {
-            if (g.getMaterial().getMaterialDef().getTechniqueDef(forcedTechnique) != null) {
-                tmpTech = g.getMaterial().getActiveTechnique() != null ? g.getMaterial().getActiveTechnique().getDef().getName() : "Default";
-                g.getMaterial().selectTechnique(forcedTechnique, this);
-                //saving forcedRenderState for future calls
-                RenderState tmpRs = forcedRenderState;
-                if (g.getMaterial().getActiveTechnique().getDef().getForcedRenderState() != null) {
-                    //forcing forced technique renderState
-                    forcedRenderState = g.getMaterial().getActiveTechnique().getDef().getForcedRenderState();
-                }
-                // use geometry's material
-                g.getMaterial().render(g, lightList, this);
-                g.getMaterial().selectTechnique(tmpTech, this);
-
-                //restoring forcedRenderState
-                forcedRenderState = tmpRs;
-
-                //Reverted this part from revision 6197
-                //If forcedTechnique does not exists, and forcedMaterial is not set, the geom MUST NOT be rendered
-            } else if (forcedMaterial != null) {
-                // use forced material
-                forcedMaterial.render(g, lightList, this);
-            }
-        } else if (forcedMaterial != null) {
-            // use forced material
-            forcedMaterial.render(g, lightList, this);
-        } else {
-            g.getMaterial().render(g, lightList, this);
-        }
+        g.render(this);
     }
 
     /**
@@ -604,13 +578,15 @@ public class RenderManager {
                 preloadScene(children.get(i));
             }
         } else if (scene instanceof Geometry) {
+
+
             // add to the render queue
             Geometry gm = (Geometry) scene;
             if (gm.getMaterial() == null) {
                 throw new IllegalStateException("No material is set for Geometry: " + gm.getName());
             }
 
-            gm.getMaterial().preload(this);
+            gm.preload(this);
             Mesh mesh = gm.getMesh();
             if (mesh != null) {
                 for (VertexBuffer vb : mesh.getBufferList().getArray()) {
