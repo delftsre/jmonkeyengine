@@ -32,6 +32,7 @@
 package com.jme3.texture;
 
 import com.jme3.texture.Texture.Type;
+import com.jme3.texture.image.ColorSpace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,16 +53,25 @@ public class TextureCubeMapTest extends Texture3DTest {
     @Before
     public void initiate(){
         texture = new TextureCubeMap();
-        texture_extended = new TextureCubeMap();
+        texture_extended = new TextureCubeMap(new Image(Image.Format.ABGR8, 20, 5, null, ColorSpace.Linear));
     }
 
     @Test
     public void testConstructorTexture(){
         final Image image = Mockito.mock(Image.class);
+        when(image.getFormat()).thenReturn(Image.Format.Depth);
         when(image.getData(0)).thenReturn(null);
 
-        // Test Constructor
-        assert true;
+        // Test Constructor with Image
+        texture = new TextureCubeMap(image);
+        assert texture.getImage().equals(image);
+
+        // Test Constructor with widht, height and format
+        texture = new TextureCubeMap(20, 5, Image.Format.Depth32);
+        assert texture.getImage().getWidth() == 20;
+        assert texture.getImage().getHeight() == 5;
+        assert texture.getImage().getFormat().equals(Image.Format.Depth32);
+
     }
 
     @Test
@@ -71,7 +81,12 @@ public class TextureCubeMapTest extends Texture3DTest {
 
     @Test
     public void readwriteTest() {
-        //TextureCubeMap loaded_texture = new TextureCubeMap();
-        //this.writeAndRead(loaded_texture);
+        TextureCubeMap loaded_texture = new TextureCubeMap();
+        loaded_texture = (TextureCubeMap) this.writeAndRead(loaded_texture);
+        assert texture_extended.getImage().getWidth() == loaded_texture.getImage().getWidth();
+        assert texture_extended.getImage().getHeight() == loaded_texture.getImage().getHeight();
+        assert texture_extended.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
+        assert texture_extended.getImage().equals(loaded_texture.getImage());
+        assert loaded_texture.getImage().getDepth() == texture_extended.getImage().getDepth();
     }
 }

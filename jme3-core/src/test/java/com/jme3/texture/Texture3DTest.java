@@ -165,6 +165,10 @@ public class Texture3DTest extends Texture2DTest{
     public void readwriteTest() {
         Texture3D loaded_texture = new Texture3D();
         loaded_texture = (Texture3D) this.writeAndRead(loaded_texture);
+        assert texture_extended.getImage().getWidth() == loaded_texture.getImage().getWidth();
+        assert texture_extended.getImage().getHeight() == loaded_texture.getImage().getHeight();
+        assert texture_extended.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
+        assert texture_extended.getImage().equals(loaded_texture.getImage());
         assert loaded_texture.getImage().getDepth() == texture_extended.getImage().getDepth();
     }
 }

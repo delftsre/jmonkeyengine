@@ -64,7 +64,10 @@ public class TextureArrayTest extends Texture2DTest {
     @Before
     public void initiate(){
         texture = new TextureArray();
-        texture_extended = new TextureArray();
+        List<Image> list = new ArrayList<Image>();
+        list.add(new Image(Image.Format.ABGR8, 20, 5, null, ColorSpace.Linear));
+        list.add(new Image(Image.Format.ABGR8, 20, 5, null, ColorSpace.Linear));
+        texture_extended = new TextureArray(list);
     }
 
     @Test
@@ -97,7 +100,11 @@ public class TextureArrayTest extends Texture2DTest {
 
     @Test
     public void readwriteTest() {
-        //Texture2D loaded_texture = new TextureArray();
-        //this.writeAndRead(loaded_texture);
+        TextureArray loaded_texture = new TextureArray();
+        loaded_texture = (TextureArray) this.writeAndRead(loaded_texture);
+        assert texture_extended.getImage().getWidth() == loaded_texture.getImage().getWidth();
+        assert texture_extended.getImage().getHeight() == loaded_texture.getImage().getHeight();
+        assert texture_extended.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
+        assert texture_extended.getImage().equals(loaded_texture.getImage());
     }
 }

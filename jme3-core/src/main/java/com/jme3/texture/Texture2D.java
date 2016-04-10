@@ -99,9 +99,7 @@ public class Texture2D extends Texture {
 
     @Override
     public Texture createSimpleClone() {
-        Texture2D clone = new Texture2D();
-        createSimpleClone(clone);
-        return clone;
+        return createSimpleClone(new Texture2D());
     }
 
     @Override

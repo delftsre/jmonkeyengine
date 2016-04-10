@@ -98,9 +98,8 @@ public class TextureArray extends Texture2D {
 
     @Override
     public Texture createSimpleClone() {
-        TextureArray clone = new TextureArray();
-        createSimpleClone(clone);
-        return clone;
+        return createSimpleClone(new TextureArray());
+
     }
 
 }
