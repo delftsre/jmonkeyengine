@@ -38,12 +38,12 @@ import java.nio.ByteBuffer;
 
 public abstract class CommonImageRaster extends ImageRaster {
 
-    protected final int[] components = new int[4];
-    protected ByteBuffer buffer;
-    protected final Image image;
-    protected final ImageCodec codec;
-    protected final byte[] temp;
-    protected int slice;
+    private final int[] components = new int[4];
+    private ByteBuffer buffer;
+    private final Image image;
+    private final ImageCodec codec;
+    private final byte[] temp;
+    private int slice;
 
     protected void rangeCheck(int x, int y) {
         if (x < 0 || y < 0 || x >= this.getWidth() || y >= this.getHeight()) {
