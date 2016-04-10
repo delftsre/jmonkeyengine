@@ -76,12 +76,14 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class Texture2DTest {
 
-    private Texture2D texture;
+    protected Texture2D texture;
+    protected Texture2D texture_extended;
 
 
     @Before
     public void initiate(){
         texture = new Texture2D();
+        texture_extended = new Texture2D(20,5,Image.Format.Alpha8);
     }
 
     @Test
@@ -181,7 +183,6 @@ public class Texture2DTest {
         texture.setWrap(WrapMode.EdgeClamp);
         assert texture.hashCode() == old_hash;
 
-
         texture.setWrap(WrapAxis.T, WrapMode.MirroredRepeat);
         assert texture.hashCode() != old_hash;
 
@@ -191,7 +192,7 @@ public class Texture2DTest {
     public void testEquals(){
         Texture clone = texture.clone();
         assert clone.equals(texture) == true;
-        assert texture.equals(new Texture3D()) == false;
+        assert texture.equals(new String()) == false;
         clone.setWrap(WrapMode.Repeat);
         assert clone.equals(texture) == false;
 
@@ -210,28 +211,32 @@ public class Texture2DTest {
 
     @Test
     public void readwriteTest() {
+        Texture2D loaded_texture = new Texture2D();
+        this.writeAndRead(loaded_texture);
+    }
+
+    public Texture2D writeAndRead(Texture2D loaded_texture){
         Boolean exception = false;
-        texture = new Texture2D(20,5,Image.Format.Alpha8);
         String userHome = System.getProperty("user.home");
         BinaryExporter exporter = BinaryExporter.getInstance();
         File file = new File(userHome + "/Models/" + "MyModel.j3o");
         try {
-            exporter.save(texture, file);
+            exporter.save(texture_extended, file);
         } catch (IOException e) {
             System.out.println(e);
             exception = true;
         }
         BinaryImporter importer = BinaryImporter.getInstance();
-        Texture2D loaded_texture = new Texture2D();
         try{
             loaded_texture = (Texture2D) importer.load(file);
         } catch(IOException e){
             System.out.println(e);
             exception = true;
         }
-        assert texture.getImage().getWidth() == loaded_texture.getImage().getWidth();
-        assert texture.getImage().getHeight() == loaded_texture.getImage().getHeight();
-        assert texture.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
-        assert texture.getImage().equals(loaded_texture.getImage());
+        assert texture_extended.getImage().getWidth() == loaded_texture.getImage().getWidth();
+        assert texture_extended.getImage().getHeight() == loaded_texture.getImage().getHeight();
+        assert texture_extended.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
+        assert texture_extended.getImage().equals(loaded_texture.getImage());
+        return loaded_texture;
     }
 }

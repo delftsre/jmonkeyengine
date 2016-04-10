@@ -57,7 +57,12 @@ public class Texture3D extends Texture2D {
      * @param img The image to use.
      */
     public Texture3D(Image img) {
-        super(img);
+        super();
+        setImage(img);
+        if (img.getFormat().isDepthFormat()) {
+            setMagFilter(MagFilter.Nearest);
+            setMinFilter(MinFilter.NearestNoMipMaps);
+        }
     }
 
     /**
@@ -116,11 +121,17 @@ public class Texture3D extends Texture2D {
      *             if axis or mode are null
      */
     public void setWrap(WrapAxis axis, WrapMode mode) {
-        super.setWrap(axis, mode);
+        if (mode == null) {
+            throw new IllegalArgumentException("mode can not be null.");
+        } else if (axis == null) {
+            throw new IllegalArgumentException("axis can not be null.");
+        }
         switch (axis) {
             case R:
                 this.wrapR = mode;
                 break;
+            default:
+                super.setWrap(axis, mode);
         }
     }
 

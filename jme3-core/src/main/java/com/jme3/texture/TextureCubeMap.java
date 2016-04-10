@@ -75,8 +75,7 @@ public class TextureCubeMap extends Texture3D {
     }
 
     public TextureCubeMap(Image img){
-        super();
-        setImage(img);
+        super(img);
     }
     
     public TextureCubeMap(int width, int height, Image.Format format){
@@ -96,5 +95,12 @@ public class TextureCubeMap extends Texture3D {
     @Override
     public Type getType() {
         return Type.CubeMap;
+    }
+
+    @Override
+    public Texture createSimpleClone() {
+        TextureCubeMap clone = new TextureCubeMap();
+        createSimpleClone(clone);
+        return clone;
     }
 }
