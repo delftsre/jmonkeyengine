@@ -101,8 +101,22 @@ public class Texture2DTest {
 
     @Test
     public void testHash(){
-        int expected = new Integer(941204392);
-        assert texture.hashCode() == expected;
+        int old_hash = texture.hashCode();
+        texture.setWrap(WrapMode.Repeat);
+        assert texture.hashCode() != old_hash;
+        texture.setWrap(WrapMode.EdgeClamp);
+        assert texture.hashCode() == old_hash;
+
+        texture.setWrap(WrapAxis.S, WrapMode.Repeat);
+        assert texture.hashCode() != old_hash;
+
+        texture.setWrap(WrapMode.EdgeClamp);
+        assert texture.hashCode() == old_hash;
+
+
+        texture.setWrap(WrapAxis.T, WrapMode.MirroredRepeat);
+        assert texture.hashCode() != old_hash;
+
     }
 
     @Test
@@ -117,8 +131,6 @@ public class Texture2DTest {
         clone.setWrap(WrapAxis.T, WrapMode.MirroredRepeat);
 
         assert clone.equals(texture) == false;
-
-
     }
 
 
