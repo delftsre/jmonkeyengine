@@ -31,71 +31,65 @@
  */
 package com.jme3.input;
 
-import com.jme3.input.event.*;
+import java.util.ArrayList;
+
+import com.jme3.input.event.KeyInputEvent;
 
 /**
- * An interface used for receiving raw input from devices.
+ * TestKeyInput as an implementation of <code>KeyInput</code> to simulate keys for tests.
+ *
+ * @author Willem Vaandrager.
  */
-public interface RawInputListener {
+public class TestKeyInput implements KeyInput {
 
-    /**
-     * Called before a batch of input will be sent to this
-     * <code>RawInputListener</code>.
-     */
-    public void beginInput();
+    protected boolean inited = false;
+    
+	public ArrayList<KeyInputEvent> eventQueue = new ArrayList<KeyInputEvent>();
+	
+    private RawInputListener listener;
+    
 
-    /**
-     * Called after a batch of input was sent to this
-     * <code>RawInputListener</code>.
-     *
-     * The listener should set the {@link InputEvent#setConsumed() consumed flag}
-     * on any events that have been consumed either at this call or previous calls.
-     */
-    public void endInput();
+    public void initialize() {
+        if (inited)
+            throw new IllegalStateException("Input already initialized.");
 
-    /**
-     * Invoked on joystick axis events.
-     *
-     * @param evt
-     */
-    public void onJoyAxisEvent(JoyAxisEvent evt);
+        inited = true;
+    }
+    
+    public void addEvent(KeyInputEvent evt){
+    	eventQueue.add(evt);
+    }
+    
+    public void setInputListener(RawInputListener listener) {
+        this.listener = listener;
+    }
+    
+    public RawInputListener getInputListener() {
+        return listener;
+    }
 
-    /**
-     * Invoked on joystick button presses.
-     *
-     * @param evt
-     */
-    public void onJoyButtonEvent(JoyButtonEvent evt);
+    public void update() {
+        if (!inited)
+            throw new IllegalStateException("Input not initialized.");
+        
+        for (KeyInputEvent evt : eventQueue) {
+            listener.onKeyEvent(evt);
+		}
+    }
 
-    /**
-     * Invoked on mouse movement/motion events.
-     *
-     * @param evt
-     */
-    public void onMouseMotionEvent(MouseMotionEvent evt);
+    public void destroy() {
+        if (!inited)
+            throw new IllegalStateException("Input not initialized.");
 
-    /**
-     * Invoked on mouse button events.
-     *
-     * @param evt
-     */
-    public void onMouseButtonEvent(MouseButtonEvent evt);
+        inited = false;
+    }
 
-    /**
-     * Invoked on keyboard key press or release events.
-     *
-     * @param evt
-     */
-    public void onKeyEvent(KeyInputEvent evt);
+    public boolean isInitialized() {
+        return inited;
+    }
 
-
-    /**
-     * Invoked on touchscreen touch events.
-     *
-     * @param evt
-     */
-    public void onTouchEvent(TouchEvent evt);
-
-
-
+    public long getInputTimeNanos() {
+        return System.currentTimeMillis() * 1000000;
+    }
 }
+

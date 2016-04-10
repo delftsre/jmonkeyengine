@@ -35,15 +35,18 @@ import com.jme3.app.Application;
 import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.controls.*;
 import com.jme3.input.event.*;
-import com.jme3.math.FastMath;
+import com.jme3.input.eventprocessing.EventProcessorHandler;
+import com.jme3.input.eventprocessing.JoyEventProcessor;
+import com.jme3.input.eventprocessing.KeyEventProcessor;
+import com.jme3.input.eventprocessing.MouseEventProcessor;
+import com.jme3.input.eventprocessing.TouchEventProcessor;
+import com.jme3.input.inputListener.*;
+import com.jme3.input.queue.EventQueue;
+import com.jme3.input.util.InputSettings;
+import com.jme3.input.util.InputTimer;
 import com.jme3.math.Vector2f;
-import com.jme3.util.IntMap;
-import com.jme3.util.IntMap.Entry;
-import com.jme3.util.SafeArrayList;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
 /**
  * The <code>InputManager</code> is responsible for converting input events
@@ -82,41 +85,21 @@ import java.util.logging.Logger;
  * for digital inputs. For analog inputs however, the <code>value</code> argument
  * will equal the actual analog value.
  */
+//@Deprecated
 public class InputManager implements RawInputListener {
 
-    private static final Logger logger = Logger.getLogger(InputManager.class.getName());
-    private final KeyInput keys;
-    private final MouseInput mouse;
-    private final JoyInput joystick;
-    private final TouchInput touch;
-    private float frameTPF;
-    private long lastLastUpdateTime = 0;
-    private long lastUpdateTime = 0;
-    private long frameDelta = 0;
-    private long firstTime = 0;
-    private boolean eventsPermitted = false;
-    private boolean mouseVisible = true;
-    private boolean safeMode = false;
-    private float globalAxisDeadZone = 0.05f;
-    private final Vector2f cursorPos = new Vector2f();
-    private Joystick[] joysticks;
-    private final IntMap<ArrayList<Mapping>> bindings = new IntMap<ArrayList<Mapping>>();
-    private final HashMap<String, Mapping> mappings = new HashMap<String, Mapping>();
-    private final IntMap<Long> pressedButtons = new IntMap<Long>();
-    private final IntMap<Float> axisValues = new IntMap<Float>();
-    private final SafeArrayList<RawInputListener> rawListeners = new SafeArrayList<RawInputListener>(RawInputListener.class);
-    private final ArrayList<InputEvent> inputQueue = new ArrayList<InputEvent>();
+	CursorManager cursorManager;
+	JoystickManager joystickManager;
 
-    private static class Mapping {
-
-        private final String name;
-        private final ArrayList<Integer> triggers = new ArrayList<Integer>();
-        private final ArrayList<InputListener> listeners = new ArrayList<InputListener>();
-
-        public Mapping(String name) {
-            this.name = name;
-        }
-    }
+	InputUpdater updater;
+    EventQueue inputQueue;
+	EventProcessorHandler processor;
+    BaseListenerHandler listener;  
+    
+    InputSettings settings;
+    Mapper mapper;
+    InputTimer timer;       
+    ActionInvoker invoker;
 
     /**
      * Initializes the InputManager.
@@ -129,582 +112,70 @@ public class InputManager implements RawInputListener {
      * @param touch
      * @throws IllegalArgumentException If either mouseInput or keyInput are null.
      */
+    public InputManager(Mapper m, CursorManager cm) {
+    	this.mapper = m;
+    	this.cursorManager = cm;
+    }
+    
+    /**
+    
+     * Initializes the InputManager.
+     *
+     * <p>This should only be called internally in {@link Application}.
+     *
+     * @throws IllegalArgumentException If either mouseInput or keyInput are null.
+     **/
     public InputManager(MouseInput mouse, KeyInput keys, JoyInput joystick, TouchInput touch) {
         if (keys == null || mouse == null) {
             throw new IllegalArgumentException("Mouse or keyboard cannot be null");
         }
-
-        this.keys = keys;
-        this.mouse = mouse;
-        this.joystick = joystick;
-        this.touch = touch;
-
-        keys.setInputListener(this);
-        mouse.setInputListener(this);
-        if (joystick != null) {
-            joystick.setInputListener(this);
-            joysticks = joystick.loadJoysticks(this);
+        
+        processor = new EventProcessorHandler();
+        
+        listener = new BaseListenerHandler();
+        List<Input> inputDevices = new ArrayList<Input>();
+        
+        settings = new InputSettings();
+        mapper = new Mapper();
+        timer = new InputTimer();        
+        
+        invoker = new ActionInvoker(settings, mapper, timer);
+        
+    	cursorManager = new CursorManager(mouse,touch);
+    	joystickManager = new JoystickManager(this,joystick);
+    	
+        inputQueue = new EventQueue(listener, processor);
+        
+        if(mouse != null){
+        	processor.add(new MouseEventProcessor(invoker));
+        	mouse.setInputListener(new MouseInputListener(inputQueue, cursorManager));
+        	inputDevices.add(mouse);
         }
-        if (touch != null) {
-            touch.setInputListener(this);
+        if(keys != null){
+        	processor.add(new KeyEventProcessor(invoker));
+        	keys.setInputListener(new KeyInputListener(inputQueue));
+        	inputDevices.add(keys);
         }
-
-        firstTime = keys.getInputTimeNanos();
+        if(joystick != null){
+        	processor.add(new JoyEventProcessor(invoker));
+        	joystick.setInputListener(new JoyInputListener(inputQueue));
+        	inputDevices.add(joystick);
+        }
+        if(touch != null){
+        	processor.add(new TouchEventProcessor(invoker));
+        	touch.setInputListener(new TouchInputListener(inputQueue, cursorManager));
+        	inputDevices.add(touch);
+        }      
+        
+        updater = new InputUpdater(timer, invoker, inputQueue, inputDevices, settings);
     }
 
-    private void invokeActions(int hash, boolean pressed) {
-        ArrayList<Mapping> maps = bindings.get(hash);
-        if (maps == null) {
-            return;
-        }
-
-        int size = maps.size();
-        for (int i = size - 1; i >= 0; i--) {
-            Mapping mapping = maps.get(i);
-            ArrayList<InputListener> listeners = mapping.listeners;
-            int listenerSize = listeners.size();
-            for (int j = listenerSize - 1; j >= 0; j--) {
-                InputListener listener = listeners.get(j);
-                if (listener instanceof ActionListener) {
-                    ((ActionListener) listener).onAction(mapping.name, pressed, frameTPF);
-                }
-            }
-        }
-    }
-
-    private float computeAnalogValue(long timeDelta) {
-        if (safeMode || frameDelta == 0) {
-            return 1f;
-        } else {
-            return FastMath.clamp((float) timeDelta / (float) frameDelta, 0, 1);
-        }
-    }
-
-    private void invokeTimedActions(int hash, long time, boolean pressed) {
-        if (!bindings.containsKey(hash)) {
-            return;
-        }
-
-        if (pressed) {
-            pressedButtons.put(hash, time);
-        } else {
-            Long pressTimeObj = pressedButtons.remove(hash);
-            if (pressTimeObj == null) {
-                return; // under certain circumstances it can be null, ignore
-            }                        // the event then.
-
-            long pressTime = pressTimeObj;
-            long lastUpdate = lastLastUpdateTime;
-            long releaseTime = time;
-            long timeDelta = releaseTime - Math.max(pressTime, lastUpdate);
-
-            if (timeDelta > 0) {
-                invokeAnalogs(hash, computeAnalogValue(timeDelta), false);
-            }
-        }
-    }
-
-    private void invokeUpdateActions() {
-        for (Entry<Long> pressedButton : pressedButtons) {
-            int hash = pressedButton.getKey();
-
-            long pressTime = pressedButton.getValue();
-            long timeDelta = lastUpdateTime - Math.max(lastLastUpdateTime, pressTime);
-
-            if (timeDelta > 0) {
-                invokeAnalogs(hash, computeAnalogValue(timeDelta), false);
-            }
-        }
-
-        for (Entry<Float> axisValue : axisValues) {
-            int hash = axisValue.getKey();
-            float value = axisValue.getValue();
-            invokeAnalogs(hash, value * frameTPF, true);
-        }
-    }
-
-    private void invokeAnalogs(int hash, float value, boolean isAxis) {
-        ArrayList<Mapping> maps = bindings.get(hash);
-        if (maps == null) {
-            return;
-        }
-
-        if (!isAxis) {
-            value *= frameTPF;
-        }
-
-        int size = maps.size();
-        for (int i = size - 1; i >= 0; i--) {
-            Mapping mapping = maps.get(i);
-            ArrayList<InputListener> listeners = mapping.listeners;
-            int listenerSize = listeners.size();
-            for (int j = listenerSize - 1; j >= 0; j--) {
-                InputListener listener = listeners.get(j);
-                if (listener instanceof AnalogListener) {
-                    // NOTE: multiply by TPF for any button bindings
-                    ((AnalogListener) listener).onAnalog(mapping.name, value, frameTPF);
-                }
-            }
-        }
-    }
-
-    private void invokeAnalogsAndActions(int hash, float value, float effectiveDeadZone, boolean applyTpf) {
-        if (value < effectiveDeadZone) {
-            invokeAnalogs(hash, value, !applyTpf);
-            return;
-        }
-
-        ArrayList<Mapping> maps = bindings.get(hash);
-        if (maps == null) {
-            return;
-        }
-
-        boolean valueChanged = !axisValues.containsKey(hash);
-        if (applyTpf) {
-            value *= frameTPF;
-        }
-
-        int size = maps.size();
-        for (int i = size - 1; i >= 0; i--) {
-            Mapping mapping = maps.get(i);
-            ArrayList<InputListener> listeners = mapping.listeners;
-            int listenerSize = listeners.size();
-            for (int j = listenerSize - 1; j >= 0; j--) {
-                InputListener listener = listeners.get(j);
-
-                if (listener instanceof ActionListener && valueChanged) {
-                    ((ActionListener) listener).onAction(mapping.name, true, frameTPF);
-                }
-
-                if (listener instanceof AnalogListener) {
-                    ((AnalogListener) listener).onAnalog(mapping.name, value, frameTPF);
-                }
-
-            }
-        }
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void beginInput() {
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void endInput() {
-    }
-
-    private void onJoyAxisEventQueued(JoyAxisEvent evt) {
-//        for (int i = 0; i < rawListeners.size(); i++){
-//            rawListeners.get(i).onJoyAxisEvent(evt);
-//        }
-
-        int joyId = evt.getJoyIndex();
-        int axis = evt.getAxisIndex();
-        float value = evt.getValue();
-        float effectiveDeadZone = Math.max(globalAxisDeadZone, evt.getAxis().getDeadZone()); 
-        if (value < effectiveDeadZone && value > -effectiveDeadZone) {
-            int hash1 = JoyAxisTrigger.joyAxisHash(joyId, axis, true);
-            int hash2 = JoyAxisTrigger.joyAxisHash(joyId, axis, false);
-
-            Float val1 = axisValues.get(hash1);
-            Float val2 = axisValues.get(hash2);
-
-            if (val1 != null && val1 > effectiveDeadZone) {
-                invokeActions(hash1, false);
-            }
-            if (val2 != null && val2 > effectiveDeadZone) {
-                invokeActions(hash2, false);
-            }
-
-            axisValues.remove(hash1);
-            axisValues.remove(hash2);
-
-        } else if (value < 0) {
-            int hash = JoyAxisTrigger.joyAxisHash(joyId, axis, true);
-            int otherHash = JoyAxisTrigger.joyAxisHash(joyId, axis, false);
-
-            // Clear the reverse direction's actions in case we
-            // crossed center too quickly
-            Float otherVal = axisValues.get(otherHash);
-            if (otherVal != null && otherVal > effectiveDeadZone) {
-                invokeActions(otherHash, false);
-            }
-
-            invokeAnalogsAndActions(hash, -value, effectiveDeadZone, true);
-            axisValues.put(hash, -value);
-            axisValues.remove(otherHash);
-        } else {
-            int hash = JoyAxisTrigger.joyAxisHash(joyId, axis, false);
-            int otherHash = JoyAxisTrigger.joyAxisHash(joyId, axis, true);
-
-            // Clear the reverse direction's actions in case we
-            // crossed center too quickly
-            Float otherVal = axisValues.get(otherHash);
-            if (otherVal != null && otherVal > effectiveDeadZone) {
-                invokeActions(otherHash, false);
-            }
-
-            invokeAnalogsAndActions(hash, value, effectiveDeadZone, true);
-            axisValues.put(hash, value);
-            axisValues.remove(otherHash);
-        }
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void onJoyAxisEvent(JoyAxisEvent evt) {
-        if (!eventsPermitted) {
-            throw new UnsupportedOperationException("JoyInput has raised an event at an illegal time.");
-        }
-
-        inputQueue.add(evt);
-    }
-
-    private void onJoyButtonEventQueued(JoyButtonEvent evt) {
-//        for (int i = 0; i < rawListeners.size(); i++){
-//            rawListeners.get(i).onJoyButtonEvent(evt);
-//        }
-
-        int hash = JoyButtonTrigger.joyButtonHash(evt.getJoyIndex(), evt.getButtonIndex());
-        invokeActions(hash, evt.isPressed());
-        invokeTimedActions(hash, evt.getTime(), evt.isPressed());
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void onJoyButtonEvent(JoyButtonEvent evt) {
-        if (!eventsPermitted) {
-            throw new UnsupportedOperationException("JoyInput has raised an event at an illegal time.");
-        }
-
-        inputQueue.add(evt);
-    }
-
-    private void onMouseMotionEventQueued(MouseMotionEvent evt) {
-//        for (int i = 0; i < rawListeners.size(); i++){
-//            rawListeners.get(i).onMouseMotionEvent(evt);
-//        }
-
-        if (evt.getDX() != 0) {
-            float val = Math.abs(evt.getDX()) / 1024f;
-            invokeAnalogsAndActions(MouseAxisTrigger.mouseAxisHash(MouseInput.AXIS_X, evt.getDX() < 0), val, globalAxisDeadZone, false);
-        }
-        if (evt.getDY() != 0) {
-            float val = Math.abs(evt.getDY()) / 1024f;
-            invokeAnalogsAndActions(MouseAxisTrigger.mouseAxisHash(MouseInput.AXIS_Y, evt.getDY() < 0), val, globalAxisDeadZone, false);
-        }
-        if (evt.getDeltaWheel() != 0) {
-            float val = Math.abs(evt.getDeltaWheel()) / 100f;
-            invokeAnalogsAndActions(MouseAxisTrigger.mouseAxisHash(MouseInput.AXIS_WHEEL, evt.getDeltaWheel() < 0), val, globalAxisDeadZone, false);
-        }
-    }
-
-    /**
-     * Sets the mouse cursor image or animation.
-     * Set cursor to null to show default system cursor.
-     * To hide the cursor completely, use {@link #setCursorVisible(boolean) }.
-     *
-     * @param jmeCursor The cursor to set, or null to reset to system cursor.
-     *
-     * @see JmeCursor
-     */
-    public void setMouseCursor(JmeCursor jmeCursor) {
-        mouse.setNativeCursor(jmeCursor);
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void onMouseMotionEvent(MouseMotionEvent evt) {
-        if (!eventsPermitted) {
-            throw new UnsupportedOperationException("MouseInput has raised an event at an illegal time.");
-        }
-
-        cursorPos.set(evt.getX(), evt.getY());
-        inputQueue.add(evt);
-    }
-
-    private void onMouseButtonEventQueued(MouseButtonEvent evt) {
-        int hash = MouseButtonTrigger.mouseButtonHash(evt.getButtonIndex());
-        invokeActions(hash, evt.isPressed());
-        invokeTimedActions(hash, evt.getTime(), evt.isPressed());
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void onMouseButtonEvent(MouseButtonEvent evt) {
-        if (!eventsPermitted) {
-            throw new UnsupportedOperationException("MouseInput has raised an event at an illegal time.");
-        }
-        //updating cursor pos on click, so that non android touch events can properly update cursor position.
-        cursorPos.set(evt.getX(), evt.getY());
-        inputQueue.add(evt);
-    }
-
-    private void onKeyEventQueued(KeyInputEvent evt) {
-        if (evt.isRepeating()) {
-            return; // repeat events not used for bindings
-        }
-
-        int hash = KeyTrigger.keyHash(evt.getKeyCode());
-        invokeActions(hash, evt.isPressed());
-        invokeTimedActions(hash, evt.getTime(), evt.isPressed());
-    }
-
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void onKeyEvent(KeyInputEvent evt) {
-        if (!eventsPermitted) {
-            throw new UnsupportedOperationException("KeyInput has raised an event at an illegal time.");
-        }
-
-        inputQueue.add(evt);
-    }
-
-    /**
-     * Set the deadzone for joystick axes.
-     *
-     * <p>{@link ActionListener#onAction(java.lang.String, boolean, float) }
-     * events will only be raised if the joystick axis value is greater than
-     * the <code>deadZone</code>.
-     *
-     * @param deadZone the deadzone for joystick axes.
-     */
-    public void setAxisDeadZone(float deadZone) {
-        this.globalAxisDeadZone = deadZone;
-    }
-
-    /**
-     * Returns the deadzone for joystick axes.
-     *
-     * @return the deadzone for joystick axes.
-     */
-    public float getAxisDeadZone() {
-        return globalAxisDeadZone;
-    }
-
-    /**
-     * Adds a new listener to receive events on the given mappings.
-     *
-     * <p>The given InputListener will be registered to receive events
-     * on the specified mapping names. When a mapping raises an event, the
-     * listener will have its appropriate method invoked, either
-     * {@link ActionListener#onAction(java.lang.String, boolean, float) }
-     * or {@link AnalogListener#onAnalog(java.lang.String, float, float) }
-     * depending on which interface the <code>listener</code> implements.
-     * If the listener implements both interfaces, then it will receive the
-     * appropriate event for each method.
-     *
-     * @param listener The listener to register to receive input events.
-     * @param mappingNames The mapping names which the listener will receive
-     * events from.
-     *
-     * @see InputManager#removeListener(com.jme3.input.controls.InputListener)
-     */
     public void addListener(InputListener listener, String... mappingNames) {
-        for (String mappingName : mappingNames) {
-            Mapping mapping = mappings.get(mappingName);
-            if (mapping == null) {
-                mapping = new Mapping(mappingName);
-                mappings.put(mappingName, mapping);
-            }
-            if (!mapping.listeners.contains(listener)) {
-                mapping.listeners.add(listener);
-            }
-        }
+        mapper.addListener(listener, mappingNames);;
     }
-
-    /**
-     * Removes a listener from receiving events.
-     *
-     * <p>This will unregister the listener from any mappings that it
-     * was previously registered with via
-     * {@link InputManager#addListener(com.jme3.input.controls.InputListener, java.lang.String[]) }.
-     *
-     * @param listener The listener to unregister.
-     *
-     * @see InputManager#addListener(com.jme3.input.controls.InputListener, java.lang.String[])
-     */
+    
     public void removeListener(InputListener listener) {
-        for (Mapping mapping : mappings.values()) {
-            mapping.listeners.remove(listener);
-        }
-    }
-
-    /**
-     * Create a new mapping to the given triggers.
-     *
-     * <p>
-     * The given mapping will be assigned to the given triggers, when
-     * any of the triggers given raise an event, the listeners
-     * registered to the mappings will receive appropriate events.
-     *
-     * @param mappingName The mapping name to assign.
-     * @param triggers The triggers to which the mapping is to be registered.
-     *
-     * @see InputManager#deleteMapping(java.lang.String)
-     */
-    public void addMapping(String mappingName, Trigger... triggers) {
-        Mapping mapping = mappings.get(mappingName);
-        if (mapping == null) {
-            mapping = new Mapping(mappingName);
-            mappings.put(mappingName, mapping);
-        }
-
-        for (Trigger trigger : triggers) {
-            int hash = trigger.triggerHashCode();
-            ArrayList<Mapping> names = bindings.get(hash);
-            if (names == null) {
-                names = new ArrayList<Mapping>();
-                bindings.put(hash, names);
-            }
-            if (!names.contains(mapping)) {
-                names.add(mapping);
-                mapping.triggers.add(hash);
-            } else {
-                logger.log(Level.WARNING, "Attempted to add mapping \"{0}\" twice to trigger.", mappingName);
-            }
-        }
-    }
-
-    /**
-     * Returns true if this InputManager has a mapping registered
-     * for the given mappingName.
-     *
-     * @param mappingName The mapping name to check.
-     *
-     * @see InputManager#addMapping(java.lang.String, com.jme3.input.controls.Trigger[])
-     * @see InputManager#deleteMapping(java.lang.String)
-     */
-    public boolean hasMapping(String mappingName) {
-        return mappings.containsKey(mappingName);
-    }
-
-    /**
-     * Deletes a mapping from receiving trigger events.
-     *
-     * <p>
-     * The given mapping will no longer be assigned to receive trigger
-     * events.
-     *
-     * @param mappingName The mapping name to unregister.
-     *
-     * @see InputManager#addMapping(java.lang.String, com.jme3.input.controls.Trigger[])
-     */
-    public void deleteMapping(String mappingName) {
-        Mapping mapping = mappings.remove(mappingName);
-        if (mapping == null) {
-            //throw new IllegalArgumentException("Cannot find mapping: " + mappingName);
-            logger.log(Level.WARNING, "Cannot find mapping to be removed, skipping: {0}", mappingName);
-            return;
-        }
-
-        ArrayList<Integer> triggers = mapping.triggers;
-        for (int i = triggers.size() - 1; i >= 0; i--) {
-            int hash = triggers.get(i);
-            ArrayList<Mapping> maps = bindings.get(hash);
-            maps.remove(mapping);
-        }
-    }
-
-    /**
-     * Deletes a specific trigger registered to a mapping.
-     *
-     * <p>
-     * The given mapping will no longer receive events raised by the
-     * trigger.
-     *
-     * @param mappingName The mapping name to cease receiving events from the
-     * trigger.
-     * @param trigger The trigger to no longer invoke events on the mapping.
-     */
-    public void deleteTrigger(String mappingName, Trigger trigger) {
-        Mapping mapping = mappings.get(mappingName);
-        if (mapping == null) {
-            throw new IllegalArgumentException("Cannot find mapping: " + mappingName);
-        }
-
-        ArrayList<Mapping> maps = bindings.get(trigger.triggerHashCode());
-        maps.remove(mapping);
-
-    }
-
-    /**
-     * Clears all the input mappings from this InputManager.
-     * Consequently, also clears all of the
-     * InputListeners as well.
-     */
-    public void clearMappings() {
-        mappings.clear();
-        bindings.clear();
-        reset();
-    }
-
-    /**
-     * Do not use.
-     * Called to reset pressed keys or buttons when focus is restored.
-     */
-    public void reset() {
-        pressedButtons.clear();
-        axisValues.clear();
-    }
-
-    /**
-     * Returns whether the mouse cursor is visible or not.
-     *
-     * <p>By default the cursor is visible.
-     *
-     * @return whether the mouse cursor is visible or not.
-     *
-     * @see InputManager#setCursorVisible(boolean)
-     */
-    public boolean isCursorVisible() {
-        return mouseVisible;
-    }
-
-    /**
-     * Set whether the mouse cursor should be visible or not.
-     *
-     * @param visible whether the mouse cursor should be visible or not.
-     */
-    public void setCursorVisible(boolean visible) {
-        if (mouseVisible != visible) {
-            mouseVisible = visible;
-            mouse.setCursorVisible(mouseVisible);
-        }
-    }
-
-    /**
-     * Returns the current cursor position. The position is relative to the
-     * bottom-left of the screen and is in pixels.
-     *
-     * @return the current cursor position
-     */
-    public Vector2f getCursorPosition() {
-        return cursorPos;
-    }
-
-    /**
-     * Returns an array of all joysticks installed on the system.
-     *
-     * @return an array of all joysticks installed on the system.
-     */
-    public Joystick[] getJoysticks() {
-        return joysticks;
+	    mapper.removeListener(listener);
     }
 
     /**
@@ -728,7 +199,7 @@ public class InputManager implements RawInputListener {
      * @see RawInputListener
      */
     public void addRawInputListener(RawInputListener listener) {
-        rawListeners.add(listener);
+        this.listener.addRawInputListener(listener);
     }
 
     /**
@@ -740,7 +211,7 @@ public class InputManager implements RawInputListener {
      * @see InputManager#addRawInputListener(com.jme3.input.RawInputListener)
      */
     public void removeRawInputListener(RawInputListener listener) {
-        rawListeners.remove(listener);
+        this.listener.removeRawInputListener(listener);
     }
 
     /**
@@ -749,7 +220,128 @@ public class InputManager implements RawInputListener {
      * @see InputManager#addRawInputListener(com.jme3.input.RawInputListener)
      */
     public void clearRawInputListeners() {
-        rawListeners.clear();
+    	listener.clearRawInputListeners();
+    }
+
+
+    public void addMapping(String mappingName, Trigger... triggers) {
+    	mapper.addMapping(mappingName, triggers);
+    }
+
+    /**
+     * Returns true if this InputManager has a mapping registered
+     * for the given mappingName.
+     *
+     * @param mappingName The mapping name to check.
+     *
+     * @see InputManager#addMapping(java.lang.String, com.jme3.input.controls.Trigger[])
+     * @see InputManager#deleteMapping(java.lang.String)
+     */
+    public boolean hasMapping(String mappingName) {
+        return mapper.hasMapping(mappingName);
+    }
+
+    public void deleteMapping(String mappingName) {
+    	mapper.deleteMapping(mappingName);
+    }
+    
+
+    /**
+     * Deletes a specific trigger registered to a mapping.
+     *
+     * <p>
+     * The given mapping will no longer receive events raised by the
+     * trigger.
+     *
+     * @param mappingName The mapping name to cease receiving events from the
+     * trigger.
+     * @param trigger The trigger to no longer invoke events on the mapping.
+     */
+    public void deleteTrigger(String mappingName, Trigger trigger) {
+        mapper.deleteTrigger(mappingName, trigger);
+    }
+
+    /**
+     * Clears all the input mappings from this InputManager.
+     * Consequently, also clears all of the
+     * InputListeners as well.
+     */
+    public void clearMappings() {
+        mapper.clearMappings();
+    }
+    /**
+     * Set the deadzone for joystick axes.
+     *
+     * <p>{@link ActionListener#onAction(java.lang.String, boolean, float) }
+     * events will only be raised if the joystick axis value is greater than
+     * the <code>deadZone</code>.
+     *
+     * @param deadZone the deadzone for joystick axes.
+     */
+    public void setAxisDeadZone(float deadZone) {
+        settings.setGlobalAxisDeadZone(deadZone);
+    }
+
+    /**
+     * Returns the deadzone for joystick axes.
+     *
+     * @return the deadzone for joystick axes.
+     */
+    public float getAxisDeadZone() {
+        return settings.getGlobalAxisDeadZone();
+    }
+    
+    /**
+     * Do not use.
+     * Called to reset pressed keys or buttons when focus is restored.
+     */
+    public void reset() {
+    	invoker.reset();
+    }
+    
+    public void setMouseCursor(JmeCursor jmeCursor) {
+		cursorManager.setMouseCursor(jmeCursor);
+	}
+    
+    /**
+     * Returns whether the mouse cursor is visible or not.
+     *
+     * <p>By default the cursor is visible.
+     *
+     * @return whether the mouse cursor is visible or not.
+     *
+     * @see InputManager#setCursorVisible(boolean)
+     */
+    public boolean isCursorVisible() {
+        return cursorManager.isCursorVisible();
+    }
+
+    /**
+     * Set whether the mouse cursor should be visible or not.
+     *
+     * @param visible whether the mouse cursor should be visible or not.
+     */
+    public void setCursorVisible(boolean visible) {
+       cursorManager.setCursorVisible(visible);
+    }
+
+    /**
+     * Returns the current cursor position. The position is relative to the
+     * bottom-left of the screen and is in pixels.
+     *
+     * @return the current cursor position
+     */
+    public Vector2f getCursorPosition() {
+        return cursorManager.getCursorPosition();
+    }
+    
+    /**
+     * Returns an array of all joysticks installed on the system.
+     *
+     * @return an array of all joysticks installed on the system.
+     */
+    public Joystick[] getJoysticks() {
+        return joystickManager.getJoysticks();
     }
 
     /**
@@ -758,9 +350,7 @@ public class InputManager implements RawInputListener {
      * @param value True to enable simulation of mouse events
      */
     public void setSimulateMouse(boolean value) {
-        if (touch != null) {
-            touch.setSimulateMouse(value);
-        }
+        cursorManager.setSimulateMouse(value);
     }
     /**
      * @deprecated Use isSimulateMouse
@@ -768,11 +358,7 @@ public class InputManager implements RawInputListener {
      *
      */
     public boolean getSimulateMouse() {
-        if (touch != null) {
-            return touch.isSimulateMouse();
-        } else {
-            return false;
-        }
+        return cursorManager.isSimulateMouse();
     }
 
     /**
@@ -780,11 +366,7 @@ public class InputManager implements RawInputListener {
      *
      */
     public boolean isSimulateMouse() {
-        if (touch != null) {
-            return touch.isSimulateMouse();
-        } else {
-            return false;
-        }
+        return cursorManager.isSimulateMouse();
     }
 
     /**
@@ -793,9 +375,7 @@ public class InputManager implements RawInputListener {
      * @param value True to enable simulation of keyboard events
      */
     public void setSimulateKeyboard(boolean value) {
-        if (touch != null) {
-            touch.setSimulateKeyboard(value);
-        }
+        cursorManager.setSimulateKeyboard(value);
     }
 
     /**
@@ -803,77 +383,9 @@ public class InputManager implements RawInputListener {
      *
      */
     public boolean isSimulateKeyboard() {
-        if (touch != null) {
-            return touch.isSimulateKeyboard();
-        } else {
-            return false;
-        }
+        return cursorManager.isSimulateKeyboard();
     }
-
-    private void processQueue() {
-        int queueSize = inputQueue.size();
-        RawInputListener[] array = rawListeners.getArray(); 
-
-        for (RawInputListener listener : array) {
-            listener.beginInput();
-
-            for (int j = 0; j < queueSize; j++) {
-                InputEvent event = inputQueue.get(j);
-                if (event.isConsumed()) {
-                    continue;
-                }
-
-                if (event instanceof MouseMotionEvent) {
-                    listener.onMouseMotionEvent((MouseMotionEvent) event);
-                } else if (event instanceof KeyInputEvent) {
-                    listener.onKeyEvent((KeyInputEvent) event);
-                } else if (event instanceof MouseButtonEvent) {
-                    listener.onMouseButtonEvent((MouseButtonEvent) event);
-                } else if (event instanceof JoyAxisEvent) {
-                    listener.onJoyAxisEvent((JoyAxisEvent) event);
-                } else if (event instanceof JoyButtonEvent) {
-                    listener.onJoyButtonEvent((JoyButtonEvent) event);
-                } else if (event instanceof TouchEvent) {
-                    listener.onTouchEvent((TouchEvent) event);
-                } else {
-                    assert false;
-                }
-            }
-
-            listener.endInput();
-        }
-
-        for (int i = 0; i < queueSize; i++) {
-            InputEvent event = inputQueue.get(i);
-            if (event.isConsumed()) {
-                continue;
-            }
-
-            if (event instanceof MouseMotionEvent) {
-                onMouseMotionEventQueued((MouseMotionEvent) event);
-            } else if (event instanceof KeyInputEvent) {
-                onKeyEventQueued((KeyInputEvent) event);
-            } else if (event instanceof MouseButtonEvent) {
-                onMouseButtonEventQueued((MouseButtonEvent) event);
-            } else if (event instanceof JoyAxisEvent) {
-                onJoyAxisEventQueued((JoyAxisEvent) event);
-            } else if (event instanceof JoyButtonEvent) {
-                onJoyButtonEventQueued((JoyButtonEvent) event);
-            } else if (event instanceof TouchEvent) {
-                onTouchEventQueued((TouchEvent) event);
-            } else {
-                assert false;
-            }
-            // larynx, 2011.06.10 - flag event as reusable because
-            // the android input uses a non-allocating ringbuffer which
-            // needs to know when the event is not anymore in inputQueue
-            // and therefor can be reused.
-            event.setConsumed();
-        }
-
-        inputQueue.clear();
-    }
-
+    
     /**
      * Updates the <code>InputManager</code>.
      * This will query current input devices and send
@@ -882,68 +394,39 @@ public class InputManager implements RawInputListener {
      * @param tpf Time per frame value.
      */
     public void update(float tpf) {
-        frameTPF = tpf;
-
-        // Activate safemode if the TPF value is so small
-        // that rounding errors are inevitable
-        safeMode = tpf < 0.015f;
-
-        long currentTime = keys.getInputTimeNanos();
-        frameDelta = currentTime - lastUpdateTime;
-
-        eventsPermitted = true;
-
-        keys.update();
-        mouse.update();
-        if (joystick != null) {
-            joystick.update();
-        }
-        if (touch != null) {
-            touch.update();
-        }
-
-        eventsPermitted = false;
-
-        processQueue();
-        invokeUpdateActions();
-
-        lastLastUpdateTime = lastUpdateTime;
-        lastUpdateTime = currentTime;
+        updater.update(tpf);
     }
+    
+	@Override
+	public void beginInput() {
+	}
 
-    /**
-     * Dispatches touch events to touch listeners
-     * @param evt The touch event to be dispatched to all onTouch listeners
-     */
-    public void onTouchEventQueued(TouchEvent evt) {
-        ArrayList<Mapping> maps = bindings.get(TouchTrigger.touchHash(evt.getKeyCode()));
-        if (maps == null) {
-            return;
-        }
+	@Override
+	public void endInput() {
+	}
 
-        int size = maps.size();
-        for (int i = size - 1; i >= 0; i--) {
-            Mapping mapping = maps.get(i);
-            ArrayList<InputListener> listeners = mapping.listeners;
-            int listenerSize = listeners.size();
-            for (int j = listenerSize - 1; j >= 0; j--) {
-                InputListener listener = listeners.get(j);
-                if (listener instanceof TouchListener) {
-                    ((TouchListener) listener).onTouch(mapping.name, evt, frameTPF);
-                }
-            }
-        }
-    }
+	public void onJoyAxisEvent(JoyAxisEvent evt) {
+        throw new UnsupportedOperationException("JoyInput has raised an event at an illegal time.");
+	}
 
-    /**
-     * Callback from RawInputListener. Do not use.
-     */
-    @Override
-    public void onTouchEvent(TouchEvent evt) {
-        if (!eventsPermitted) {
-            throw new UnsupportedOperationException("TouchInput has raised an event at an illegal time.");
-        }
-        cursorPos.set(evt.getX(), evt.getY());
-        inputQueue.add(evt);
-    }
+	public void onJoyButtonEvent(JoyButtonEvent evt) {
+        throw new UnsupportedOperationException("JoyInput has raised an event at an illegal time.");
+	}
+
+	public void onMouseMotionEvent(MouseMotionEvent evt) {
+        throw new UnsupportedOperationException("MouseInput has raised an event at an illegal time.");
+	}
+
+	public void onMouseButtonEvent(MouseButtonEvent evt) {
+        throw new UnsupportedOperationException("MouseInput has raised an event at an illegal time.");
+	}
+
+	public void onKeyEvent(KeyInputEvent evt) {
+        throw new UnsupportedOperationException("KeyInput has raised an event at an illegal time.");		
+	}
+
+	public void onTouchEvent(TouchEvent evt) {
+        throw new UnsupportedOperationException("TouchInput has raised an event at an illegal time.");
+	}
+
 }

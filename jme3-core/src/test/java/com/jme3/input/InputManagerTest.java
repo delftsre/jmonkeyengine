@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2015 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,71 +31,37 @@
  */
 package com.jme3.input;
 
-import com.jme3.input.event.*;
+
+import com.jme3.input.dummy.*;
+import com.jme3.input.event.InputEvent;
+import com.jme3.input.event.JoyButtonEvent;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
- * An interface used for receiving raw input from devices.
+ * Tests functionality of input behavior as: 
+ * 
+ * @author 
  */
-public interface RawInputListener {
+public class InputManagerTest {
+    
+	public MouseInput mi;
+	public KeyInput ki;
+	public InputManager im;
+	
+    @Before
+    public void setUp() {
+    	mi =  new DummyMouseInput();
+    	ki = new DummyKeyInput();    	
 
-    /**
-     * Called before a batch of input will be sent to this
-     * <code>RawInputListener</code>.
-     */
-    public void beginInput();
-
-    /**
-     * Called after a batch of input was sent to this
-     * <code>RawInputListener</code>.
-     *
-     * The listener should set the {@link InputEvent#setConsumed() consumed flag}
-     * on any events that have been consumed either at this call or previous calls.
-     */
-    public void endInput();
-
-    /**
-     * Invoked on joystick axis events.
-     *
-     * @param evt
-     */
-    public void onJoyAxisEvent(JoyAxisEvent evt);
-
-    /**
-     * Invoked on joystick button presses.
-     *
-     * @param evt
-     */
-    public void onJoyButtonEvent(JoyButtonEvent evt);
-
-    /**
-     * Invoked on mouse movement/motion events.
-     *
-     * @param evt
-     */
-    public void onMouseMotionEvent(MouseMotionEvent evt);
-
-    /**
-     * Invoked on mouse button events.
-     *
-     * @param evt
-     */
-    public void onMouseButtonEvent(MouseButtonEvent evt);
-
-    /**
-     * Invoked on keyboard key press or release events.
-     *
-     * @param evt
-     */
-    public void onKeyEvent(KeyInputEvent evt);
-
-
-    /**
-     * Invoked on touchscreen touch events.
-     *
-     * @param evt
-     */
-    public void onTouchEvent(TouchEvent evt);
-
-
-
+    	im = new InputManager(mi,ki,null,null);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testCreateEmptyInputManager() {
+    	im = new InputManager(null,null,null,null);
+    }
 }
