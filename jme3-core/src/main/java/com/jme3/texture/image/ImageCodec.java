@@ -44,6 +44,15 @@ abstract class ImageCodec {
     protected final int bpp, type, maxAlpha, maxRed, maxGreen, maxBlue;
     protected final boolean isGray;
 
+    /**
+     * An ImageCoded
+     * @param bpp bits per pixel
+     * @param flags
+     * @param maxAlpha
+     * @param maxRed
+     * @param maxGreen
+     * @param maxBlue
+     */
     public ImageCodec(int bpp, int flags, int maxAlpha, int maxRed, int maxGreen, int maxBlue) {
         this.bpp = bpp;
         this.isGray = (flags & FLAG_GRAY) != 0;
