@@ -164,11 +164,6 @@ public final class Shader extends NativeObject {
         }
         
         @Override
-        public long getUniqueId() {
-            return ((long)OBJTYPE_SHADERSOURCE << 32) | ((long)id);
-        }
-        
-        @Override
         public String toString(){
             String nameTxt = "";
             if (name != null)
@@ -368,8 +363,4 @@ public final class Shader extends NativeObject {
         return new Shader(this);
     }
 
-    @Override
-    public long getUniqueId() {
-        return ((long)OBJTYPE_SHADER << 32) | ((long)id);
-    }
 }

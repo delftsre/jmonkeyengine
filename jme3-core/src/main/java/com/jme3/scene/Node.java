@@ -34,6 +34,7 @@ package com.jme3.scene;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
+import com.jme3.effect.IParticleEmitter;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
@@ -761,5 +762,16 @@ public class Node extends Spatial {
     @Override
     protected void breadthFirstTraversal(SceneGraphVisitor visitor, Queue<Spatial> queue) {
         queue.addAll(children);
+    }
+    
+    @Override
+    public IParticleEmitter findEmitter() {
+        for (Spatial child : children) {
+                IParticleEmitter em = child.findEmitter();
+                if (em != null) {
+                    return em;
+                }
+            }
+        return null;
     }
 }

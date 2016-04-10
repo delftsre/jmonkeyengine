@@ -222,7 +222,7 @@ public class AudioStream extends AudioData implements Closeable {
     }
 
     @Override
-    public long getUniqueId() {
-        return ((long) OBJTYPE_AUDIOSTREAM << 32) | ((long) ids[0]);
+    public String getUniqueId() {
+    	return this.getClass().getName().concat(((Integer)ids[0]).toString());
     }
 }

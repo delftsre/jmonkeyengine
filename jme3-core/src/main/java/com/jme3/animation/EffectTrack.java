@@ -31,14 +31,13 @@
  */
 package com.jme3.animation;
 
-import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.IParticleEmitter;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.control.AbstractControl;
@@ -70,7 +69,7 @@ import java.util.logging.Logger;
 public class EffectTrack implements ClonableTrack {
 
     private static final Logger logger = Logger.getLogger(EffectTrack.class.getName());
-    private ParticleEmitter emitter;
+    private IParticleEmitter emitter;
     private float startOffset = 0;
     private float particlesPerSeconds = 0;
     private float length = 0;
@@ -81,7 +80,7 @@ public class EffectTrack implements ClonableTrack {
 
     public static class KillParticleControl extends AbstractControl {
 
-        ParticleEmitter emitter;
+        IParticleEmitter emitter;
         boolean stopRequested = false;
         boolean remove = false;
 
@@ -92,11 +91,7 @@ public class EffectTrack implements ClonableTrack {
         public void setSpatial(Spatial spatial) {
             super.setSpatial(spatial);
             if (spatial != null) {
-                if (spatial instanceof ParticleEmitter) {
-                    emitter = (ParticleEmitter) spatial;
-                } else {
-                    throw new IllegalArgumentException("KillParticleEmitter can only ba attached to ParticleEmitter");
-                }
+                emitter = (IParticleEmitter) spatial;
             }
 
 
@@ -158,7 +153,7 @@ public class EffectTrack implements ClonableTrack {
      * @param length the length of the track (usually the length of the
      * animation you want to add the track to)
      */
-    public EffectTrack(ParticleEmitter emitter, float length) {
+    public EffectTrack(IParticleEmitter emitter, float length) {
         this.emitter = emitter;
         //saving particles per second value
         this.particlesPerSeconds = emitter.getParticlesPerSec();
@@ -179,7 +174,7 @@ public class EffectTrack implements ClonableTrack {
      * @param startOffset the time in second when the emitter will be triggerd
      * after the animation starts (default is 0)
      */
-    public EffectTrack(ParticleEmitter emitter, float length, float startOffset) {
+    public EffectTrack(IParticleEmitter emitter, float length, float startOffset) {
         this(emitter, length);
         this.startOffset = startOffset;
     }
@@ -284,28 +279,17 @@ public class EffectTrack implements ClonableTrack {
     }
 
     /**
-     * recursive function responsible for finding the newly cloned Emitter
+     * function responsible for finding the newly cloned Emitter
      *
      * @param spat
-     * @return
+     * @return the newly cloned emitter
      */
-    private ParticleEmitter findEmitter(Spatial spat) {
-        if (spat instanceof ParticleEmitter) {
-            //spat is a PArticleEmitter
-            ParticleEmitter em = (ParticleEmitter) spat;
-            //getting the UserData TrackInfo so check if it should be attached to this Track
+    protected IParticleEmitter findEmitter(Spatial spat) {
+        IParticleEmitter em =  spat.findEmitter();
+        if (em != null) {
             TrackInfo t = (TrackInfo) em.getUserData("TrackInfo");
             if (t != null && t.getTracks().contains(this)) {
                 return em;
-            }
-            return null;
-
-        } else if (spat instanceof Node) {
-            for (Spatial child : ((Node) spat).getChildren()) {
-                ParticleEmitter em = findEmitter(child);
-                if (em != null) {
-                    return em;
-                }
             }
         }
         return null;
@@ -323,7 +307,7 @@ public class EffectTrack implements ClonableTrack {
      *
      * @return the emitter used by this track
      */
-    public ParticleEmitter getEmitter() {
+    public IParticleEmitter getEmitter() {
         return emitter;
     }
 
@@ -332,7 +316,7 @@ public class EffectTrack implements ClonableTrack {
      *
      * @param emitter
      */
-    public void setEmitter(ParticleEmitter emitter) {
+    public void setEmitter(IParticleEmitter emitter) {
         if (this.emitter != null) {
             TrackInfo data = (TrackInfo) emitter.getUserData("TrackInfo");
             data.getTracks().remove(this);
@@ -422,7 +406,7 @@ public class EffectTrack implements ClonableTrack {
         this.particlesPerSeconds = in.readFloat("particlesPerSeconds", 0);
         //reading the emitter even if the track will then reference its cloned counter part if it's loaded with the assetManager.
         //This also avoid null pointer exception if the model is not loaded via the AssetManager.
-        emitter = (ParticleEmitter) in.readSavable("emitter", null);
+        emitter = (IParticleEmitter) in.readSavable("emitter", null);
         emitter.setParticlesPerSec(0);
         //if the emitter was saved with a KillParticleControl we remove it.
 //        Control c = emitter.getControl(KillParticleControl.class);

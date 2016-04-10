@@ -44,7 +44,7 @@ import java.nio.Buffer;
 public abstract class NativeObject implements Cloneable {
 
     public static final int INVALID_ID = -1;
-    
+    /*
     protected static final int OBJTYPE_VERTEXBUFFER = 1,
                                OBJTYPE_TEXTURE      = 2,
                                OBJTYPE_FRAMEBUFFER  = 3,
@@ -53,7 +53,7 @@ public abstract class NativeObject implements Cloneable {
                                OBJTYPE_AUDIOBUFFER  = 6,
                                OBJTYPE_AUDIOSTREAM  = 7,
                                OBJTYPE_FILTER       = 8;
-    
+    */
     /**
      * The object manager to which this NativeObject is registered to.
      */
@@ -214,7 +214,9 @@ public abstract class NativeObject implements Cloneable {
      * 
      * @return unique ID for this NativeObject.
      */
-    public abstract long getUniqueId();
+    public String getUniqueId() {
+    	return this.getClass().getName().concat(((Integer)id).toString());
+    }
     
     /**
      * Reclaims native resources used by this NativeObject.

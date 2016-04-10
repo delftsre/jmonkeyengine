@@ -507,11 +507,6 @@ public class FrameBuffer extends NativeObject {
         return new FrameBuffer(this);
     }
     
-    @Override
-    public long getUniqueId() {
-        return ((long)OBJTYPE_FRAMEBUFFER << 32) | ((long)id);
-    }
-    
     /**
      * Specifies that the color values stored in this framebuffer are in SRGB
      * format.

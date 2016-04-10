@@ -74,14 +74,14 @@ public class NativeObjectManager {
     /**
      * List of currently active GLObjects.
      */
-    private HashMap<Long, NativeObjectRef> refMap = new HashMap<Long, NativeObjectRef>();
+    private HashMap<String, NativeObjectRef> refMap = new HashMap<String, NativeObjectRef>();
     
     /**
      * List of real objects requested by user for deletion.
      */
     private ArrayDeque<NativeObject> userDeletionQueue = new ArrayDeque<NativeObject>();
 
-    private static class NativeObjectRef extends PhantomReference<Object> {
+    public static class NativeObjectRef extends PhantomReference<Object> {
         
         private NativeObject objClone;
         private WeakReference<NativeObject> realObj;
@@ -140,7 +140,7 @@ public class NativeObjectManager {
                 assert ref == null || ref == ref2;
 
                 int id = obj.getId();
-
+                
                 // Delete object from the GL driver
                 obj.deleteObject(rendererObject);
                 assert obj.getId() == NativeObject.INVALID_ID;
@@ -239,7 +239,11 @@ public class NativeObjectManager {
         refMap.clear();
         refQueue = new ReferenceQueue<Object>();
     }
-
+    
+    //Only for tests
+    public HashMap<String, NativeObjectRef> getRefMap() {
+    	return refMap;
+    }
 //    public void printObjects(){
 //        System.out.println(" ------------------- ");
 //        System.out.println(" GL Object count: "+ objectList.size());

@@ -64,21 +64,8 @@ final class TextureUtil {
     
     public void initialize(EnumSet<Caps> caps) {
         this.formats = GLImageFormats.getFormatsForCaps(caps);
-        if (logger.isLoggable(Level.FINE)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Supported texture formats: \n");
-            for (int i = 0; i < Format.values().length; i++) {
-                Format format = Format.values()[i];
-                if (formats[0][i] != null) {
-                    boolean srgb = formats[1][i] != null;
-                    sb.append("\t").append(format.toString());
-                    sb.append(" (Linear");
-                    if (srgb) sb.append("/sRGB");
-                    sb.append(")\n");
-                }
-            }
-            logger.log(Level.FINE, sb.toString());
-        }
+        if (logger.isLoggable(Level.FINE))
+            logger.log(Level.FINE, StringBuilderForTextureUtil.build(formats));
     }
 
     public GLImageFormat getImageFormat(Format fmt, boolean isSrgb) {

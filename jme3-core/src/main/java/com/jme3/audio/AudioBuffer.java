@@ -120,8 +120,4 @@ public class AudioBuffer extends AudioData {
         return new AudioBuffer(id);
     }
 
-    @Override
-    public long getUniqueId() {
-        return ((long)OBJTYPE_AUDIOBUFFER << 32) | ((long)id);
-    }
 }
