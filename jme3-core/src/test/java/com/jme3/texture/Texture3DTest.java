@@ -165,6 +165,6 @@ public class Texture3DTest extends Texture2DTest{
     public void readwriteTest() {
         Texture3D loaded_texture = new Texture3D();
         loaded_texture = (Texture3D) this.writeAndRead(loaded_texture);
-        assert loaded_texture.getImage().getDepth() == texture.getImage().getDepth();
+        assert loaded_texture.getImage().getDepth() == texture_extended.getImage().getDepth();
     }
 }
