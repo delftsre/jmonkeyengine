@@ -36,6 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.texture.image.ColorSpace;
+
 import java.io.IOException;
 
 /**
@@ -92,15 +93,13 @@ public class Texture2D extends Texture {
      * @param numSamples
      */
     public Texture2D(int width, int height, int numSamples, Image.Format format){
-        this(new Image(format, width, height, null, ColorSpace.Linear));
+        this(width, height, format);
         getImage().setMultiSamples(numSamples);
     }
 
     @Override
     public Texture createSimpleClone() {
-        Texture2D clone = new Texture2D();
-        createSimpleClone(clone);
-        return clone;
+        return createSimpleClone(new Texture2D());
     }
 
     @Override
@@ -151,8 +150,8 @@ public class Texture2D extends Texture {
         if (mode == null) {
             throw new IllegalArgumentException("mode can not be null.");
         }
-        this.wrapS = mode;
-        this.wrapT = mode;
+        setWrap(WrapAxis.S, mode);
+        setWrap(WrapAxis.T, mode);
     }
 
     /**
@@ -183,9 +182,8 @@ public class Texture2D extends Texture {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Texture2D)) {
+        if (!(other instanceof Texture2D))
             return false;
-        }
         Texture2D that = (Texture2D) other;
         if (this.getWrap(WrapAxis.S) != that.getWrap(WrapAxis.S))
             return false;

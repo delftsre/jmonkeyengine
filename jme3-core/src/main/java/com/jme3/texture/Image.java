@@ -541,7 +541,9 @@ public class Image extends NativeObject implements Savable /*, Cloneable*/ {
         setFormat(format);
         this.width = width;
         this.height = height;
-        this.data = data;
+        if(data != null) {
+            this.data = data;
+        }
         this.depth = depth;
         this.mipMapSizes = mipMapSizes;
         this.colorSpace = colorSpace;
@@ -731,9 +733,9 @@ public class Image extends NativeObject implements Savable /*, Cloneable*/ {
      *            the data that contains the image information.
      */
     public void setData(ByteBuffer data) {
-        this.data = new ArrayList<ByteBuffer>(1);
-        this.data.add(data);
-        setUpdateNeeded();
+        ArrayList<ByteBuffer> list = new ArrayList<ByteBuffer>(1);
+        list.add(data);
+        setData(list);
     }
 
     public void addData(ByteBuffer data) {

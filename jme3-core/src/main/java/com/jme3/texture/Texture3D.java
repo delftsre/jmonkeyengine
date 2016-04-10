@@ -41,10 +41,8 @@ import java.io.IOException;
 /**
  * @author Maarten Steur
  */
-public class Texture3D extends Texture {
+public class Texture3D extends Texture2D {
 
-    private WrapMode wrapS = WrapMode.EdgeClamp;
-    private WrapMode wrapT = WrapMode.EdgeClamp;
     private WrapMode wrapR = WrapMode.EdgeClamp;
 
     /**
@@ -94,21 +92,18 @@ public class Texture3D extends Texture {
      * @param numSamples
      */
     public Texture3D(int width, int height, int depth, int numSamples, Image.Format format) {
-        this(new Image(format, width, height, depth, null, ColorSpace.Linear));
+        this(width, height, depth, format);
         getImage().setMultiSamples(numSamples);
     }
 
     @Override
     public Texture createSimpleClone() {
-        Texture3D clone = new Texture3D();
-        createSimpleClone(clone);
-        return clone;
+        return createSimpleClone(new Texture3D());
+
     }
 
     @Override
     public Texture createSimpleClone(Texture rVal) {
-        rVal.setWrap(WrapAxis.S, wrapS);
-        rVal.setWrap(WrapAxis.T, wrapT);
         rVal.setWrap(WrapAxis.R, wrapR);
         return super.createSimpleClone(rVal);
     }
@@ -131,15 +126,11 @@ public class Texture3D extends Texture {
             throw new IllegalArgumentException("axis can not be null.");
         }
         switch (axis) {
-            case S:
-                this.wrapS = mode;
-                break;
-            case T:
-                this.wrapT = mode;
-                break;
             case R:
                 this.wrapR = mode;
                 break;
+            default:
+                super.setWrap(axis, mode);
         }
     }
 
@@ -155,8 +146,7 @@ public class Texture3D extends Texture {
         if (mode == null) {
             throw new IllegalArgumentException("mode can not be null.");
         }
-        this.wrapS = mode;
-        this.wrapT = mode;
+        super.setWrap(mode);
         this.wrapR = mode;
     }
 
@@ -172,14 +162,10 @@ public class Texture3D extends Texture {
      */
     public WrapMode getWrap(WrapAxis axis) {
         switch (axis) {
-            case S:
-                return wrapS;
-            case T:
-                return wrapT;
             case R:
                 return wrapR;
         }
-        throw new IllegalArgumentException("invalid WrapAxis: " + axis);
+        return super.getWrap(axis);
     }
 
     @Override
@@ -193,12 +179,6 @@ public class Texture3D extends Texture {
             return false;
         }
         Texture3D that = (Texture3D) other;
-        if (this.getWrap(WrapAxis.S) != that.getWrap(WrapAxis.S)) {
-            return false;
-        }
-        if (this.getWrap(WrapAxis.T) != that.getWrap(WrapAxis.T)) {
-            return false;
-        }
         if (this.getWrap(WrapAxis.R) != that.getWrap(WrapAxis.R)) {
             return false;
         }
@@ -206,11 +186,16 @@ public class Texture3D extends Texture {
     }
 
     @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 53 * hash + (this.wrapR != null ? this.wrapR.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
     public void write(JmeExporter e) throws IOException {
         super.write(e);
         OutputCapsule capsule = e.getCapsule(this);
-        capsule.write(wrapS, "wrapS", WrapMode.EdgeClamp);
-        capsule.write(wrapT, "wrapT", WrapMode.EdgeClamp);
         capsule.write(wrapR, "wrapR", WrapMode.EdgeClamp);
     }
 
@@ -218,8 +203,6 @@ public class Texture3D extends Texture {
     public void read(JmeImporter e) throws IOException {
         super.read(e);
         InputCapsule capsule = e.getCapsule(this);
-        wrapS = capsule.readEnum("wrapS", WrapMode.class, WrapMode.EdgeClamp);
-        wrapT = capsule.readEnum("wrapT", WrapMode.class, WrapMode.EdgeClamp);
         wrapR = capsule.readEnum("wrapR", WrapMode.class, WrapMode.EdgeClamp);
     }
 }
