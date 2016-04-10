@@ -70,13 +70,15 @@ public abstract class CommonImageRaster extends ImageRaster {
 
     public abstract void codecWriteComponents(int x, int y);
 
-    public void beforeSetPixelStore(ColorRGBA color) {}
+    public ColorRGBA beforeSetPixelStore(ColorRGBA color) {
+        return color;
+    }
 
     @Override
     public void setPixel(int x, int y, ColorRGBA color) {
         rangeCheck(x, y);
 
-        this.beforeSetPixelStore(color);
+        color = this.beforeSetPixelStore(color);
 
         // Check flags for grayscale
         if (codec.isGray) {

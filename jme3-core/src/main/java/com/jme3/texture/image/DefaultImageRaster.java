@@ -89,12 +89,13 @@ public class DefaultImageRaster extends CommonImageRaster {
     }
 
     @Override
-    public void beforeSetPixelStore(ColorRGBA color) {
+    public ColorRGBA beforeSetPixelStore(ColorRGBA color) {
         if (convertToLinear) {
             // Input is linear, needs to be converted to sRGB before writing
             // into image.
             color = color.getAsSrgb();
         }
+        return color;
     }
 
     @Override
