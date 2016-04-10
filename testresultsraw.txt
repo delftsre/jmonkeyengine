@@ -1,0 +1,259 @@
+##### FST UNRELIABLE WITH REG #####
+
+Running EmptyTestMessage tests
+Serialization size is 3
+Sent 594027 messages in 10 seconds.
+Of these, 578034 were recieved by the server and 578034 by the client.
+A second later, 594027 were recieved by the server and 594027 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 41
+Sent 524630 messages in 10 seconds.
+Of these, 508635 were recieved by the server and 507742 by the client.
+A second later, 524629 were recieved by the server and 523736 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 149
+Sent 506227 messages in 10 seconds.
+Of these, 467462 were recieved by the server and 464786 by the client.
+A second later, 483456 were recieved by the server and 480780 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 894
+Sent 310436 messages in 10 seconds.
+Of these, 119804 were recieved by the server and 119097 by the client.
+A second later, 147547 were recieved by the server and 146801 by the client.
+
+##### FST RELIABLE WITH REG #####
+
+Running EmptyTestMessage tests
+Serialization size is 3
+Sent 641053 messages in 10 seconds.
+Of these, 567789 were recieved by the server and 560820 by the client.
+A second later, 640279 were recieved by the server and 619837 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 41
+Sent 480181 messages in 10 seconds.
+Of these, 457358 were recieved by the server and 456744 by the client.
+A second later, 480181 were recieved by the server and 480181 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 149
+Sent 459529 messages in 10 seconds.
+Of these, 441253 were recieved by the server and 441231 by the client.
+A second later, 459529 were recieved by the server and 459529 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 894
+Sent 272114 messages in 10 seconds.
+Of these, 111422 were recieved by the server and 111422 by the client.
+A second later, 135097 were recieved by the server and 135097 by the client.
+
+##### FST UNRELIABLE WITHOUT REG #####
+
+Running EmptyTestMessage tests
+Serialization size is 52
+Sent 542649 messages in 10 seconds.
+Of these, 522684 were recieved by the server and 517957 by the client.
+A second later, 538680 were recieved by the server and 533953 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 91
+Sent 497530 messages in 10 seconds.
+Of these, 475786 were recieved by the server and 475405 by the client.
+A second later, 491778 were recieved by the server and 491400 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 200
+Sent 523644 messages in 10 seconds.
+Of these, 380468 were recieved by the server and 378225 by the client.
+A second later, 444881 were recieved by the server and 442653 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 942
+Sent 286728 messages in 10 seconds.
+Of these, 118655 were recieved by the server and 118162 by the client.
+A second later, 145455 were recieved by the server and 144961 by the client.
+
+##### FST RELIABLE WITHOUT REG #####
+
+Running EmptyTestMessage tests
+Serialization size is 52
+Sent 480441 messages in 10 seconds.
+Of these, 459042 were recieved by the server and 458494 by the client.
+A second later, 480441 were recieved by the server and 480441 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 91
+Sent 535569 messages in 10 seconds.
+Of these, 516434 were recieved by the server and 516129 by the client.
+A second later, 535569 were recieved by the server and 535569 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 200
+Sent 410568 messages in 10 seconds.
+Of these, 393098 were recieved by the server and 393010 by the client.
+A second later, 410568 were recieved by the server and 410568 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 942
+Sent 232388 messages in 10 seconds.
+Of these, 92178 were recieved by the server and 92177 by the client.
+A second later, 114775 were recieved by the server and 114775 by the client.
+
+##### KRYO UNRELIABLE #####
+
+Running EmptyTestMessage tests
+Serialization size is 51
+Sent 538824 messages in 10 seconds.
+Of these, 519253 were recieved by the server and 517488 by the client.
+A second later, 535246 were recieved by the server and 533482 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 89
+Sent 525301 messages in 10 seconds.
+Of these, 504227 were recieved by the server and 502752 by the client.
+A second later, 520277 were recieved by the server and 519499 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 192
+Sent 472229 messages in 10 seconds.
+Of these, 448378 were recieved by the server and 447341 by the client.
+A second later, 464371 were recieved by the server and 463335 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 1044
+Sent 323487 messages in 10 seconds.
+Of these, 117176 were recieved by the server and 116722 by the client.
+A second later, 137844 were recieved by the server and 137390 by the client.
+
+##### KRYO RELIABLE #####
+
+Running EmptyTestMessage tests
+Serialization size is 51
+Sent 509626 messages in 10 seconds.
+Of these, 487871 were recieved by the server and 487560 by the client.
+A second later, 509626 were recieved by the server and 509626 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 89
+Sent 554747 messages in 10 seconds.
+Of these, 535450 were recieved by the server and 535249 by the client.
+A second later, 554747 were recieved by the server and 554747 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 192
+Sent 456303 messages in 10 seconds.
+Of these, 438981 were recieved by the server and 438944 by the client.
+A second later, 456303 were recieved by the server and 456303 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 1044
+Sent 297441 messages in 10 seconds.
+Of these, 113129 were recieved by the server and 113129 by the client.
+A second later, 133789 were recieved by the server and 133788 by the client.
+
+##### JAVA UNRELIABLE #####
+
+Running EmptyTestMessage tests
+Serialization size is 116
+Sent 566800 messages in 10 seconds.
+Of these, 293375 were recieved by the server and 292752 by the client.
+A second later, 348894 were recieved by the server and 348273 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 187
+Sent 542524 messages in 10 seconds.
+Of these, 225538 were recieved by the server and 224428 by the client.
+A second later, 274896 were recieved by the server and 273784 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 552
+Sent 600444 messages in 10 seconds.
+Of these, 72768 were recieved by the server and 71734 by the client.
+A second later, 97019 were recieved by the server and 95951 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 2119
+Sent 102903 messages in 10 seconds.
+Of these, 30329 were recieved by the server and 30200 by the client.
+A second later, 35840 were recieved by the server and 35699 by the client.
+
+##### JAVA RELIABLE #####
+
+Running EmptyTestMessage tests
+Serialization size is 116
+Sent 370948 messages in 10 seconds.
+Of these, 352765 were recieved by the server and 352734 by the client.
+A second later, 370948 were recieved by the server and 370948 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 187
+Sent 1066106 messages in 10 seconds.
+Of these, 184092 were recieved by the server and 184070 by the client.
+A second later, 220501 were recieved by the server and 220492 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 552
+Sent 596509 messages in 10 seconds.
+Of these, 89077 were recieved by the server and 89077 by the client.
+A second later, 112112 were recieved by the server and 112110 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 2119
+Sent 99907 messages in 10 seconds.
+Of these, 28100 were recieved by the server and 28100 by the client.
+A second later, 33159 were recieved by the server and 33157 by the client.
+
+##### JME UNRELIABLE #####
+
+Running EmptyTestMessage tests
+Serialization size is 3
+Sent 641103 messages in 10 seconds.
+Of these, 625105 were recieved by the server and 625105 by the client.
+A second later, 641103 were recieved by the server and 641103 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 41
+Sent 573490 messages in 10 seconds.
+Of these, 555243 were recieved by the server and 554541 by the client.
+A second later, 571234 were recieved by the server and 570532 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 137
+Sent 562337 messages in 10 seconds.
+Of these, 536810 were recieved by the server and 535389 by the client.
+A second later, 551359 were recieved by the server and 549940 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 818
+Sent 284345 messages in 10 seconds.
+Of these, 109578 were recieved by the server and 109057 by the client.
+A second later, 126706 were recieved by the server and 126089 by the client.
+
+##### JME RELIABLE #####
+
+Running EmptyTestMessage tests
+Serialization size is 3
+Sent 635733 messages in 10 seconds.
+Of these, 562291 were recieved by the server and 555737 by the client.
+A second later, 635733 were recieved by the server and 615680 by the client.
+
+Running SimpleTestMessage tests
+Serialization size is 41
+Sent 553719 messages in 10 seconds.
+Of these, 531007 were recieved by the server and 530239 by the client.
+A second later, 553719 were recieved by the server and 553719 by the client.
+
+Running PhysicsTestMessage tests
+Serialization size is 137
+Sent 555038 messages in 10 seconds.
+Of these, 536827 were recieved by the server and 536739 by the client.
+A second later, 555038 were recieved by the server and 555038 by the client.
+
+Running HugeTestMessage tests
+Serialization size is 818
+Sent 293538 messages in 10 seconds.
+Of these, 128359 were recieved by the server and 128315 by the client.
+A second later, 151681 were recieved by the server and 151612 by the client.

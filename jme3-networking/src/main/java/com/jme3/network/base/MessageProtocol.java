@@ -31,11 +31,13 @@
  */
 package com.jme3.network.base;
 
-import com.jme3.network.Message;
-import com.jme3.network.serializing.Serializer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
+
+import com.jme3.network.AbstractMessage;
+//import com.jme3.network.Message;
+import com.jme3.network.serializing.Serializer;
 
 /**
  *  Consolidates the conversion of messages to/from byte buffers
@@ -53,7 +55,7 @@ import java.util.LinkedList;
  */
 public class MessageProtocol
 {
-    private final LinkedList<Message> messages = new LinkedList<Message>();
+    private final LinkedList<AbstractMessage> messages = new LinkedList<AbstractMessage>();
     private ByteBuffer current;
     private int size;
     private Byte carry;
@@ -63,14 +65,15 @@ public class MessageProtocol
      *  and the (short length) + data protocol.  If target is null
      *  then a 32k byte buffer will be created and filled.
      */
-    public static ByteBuffer messageToBuffer( Message message, ByteBuffer target )
+    public static ByteBuffer messageToBuffer( AbstractMessage message, ByteBuffer target )
     {
         // Could let the caller pass their own in       
         ByteBuffer buffer = target == null ? ByteBuffer.allocate( 32767 + 2 ) : target;
         
         try {
             buffer.position( 2 );
-            Serializer.writeClassAndObject( buffer, message );
+            Serializer.writeObject(buffer, message);
+//            Serializer.writeClassAndObject( buffer, message );
             buffer.flip();
             short dataLength = (short)(buffer.remaining() - 2);
             buffer.putShort( dataLength );
@@ -78,6 +81,7 @@ public class MessageProtocol
             
             return buffer;
         } catch( IOException e ) {
+        	e.printStackTrace();
             throw new RuntimeException( "Error serializing message", e );
         }
     }
@@ -86,7 +90,7 @@ public class MessageProtocol
      *  Retrieves and removes an extracted message from the accumulated buffer
      *  or returns null if there are no more messages.
      */
-    public Message getMessage()
+    public AbstractMessage getMessage()
     {
         if( messages.isEmpty() ) {
             return null;
@@ -177,10 +181,16 @@ public class MessageProtocol
     protected void createMessage( ByteBuffer buffer )
     {
         try {
-            Object obj = Serializer.readClassAndObject( buffer );
-            Message m = (Message)obj;
+//        	FieldSerializer s = new FieldSerializer();
+//        	System.out.println(Arrays.toString(buffer.array()));
+        	Object obj = Serializer.readObject(buffer, AbstractMessage.class);
+//        	System.out.println(obj);
+        	AbstractMessage m = (AbstractMessage) obj;
+        	
             messages.add(m);
         } catch( IOException e ) {
+        	System.err.println("Serialized object: " + buffer.toString());
+        	System.err.println("Serialized object: " + buffer.array().toString());
             throw new RuntimeException( "Error deserializing object, class ID:" + buffer.getShort(0), e );   
         }         
     }

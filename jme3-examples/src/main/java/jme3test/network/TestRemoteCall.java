@@ -39,7 +39,7 @@ import com.jme3.network.Network;
 import com.jme3.network.Server;
 import com.jme3.network.rmi.ObjectStore;
 import com.jme3.network.serializing.Serializer;
-import com.jme3.network.serializing.serializers.SavableSerializer;
+//import com.jme3.network.serializing.serializers.SavableSerializer;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -102,7 +102,7 @@ public class TestRemoteCall {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException{
-        Serializer.registerClass(Savable.class, new SavableSerializer());
+//        Serializer.registerClass(Savable.class, new SavableSerializer());
 
         createServer();
 

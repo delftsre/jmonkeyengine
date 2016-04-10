@@ -33,7 +33,6 @@
 package jme3test.network;
 
 import com.jme3.network.*;
-import com.jme3.network.serializing.Serializable;
 import com.jme3.network.serializing.Serializer;
 import java.io.IOException;
 
@@ -51,7 +50,6 @@ public class TestLatency {
         return System.currentTimeMillis() - startTime;
     }
 
-    @Serializable
     public static class TimestampMessage extends AbstractMessage {
 
         long timeSent     = 0;
@@ -70,7 +68,7 @@ public class TestLatency {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException{
-        Serializer.registerClass(TimestampMessage.class);
+//        Serializer.registerClass(TimestampMessage.class);
 
         Server server = Network.createServer(5110);
         server.start();
@@ -79,7 +77,7 @@ public class TestLatency {
         client.start();
         
         client.addMessageListener(new MessageListener<Client>(){
-            public void messageReceived(Client source, Message m) {
+            public void messageReceived(Client source, AbstractMessage m) {
                 TimestampMessage timeMsg = (TimestampMessage) m;
 
                 long curTime = getTime();
@@ -103,7 +101,7 @@ public class TestLatency {
         }, TimestampMessage.class);
 
         server.addMessageListener(new MessageListener<HostedConnection>(){
-            public void messageReceived(HostedConnection source, Message m) {
+            public void messageReceived(HostedConnection source, AbstractMessage m) {
                 TimestampMessage timeMsg = (TimestampMessage) m;
                 TimestampMessage outMsg = new TimestampMessage(timeMsg.timeSent, getTime());
                 source.send(outMsg);

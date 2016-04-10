@@ -33,7 +33,6 @@
 package com.jme3.network.service.rpc.msg;
 
 import com.jme3.network.AbstractMessage;
-import com.jme3.network.serializing.Serializable;
 
  
 /**
@@ -42,7 +41,6 @@ import com.jme3.network.serializing.Serializable;
  *
  *  @author    Paul Speed
  */
-@Serializable
 public class RpcCallMessage extends AbstractMessage {
 
     private long msgId;

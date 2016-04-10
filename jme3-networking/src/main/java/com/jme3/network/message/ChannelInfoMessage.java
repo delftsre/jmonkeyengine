@@ -32,7 +32,6 @@
 package com.jme3.network.message;
 
 import com.jme3.network.AbstractMessage;
-import com.jme3.network.serializing.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +40,7 @@ import java.util.List;
  *
  *  @author Paul Speed
  */
-@Serializable()
+
 public class ChannelInfoMessage extends AbstractMessage {
     private long id;
     private int[] ports;

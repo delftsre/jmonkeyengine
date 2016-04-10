@@ -32,7 +32,6 @@
 package com.jme3.network.rmi;
 
 import com.jme3.network.AbstractMessage;
-import com.jme3.network.serializing.Serializable;
 
 /**
  * Contains the return value for a remote method invocation, sent as a response
@@ -40,7 +39,6 @@ import com.jme3.network.serializing.Serializable;
  *
  * @author Kirill Vainer.
  */
-@Serializable
 public class RemoteMethodReturnMessage extends AbstractMessage {
 
     public RemoteMethodReturnMessage(){

@@ -33,22 +33,19 @@
 package jme3test.network;
 
 import com.jme3.network.*;
-import com.jme3.network.serializing.Serializable;
 import com.jme3.network.serializing.Serializer;
 import java.io.IOException;
 
 public class TestMessages {
 
-    @Serializable
     public static class PingMessage extends AbstractMessage {
     }
 
-    @Serializable
     public static class PongMessage extends AbstractMessage {
     }
 
     private static class ServerPingResponder implements MessageListener<HostedConnection> {
-        public void messageReceived(HostedConnection source, com.jme3.network.Message message) {
+        public void messageReceived(HostedConnection source, AbstractMessage message) {
             if (message instanceof PingMessage){
                 System.out.println("Server: Received ping message!");
                 source.send(new PongMessage());
@@ -57,7 +54,7 @@ public class TestMessages {
     }
 
     private static class ClientPingResponder implements MessageListener<Client> {
-        public void messageReceived(Client source, com.jme3.network.Message message) {
+        public void messageReceived(Client source, AbstractMessage message) {
             if (message instanceof PongMessage){
                 System.out.println("Client: Received pong message!");
             }
@@ -65,8 +62,8 @@ public class TestMessages {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException{
-        Serializer.registerClass(PingMessage.class);
-        Serializer.registerClass(PongMessage.class);
+//        Serializer.registerClass(PingMessage.class);
+//        Serializer.registerClass(PongMessage.class);
 
         Server server = Network.createServer(5110);
         server.start();

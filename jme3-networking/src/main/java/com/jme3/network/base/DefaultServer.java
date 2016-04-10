@@ -223,13 +223,13 @@ public class DefaultServer implements Server
     }
  
     @Override
-    public void broadcast( Message message )
+    public void broadcast( AbstractMessage message )
     {
         broadcast( null, message );
     }
 
     @Override
-    public void broadcast( Filter<? super HostedConnection> filter, Message message )
+    public void broadcast( Filter<? super HostedConnection> filter, AbstractMessage message )
     {
         if( log.isLoggable(Level.FINER) ) {
             log.log(Level.FINER, "broadcast({0}, {1})", new Object[]{filter, message});
@@ -252,7 +252,7 @@ public class DefaultServer implements Server
     }
 
     @Override
-    public void broadcast( int channel, Filter<? super HostedConnection> filter, Message message )
+    public void broadcast( int channel, Filter<? super HostedConnection> filter, AbstractMessage message )
     {
         if( log.isLoggable(Level.FINER) ) {
             log.log(Level.FINER, "broadcast({0}, {1}. {2})", new Object[]{channel, filter, message});
@@ -324,7 +324,7 @@ public class DefaultServer implements Server
         messageListeners.removeMessageListener( listener, classes );
     }
  
-    protected void dispatch( HostedConnection source, Message m )
+    protected void dispatch( HostedConnection source, AbstractMessage m )
     {
         if( log.isLoggable(Level.FINER) ) {
             log.log(Level.FINER, "{0} received:{1}", new Object[]{source, m});
@@ -574,7 +574,7 @@ public class DefaultServer implements Server
         }
        
         @Override
-        public void send( Message message )
+        public void send( AbstractMessage message )
         {
             if( log.isLoggable(Level.FINER) ) {
                 log.log(Level.FINER, "send({0})", message);
@@ -588,7 +588,7 @@ public class DefaultServer implements Server
         }
 
         @Override
-        public void send( int channel, Message message )
+        public void send( int channel, AbstractMessage message )
         {
             if( log.isLoggable(Level.FINER) ) {
                 log.log(Level.FINER, "send({0}, {1})", new Object[]{channel, message});
@@ -669,7 +669,7 @@ public class DefaultServer implements Server
     protected class Redispatch implements MessageListener<HostedConnection>
     {
         @Override
-        public void messageReceived( HostedConnection source, Message m )
+        public void messageReceived( HostedConnection source, AbstractMessage m )
         {
             dispatch( source, m );
         }

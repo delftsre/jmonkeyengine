@@ -33,7 +33,6 @@
 package com.jme3.network.service.rpc.msg;
 
 import com.jme3.network.AbstractMessage;
-import com.jme3.network.serializing.Serializable;
 import com.jme3.network.serializing.Serializer;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -45,7 +44,6 @@ import java.io.StringWriter;
  *
  *  @author    Paul Speed
  */
-@Serializable
 public class RpcResponseMessage extends AbstractMessage {
 
     private long msgId;
@@ -83,9 +81,9 @@ public class RpcResponseMessage extends AbstractMessage {
             return false;
         }
         for( Throwable t = error; t != null; t = t.getCause() ) {
-            if( Serializer.getExactSerializerRegistration(t.getClass()) == null ) {
+//            if( Serializer.getExactSerializerRegistration(t.getClass()) == null ) {
                 return false;
-            }
+//            }
         }
         return true; 
     }

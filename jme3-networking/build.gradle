@@ -4,4 +4,8 @@ if (!hasProperty('mainClass')) {
 
 dependencies {
     compile project(':jme3-core')
+    compile 'org.mockito:mockito-all:1.10.19'
+    compile 'junit:junit:4.12'
+    compile 'com.esotericsoftware:kryo:3.0.3'
+    compile 'de.ruedigermoeller:fst:2.45'    
 }

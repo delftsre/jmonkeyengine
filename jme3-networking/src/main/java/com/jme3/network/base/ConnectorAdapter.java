@@ -31,8 +31,9 @@
  */
 package com.jme3.network.base;
 
+import com.jme3.network.AbstractMessage;
 import com.jme3.network.ErrorListener;
-import com.jme3.network.Message;
+//import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
 import com.jme3.network.kernel.Connector;
 import com.jme3.network.kernel.ConnectorException;
@@ -127,7 +128,7 @@ public class ConnectorAdapter extends Thread
             }
     }
  
-    protected void dispatch( Message m )
+    protected void dispatch( AbstractMessage m )
     {
         dispatcher.messageReceived( null, m );                        
     }
@@ -168,7 +169,7 @@ public class ConnectorAdapter extends Thread
                 
                 protocol.addBuffer( buffer );
                 
-                Message m = null;
+                AbstractMessage m = null;
                 while( (m = protocol.getMessage()) != null ) {
                     m.setReliable( reliable );
                     dispatch( m );

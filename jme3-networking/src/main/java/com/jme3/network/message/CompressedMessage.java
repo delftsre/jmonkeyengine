@@ -32,8 +32,6 @@
 package com.jme3.network.message;
 
 import com.jme3.network.AbstractMessage;
-import com.jme3.network.Message;
-import com.jme3.network.serializing.Serializable;
 
 /**
  * CompressedMessage is a base class for all messages that
@@ -41,21 +39,20 @@ import com.jme3.network.serializing.Serializable;
  *
  * @author Lars Wesselius
  */
-@Serializable()
 public class CompressedMessage extends AbstractMessage {
-    private Message message;
+    private AbstractMessage message;
 
     public CompressedMessage() { }
 
-    public CompressedMessage(Message msg) {
+    public CompressedMessage(AbstractMessage msg) {
         this.message = msg;
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(AbstractMessage message) {
         this.message = message;
     }
 
-    public Message getMessage() {
+    public AbstractMessage getMessage() {
         return message;
     }
 }

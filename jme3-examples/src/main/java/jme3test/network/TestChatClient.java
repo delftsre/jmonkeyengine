@@ -31,10 +31,11 @@
  */
 package jme3test.network;
 
+import com.jme3.network.AbstractMessage;
 import com.jme3.network.Client;
 import com.jme3.network.ClientStateListener;
 import com.jme3.network.ErrorListener;
-import com.jme3.network.Message;
+//import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
 import com.jme3.network.Network;
 import java.awt.Component;
@@ -45,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import jme3test.network.TestChatServer.ChatMessage;
+import jme3test.network.TestChatServer.CommandMessage;
 
 /**
  *  A simple test chat server.  When SM implements a set
@@ -159,7 +161,7 @@ public class TestChatClient extends JFrame {
     private class ChatHandler implements MessageListener<Client> {
 
         @Override
-        public void messageReceived(Client source, Message m) {
+        public void messageReceived(Client source, AbstractMessage m) {
             ChatMessage chat = (ChatMessage) m;
 
             System.out.println("Received:" + chat);
@@ -227,10 +229,18 @@ public class TestChatClient extends JFrame {
             String name = nameField.getText();
             String message = messageField.getText();
 
-            ChatMessage chat = new ChatMessage(name, message);
-            chat.setReliable(reliable);
-            System.out.println("Sending:" + chat);
-            client.send(chat);
+            if(message.startsWith("/")) {
+	            CommandMessage command = new CommandMessage(name, message);
+	            command.setReliable(reliable);
+	            System.out.println("Sending:" + command);
+	            client.send(command);
+            }
+            else {
+	            ChatMessage chat = new ChatMessage(name, message);
+	            chat.setReliable(reliable);
+	            System.out.println("Sending:" + chat);
+	            client.send(chat);
+            }
         }
     }
 }

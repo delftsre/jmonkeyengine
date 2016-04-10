@@ -90,7 +90,7 @@ public class RpcHostedService extends AbstractHostedConnectionService {
         
         // This works for me... has to be different in
         // the general case
-        Serializer.registerClasses(RpcCallMessage.class, RpcResponseMessage.class);
+//        Serializer.registerClasses(RpcCallMessage.class, RpcResponseMessage.class);
     }
 
     /**

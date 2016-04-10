@@ -31,15 +31,18 @@
  */
 package com.jme3.network.base;
 
+import com.jme3.network.AbstractMessage;
 import com.jme3.network.Filter;
 import com.jme3.network.HostedConnection;
-import com.jme3.network.Message;
+//import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
+import com.jme3.network.Server;
 import com.jme3.network.kernel.Endpoint;
 import com.jme3.network.kernel.EndpointEvent;
 import com.jme3.network.kernel.Envelope;
 import com.jme3.network.kernel.Kernel;
 import com.jme3.network.message.ClientRegistrationMessage;
+
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -164,7 +167,7 @@ public class KernelAdapter extends Thread
      *  per-connection locking but it couldn't possibly guard against
      *  out of order Envelope processing.</p>    
      */
-    protected void dispatch( Endpoint p, Message m )
+    protected void dispatch( Endpoint p, AbstractMessage m )
     {
         // Because this class is the only one with the information
         // to do it... we need to pull of the registration message
@@ -180,7 +183,7 @@ public class KernelAdapter extends Thread
                 if( reliable ) {
                     // If it's a reliable connection then it's slightly more
                     // concerning but this can happen all the time for a UDP endpoint.
-                    log.log( Level.WARNING, "Recieved message from unconnected endpoint:" + p + "  message:" + m );
+                    log.log( Level.WARNING, "Recieved message from unconnected endpoint: {0} message: {1}", new Object[] {p, m} );
                 }                    
                 return; 
             }
@@ -229,13 +232,13 @@ public class KernelAdapter extends Thread
                 for( int i = 0; i < len; i++ ) {
                     sb.append( "[" + Integer.toHexString(data[i]) + "]" ); 
                 }
-                log.log( Level.FINE, "First 10 bytes of incomplete nessage:" + sb );         
+                log.log( Level.FINE, "First 10 bytes of incomplete nessage: {0}", sb );         
                 throw new RuntimeException( "Envelope contained incomplete data:" + env );
             }                
         }            
         
         // Should be complete... and maybe we should check but we don't
-        Message m = null;
+        AbstractMessage m = null;
         while( (m = protocol.getMessage()) != null ) {
             m.setReliable(reliable);
             dispatch( env.getSource(), m );

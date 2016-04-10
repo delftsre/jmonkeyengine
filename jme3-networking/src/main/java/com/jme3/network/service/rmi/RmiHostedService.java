@@ -98,7 +98,7 @@ public class RmiHostedService extends AbstractHostedService {
         this.defaultChannel = defaultChannel;
         this.autoHost = autoHost;
         
-        Serializer.registerClasses(ClassInfo.class, MethodInfo.class);
+//        Serializer.registerClasses(ClassInfo.class, MethodInfo.class);
     }
 
     /**

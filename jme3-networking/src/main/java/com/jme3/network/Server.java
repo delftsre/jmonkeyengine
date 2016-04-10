@@ -65,7 +65,7 @@ public interface Server
     /**
      *  Sends the specified message to all connected clients.
      */ 
-    public void broadcast( Message message );
+    public void broadcast( AbstractMessage message );
 
     /**
      *  Sends the specified message to all connected clients that match
@@ -81,7 +81,7 @@ public interface Server
      *    server.broadcast( Filters.notEqualTo( source ), message );
      *  </pre>
      */ 
-    public void broadcast( Filter<? super HostedConnection> filter, Message message );
+    public void broadcast( Filter<? super HostedConnection> filter, AbstractMessage message );
 
     /**
      *  Sends the specified message over the specified alternate channel to all connected 
@@ -97,7 +97,7 @@ public interface Server
      *    server.broadcast( Filters.notEqualTo( source ), message );
      *  </pre>
      */ 
-    public void broadcast( int channel, Filter<? super HostedConnection> filter, Message message );
+    public void broadcast( int channel, Filter<? super HostedConnection> filter, AbstractMessage message );
 
     /**
      *  Start the server so that it will began accepting new connections

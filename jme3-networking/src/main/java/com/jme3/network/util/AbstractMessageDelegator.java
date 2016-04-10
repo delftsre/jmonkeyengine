@@ -32,7 +32,8 @@
 
 package com.jme3.network.util;
 
-import com.jme3.network.Message;
+import com.jme3.network.AbstractMessage;
+//import com.jme3.network.Message;
 import com.jme3.network.MessageConnection;
 import com.jme3.network.MessageListener;
 import java.lang.reflect.InvocationTargetException;
@@ -116,7 +117,7 @@ public abstract class AbstractMessageDelegator<S extends MessageConnection>
             }
         }
  
-        if( messageType == null && !Message.class.isAssignableFrom(parms[messageIndex]) ) {
+        if( messageType == null && !AbstractMessage.class.isAssignableFrom(parms[messageIndex]) ) {
             log.finest("Second paramter is not a Message or subclass.");
             return false;
         }
@@ -280,7 +281,7 @@ public abstract class AbstractMessageDelegator<S extends MessageConnection>
      *  on the delegate returned by getSourceDelegate().
      */
     @Override
-    public void messageReceived( S source, Message msg ) {
+    public void messageReceived( S source, AbstractMessage msg ) {
         if( msg == null ) {
             return;
         }

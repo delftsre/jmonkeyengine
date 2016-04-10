@@ -48,7 +48,8 @@ public abstract class AbstractClientService extends AbstractService<ClientServic
     
     protected AbstractClientService() {
     }
-   
+    
+    
     /**
      *  Returns the client for this client service or null if
      *  the service is not yet attached.
