@@ -96,5 +96,11 @@ public class TextureArray extends Texture2D {
         return Type.TwoDimensionalArray;
     }
 
+    @Override
+    public Texture createSimpleClone() {
+        TextureArray clone = new TextureArray();
+        createSimpleClone(clone);
+        return clone;
+    }
 
 }
