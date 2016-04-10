@@ -36,6 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.texture.image.ColorSpace;
+
 import java.io.IOException;
 
 /**
@@ -183,9 +184,8 @@ public class Texture2D extends Texture {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Texture2D)) {
+        if (!(other instanceof Texture2D))
             return false;
-        }
         Texture2D that = (Texture2D) other;
         if (this.getWrap(WrapAxis.S) != that.getWrap(WrapAxis.S))
             return false;

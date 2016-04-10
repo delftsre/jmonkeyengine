@@ -30,6 +30,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.jme3.texture;
+import com.jme3.asset.*;
+import com.jme3.asset.plugins.FileLocator;
+import com.jme3.audio.AudioData;
+import com.jme3.audio.AudioKey;
+import com.jme3.export.binary.BinaryExporter;
+import com.jme3.export.binary.BinaryImporter;
+import com.jme3.font.BitmapFont;
+import com.jme3.material.Material;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.renderer.Caps;
+import com.jme3.scene.Spatial;
+import com.jme3.shader.Shader;
+import com.jme3.shader.ShaderGenerator;
+import com.jme3.shader.ShaderKey;
 import com.jme3.texture.Texture2D;
 import com.jme3.texture.Texture.*;
 import org.junit.*;
@@ -40,9 +54,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.EnumSet;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Verifies that {@link Texture2D} works correctly.
@@ -184,5 +208,30 @@ public class Texture2DTest {
         assert texture.getType().equals(Texture.Type.TwoDimensional);
     }
 
-
+    @Test
+    public void readwriteTest() {
+        Boolean exception = false;
+        texture = new Texture2D(20,5,Image.Format.Alpha8);
+        String userHome = System.getProperty("user.home");
+        BinaryExporter exporter = BinaryExporter.getInstance();
+        File file = new File(userHome + "/Models/" + "MyModel.j3o");
+        try {
+            exporter.save(texture, file);
+        } catch (IOException e) {
+            System.out.println(e);
+            exception = true;
+        }
+        BinaryImporter importer = BinaryImporter.getInstance();
+        Texture2D loaded_texture = new Texture2D();
+        try{
+            loaded_texture = (Texture2D) importer.load(file);
+        } catch(IOException e){
+            System.out.println(e);
+            exception = true;
+        }
+        assert texture.getImage().getWidth() == loaded_texture.getImage().getWidth();
+        assert texture.getImage().getHeight() == loaded_texture.getImage().getHeight();
+        assert texture.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
+        assert texture.getImage().equals(loaded_texture.getImage());
+    }
 }
