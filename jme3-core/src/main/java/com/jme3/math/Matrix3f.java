@@ -1219,37 +1219,49 @@ public final class Matrix3f implements Savable, Cloneable, java.io.Serializable 
         }
 
         Matrix3f comp = (Matrix3f) o;
-        if (Float.compare(m00, comp.m00) != 0) {
-            return false;
-        }
-        if (Float.compare(m01, comp.m01) != 0) {
-            return false;
-        }
-        if (Float.compare(m02, comp.m02) != 0) {
+
+        return
+            Float.compare(m00, comp.m00) == 0 &&
+            Float.compare(m01, comp.m01) == 0 &&
+            Float.compare(m02, comp.m02) == 0 &&
+            Float.compare(m10, comp.m10) == 0 &&
+            Float.compare(m11, comp.m11) == 0 &&
+            Float.compare(m12, comp.m12) == 0 &&
+            Float.compare(m20, comp.m20) == 0 &&
+            Float.compare(m21, comp.m21) == 0 &&
+            Float.compare(m22, comp.m22) == 0;
+    }
+
+    /**
+     * are these two matrices the same? they are is they both have mXX values with less than delta difference.
+     *
+     * @param o
+     *            the object to compare for equality
+     * @param delta
+     *            accepted limit for float comparison
+     * @return true if they are equal
+     */
+    public boolean equals(Object o, float delta) {
+        if (!(o instanceof Matrix3f) || o == null) {
             return false;
         }
 
-        if (Float.compare(m10, comp.m10) != 0) {
-            return false;
-        }
-        if (Float.compare(m11, comp.m11) != 0) {
-            return false;
-        }
-        if (Float.compare(m12, comp.m12) != 0) {
-            return false;
+        if (this == o) {
+            return true;
         }
 
-        if (Float.compare(m20, comp.m20) != 0) {
-            return false;
-        }
-        if (Float.compare(m21, comp.m21) != 0) {
-            return false;
-        }
-        if (Float.compare(m22, comp.m22) != 0) {
-            return false;
-        }
+        Matrix3f comp = (Matrix3f) o;
 
-        return true;
+        return
+            Equality.equals(m00, comp.m00, delta) &&
+            Equality.equals(m01, comp.m01, delta) &&
+            Equality.equals(m02, comp.m02, delta) &&
+            Equality.equals(m10, comp.m10, delta) &&
+            Equality.equals(m11, comp.m11, delta) &&
+            Equality.equals(m12, comp.m12, delta) &&
+            Equality.equals(m20, comp.m20, delta) &&
+            Equality.equals(m21, comp.m21, delta) &&
+            Equality.equals(m22, comp.m22, delta);
     }
 
     public void write(JmeExporter e) throws IOException {
@@ -1421,6 +1433,15 @@ public final class Matrix3f implements Savable, Cloneable, java.io.Serializable 
         }
 
         return true;
+    }
+
+    public Matrix4f toMatrix4f() {
+        return new Matrix4f(
+            m00, m01, m02, 0,
+            m10, m11, m12, 0,
+            m20, m21, m22, 0,
+            0,   0,   0,   0
+        );
     }
 
     @Override

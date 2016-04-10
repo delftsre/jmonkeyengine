@@ -224,10 +224,10 @@ public class ScreenshotAppState extends AbstractAppState implements ActionListen
             capture = false;
 
             Camera curCamera = rm.getCurrentCamera();
-            int viewX = (int) (curCamera.getViewPortLeft() * curCamera.getWidth());
-            int viewY = (int) (curCamera.getViewPortBottom() * curCamera.getHeight());
-            int viewWidth = (int) ((curCamera.getViewPortRight() - curCamera.getViewPortLeft()) * curCamera.getWidth());
-            int viewHeight = (int) ((curCamera.getViewPortTop() - curCamera.getViewPortBottom()) * curCamera.getHeight());
+            int viewX = (int) (curCamera.viewPort.getLeft() * curCamera.getWidth());
+            int viewY = (int) (curCamera.viewPort.getBottom() * curCamera.getHeight());
+            int viewWidth = (int) ((curCamera.viewPort.getRight() - curCamera.viewPort.getLeft()) * curCamera.getWidth());
+            int viewHeight = (int) ((curCamera.viewPort.getTop() - curCamera.viewPort.getBottom()) * curCamera.getHeight());
 
             renderer.setViewPort(0, 0, width, height);
             renderer.readFrameBuffer(out, outBuf);

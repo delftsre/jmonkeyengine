@@ -331,11 +331,11 @@ public class FlyByCamera implements AnalogListener, ActionListener {
 
     protected void zoomCamera(float value){
         // derive fovY value
-        float h = cam.getFrustumTop();
-        float w = cam.getFrustumRight();
+        float h = cam.frustum.getTop();
+        float w = cam.frustum.getRight();
         float aspect = w / h;
 
-        float near = cam.getFrustumNear();
+        float near = cam.frustum.getNear();
 
         float fovY = FastMath.atan(h / near)
                   / (FastMath.DEG_TO_RAD * .5f);
@@ -348,10 +348,10 @@ public class FlyByCamera implements AnalogListener, ActionListener {
         h = FastMath.tan( fovY * FastMath.DEG_TO_RAD * .5f) * near;
         w = h * aspect;
 
-        cam.setFrustumTop(h);
-        cam.setFrustumBottom(-h);
-        cam.setFrustumLeft(-w);
-        cam.setFrustumRight(w);
+        cam.frustum.setTop(h);
+        cam.frustum.setBottom(-h);
+        cam.frustum.setLeft(-w);
+        cam.frustum.setRight(w);
     }
 
     protected void riseCamera(float value){

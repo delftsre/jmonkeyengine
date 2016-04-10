@@ -31,10 +31,15 @@
  */
 package com.jme3.effect;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.material.RenderState;
 import com.jme3.math.Matrix3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Mesh;
+
+import java.io.IOException;
 
 /**
  * The <code>ParticleMesh</code> is the underlying visual implementation of a 
@@ -54,13 +59,36 @@ public abstract class ParticleMesh extends Mesh {
          * to render particles the usual way.
          */
         Point,
-        
+
         /**
-         * The particle mesh is composed of triangles. Each particle is 
+         * The particle mesh is composed of triangles. Each particle is
          * two triangles making a single quad.
          */
         Triangle;
     }
+
+    public Type type;
+
+    public abstract ParticleMesh clone();
+
+    public static void writeParticleMesh(OutputCapsule oc, ParticleMesh particleMesh) throws IOException {
+        oc.write(particleMesh.type, "meshType", ParticleMesh.Type.Triangle);
+    }
+
+    public static ParticleMesh readParticleMesh(InputCapsule ic) throws IOException {
+        Type meshType = ic.readEnum("meshType", Type.class, Type.Triangle);
+        switch (meshType) {
+            case Point:
+                return new ParticlePointMesh();
+            case Triangle:
+                return new ParticleTriMesh();
+            default:
+                throw new IllegalStateException("Unrecognized particle type: " + meshType);
+        }
+    }
+
+    public abstract boolean isPoint();
+    public abstract boolean isTriangle();
 
     /**
      * Initialize mesh data.

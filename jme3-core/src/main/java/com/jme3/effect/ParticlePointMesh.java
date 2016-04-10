@@ -47,6 +47,13 @@ public class ParticlePointMesh extends ParticleMesh {
     private int imagesX = 1;
     private int imagesY = 1;
 
+    public ParticlePointMesh clone() {
+        return new ParticlePointMesh();
+    }
+
+    public boolean isPoint() { return true; }
+    public boolean isTriangle() { return false; }
+
     @Override
     public void setImagesXY(int imagesX, int imagesY) {
         this.imagesX = imagesX;

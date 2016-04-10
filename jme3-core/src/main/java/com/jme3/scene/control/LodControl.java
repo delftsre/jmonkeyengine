@@ -150,7 +150,7 @@ public class LodControl extends AbstractControl implements Cloneable {
         BoundingVolume bv = spatial.getWorldBound();
 
         Camera cam = vp.getCamera();
-        float atanNH = FastMath.atan(cam.getFrustumNear() * cam.getFrustumTop());
+        float atanNH = FastMath.atan(cam.frustum.getNear() * cam.frustum.getTop());
         float ratio = (FastMath.PI / (8f * atanNH));
         float newDistance = bv.distanceTo(vp.getCamera().getLocation()) / ratio;
         int level;

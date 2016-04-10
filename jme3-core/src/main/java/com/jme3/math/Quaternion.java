@@ -464,44 +464,18 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
     public Matrix4f toRotationMatrix(Matrix4f result) {
         TempVars tempv = TempVars.get();
         Vector3f originalScale = tempv.vect1;
-        
+
         result.toScaleVector(originalScale);
         result.setScale(1, 1, 1);
-        float norm = norm();
-        // we explicitly test norm against one here, saving a division
-        // at the cost of a test and branch.  Is it worth it?
-        float s = (norm == 1f) ? 2f : (norm > 0f) ? 2f / norm : 0;
 
-        // compute xs/ys/zs first to save 6 multiplications, since xs/ys/zs
-        // will be used 2-4 times each.
-        float xs = x * s;
-        float ys = y * s;
-        float zs = z * s;
-        float xx = x * xs;
-        float xy = x * ys;
-        float xz = x * zs;
-        float xw = w * xs;
-        float yy = y * ys;
-        float yz = y * zs;
-        float yw = w * ys;
-        float zz = z * zs;
-        float zw = w * zs;
+        Matrix3f rotationMatrix3f = toRotationMatrix();
 
-        // using s=2/norm (instead of 1/norm) saves 9 multiplications by 2 here
-        result.m00 = 1 - (yy + zz);
-        result.m01 = (xy - zw);
-        result.m02 = (xz + yw);
-        result.m10 = (xy + zw);
-        result.m11 = 1 - (xx + zz);
-        result.m12 = (yz - xw);
-        result.m20 = (xz - yw);
-        result.m21 = (yz + xw);
-        result.m22 = 1 - (xx + yy);
+        result.set(rotationMatrix3f);
 
         result.setScale(originalScale);
-        
+
         tempv.release();
-        
+
         return result;
     }
 
@@ -655,13 +629,16 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      *            the first quaternion.
      * @param q2
      *            the second quaternion.
-     * @param t
+     * @param changeAmnt
      *            the amount to interpolate between the two quaternions.
      */
-    public Quaternion slerp(Quaternion q1, Quaternion q2, float t) {
+    public Quaternion slerp(Quaternion q1, Quaternion q2, float changeAmnt) {
         // Create a local quaternion to store the interpolated quaternion
         if (q1.x == q2.x && q1.y == q2.y && q1.z == q2.z && q1.w == q2.w) {
-            this.set(q1);
+            if (this != q1) {
+                this.set(q1);
+            }
+
             return this;
         }
 
@@ -678,8 +655,8 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
         }
 
         // Set the first and second scale for the interpolation
-        float scale0 = 1 - t;
-        float scale1 = t;
+        float scale0 = 1 - changeAmnt;
+        float scale1 = changeAmnt;
 
         // Check if the angle between the 2 quaternions was big enough to
         // warrant such calculations
@@ -690,8 +667,8 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
 
             // Calculate the scale for q1 and q2, according to the angle and
             // it's sine value
-            scale0 = FastMath.sin((1 - t) * theta) * invSinTheta;
-            scale1 = FastMath.sin((t * theta)) * invSinTheta;
+            scale0 = FastMath.sin((1 - changeAmnt) * theta) * invSinTheta;
+            scale1 = FastMath.sin((changeAmnt * theta)) * invSinTheta;
         }
 
         // Calculate the x, y, z and w values for the quaternion by using a
@@ -721,43 +698,7 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
             return;
         }
 
-        float result = (this.x * q2.x) + (this.y * q2.y) + (this.z * q2.z)
-                + (this.w * q2.w);
-
-        if (result < 0.0f) {
-            // Negate the second quaternion and the result of the dot product
-            q2.x = -q2.x;
-            q2.y = -q2.y;
-            q2.z = -q2.z;
-            q2.w = -q2.w;
-            result = -result;
-        }
-
-        // Set the first and second scale for the interpolation
-        float scale0 = 1 - changeAmnt;
-        float scale1 = changeAmnt;
-
-        // Check if the angle between the 2 quaternions was big enough to
-        // warrant such calculations
-        if ((1 - result) > 0.1f) {
-            // Get the angle between the 2 quaternions, and then store the sin()
-            // of that angle
-            float theta = FastMath.acos(result);
-            float invSinTheta = 1f / FastMath.sin(theta);
-
-            // Calculate the scale for q1 and q2, according to the angle and
-            // it's sine value
-            scale0 = FastMath.sin((1 - changeAmnt) * theta) * invSinTheta;
-            scale1 = FastMath.sin((changeAmnt * theta)) * invSinTheta;
-        }
-
-        // Calculate the x, y, z and w values for the quaternion by using a
-        // special
-        // form of linear interpolation for quaternions.
-        this.x = (scale0 * this.x) + (scale1 * q2.x);
-        this.y = (scale0 * this.y) + (scale1 * q2.y);
-        this.z = (scale0 * this.z) + (scale1 * q2.z);
-        this.w = (scale0 * this.w) + (scale1 * q2.w);
+        slerp(this, q2, changeAmnt);
     }
 
     /**

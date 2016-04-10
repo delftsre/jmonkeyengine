@@ -279,7 +279,7 @@ public class Application implements SystemListener {
     private void initCamera(){
         cam = new Camera(settings.getWidth(), settings.getHeight());
 
-        cam.setFrustumPerspective(45f, (float)cam.getWidth() / cam.getHeight(), 1f, 1000f);
+        cam.frustum.setPerspective(45f, (float)cam.getWidth() / cam.getHeight(), 1f, 1000f);
         cam.setLocation(new Vector3f(0f, 0f, 10f));
         cam.lookAt(new Vector3f(0f, 0f, 0f), Vector3f.UNIT_Y);
 

@@ -53,6 +53,13 @@ public class ParticleTriMesh extends ParticleMesh {
     private ParticleEmitter emitter;
 //    private Particle[] particlesCopy;
 
+    public ParticleTriMesh clone() {
+        return new ParticleTriMesh();
+    }
+
+    public boolean isPoint() { return false; }
+    public boolean isTriangle() { return true; }
+
     @Override
     public void initParticleData(ParticleEmitter emitter, int numParticles) {
         setMode(Mode.Triangles);

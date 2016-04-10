@@ -33,6 +33,7 @@ package com.jme3.util;
 
 import java.util.Map.Entry;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Check if the {@link ListMap} class is working correctly.
@@ -45,19 +46,20 @@ public class ListMapTest {
     public void testListMap() {
         ListMap<String, String> listMap = new ListMap<String, String>();
         listMap.put("bob", "hello");
-        assert "hello".equals(listMap.get("bob"));
-        assert "hello".equals(listMap.remove("bob"));
-        assert listMap.size() == 0;
-        assert listMap.isEmpty();
+
+        assertTrue("get value by key", "hello".equals(listMap.get("bob")));
+        assertTrue("get and remove a value by key", "hello".equals(listMap.remove("bob")));
+        assertTrue("size 0 after removing a single pair", listMap.size() == 0);
+        assertTrue("is empty after removing a single pair", listMap.isEmpty());
 
         listMap.put("abc", "1");
         listMap.put("def", "2");
         listMap.put("ghi", "3");
         listMap.put("jkl", "4");
         listMap.put("mno", "5");
-        assert "3".equals(listMap.get("ghi"));
-        assert listMap.size() == 5;
-        assert !listMap.isEmpty();
+        assertTrue("get a value from a bigger list", "3".equals(listMap.get("ghi")));
+        assertTrue("get listMap size", listMap.size() == 5);
+        assertTrue("is not empty", !listMap.isEmpty());
 
         // check iteration order, should be consistent
         for (int i = 0; i < listMap.size(); i++) {
@@ -65,9 +67,9 @@ public class ListMapTest {
             String key = listMap.getKey(i);
             String value = listMap.getValue(i);
             Entry<String, String> entry = listMap.getEntry(i);
-            assert key.equals(entry.getKey());
-            assert value.equals(entry.getValue());
-            assert expectedValue.equals(value);
+            assertTrue("key index", key.equals(entry.getKey()));
+            assertTrue("value index", value.equals(entry.getValue()));
+            assertTrue("expected value", expectedValue.equals(value));
         }
     }
 }

@@ -32,6 +32,7 @@
 package com.jme3.collision;
 
 import com.jme3.bounding.BoundingVolume;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Utilities for testing collision.
@@ -45,23 +46,23 @@ final class CollisionUtil {
         if (a instanceof BoundingVolume && b instanceof BoundingVolume) {
             BoundingVolume bv1 = (BoundingVolume) a;
             BoundingVolume bv2 = (BoundingVolume) b;
-            assert bv1.intersects(bv2) == (expected != 0);
+            assertTrue("intersection matches expectation", bv1.intersects(bv2) == (expected != 0));
         }
 
         // Test standard collideWith method
         CollisionResults results = new CollisionResults();
         int numCollisions = a.collideWith(b, results);
-        assert results.size() == numCollisions;
-        assert numCollisions == expected;
+        assertTrue("result contains all collisions", results.size() == numCollisions);
+        assertTrue("number of collisions as expected", numCollisions == expected);
 
         // force the results to be sorted here..
         results.getClosestCollision();
 
         if (results.size() > 0) {
-            assert results.getCollision(0) == results.getClosestCollision();
+            assertTrue("the first collison is the closest", results.getCollision(0) == results.getClosestCollision());
         }
         if (results.size() == 1) {
-            assert results.getClosestCollision() == results.getFarthestCollision();
+            assertTrue("if there is a single collision, the closest matches the farthest", results.getClosestCollision() == results.getFarthestCollision());
         }
     }
     

@@ -32,7 +32,6 @@
 package com.jme3.effect;
 
 import com.jme3.bounding.BoundingBox;
-import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.effect.influencers.DefaultParticleInfluencer;
 import com.jme3.effect.influencers.ParticleInfluencer;
 import com.jme3.effect.shapes.EmitterPointShape;
@@ -80,7 +79,6 @@ public class ParticleEmitter extends Geometry {
     private EmitterShape shape = DEFAULT_SHAPE;
     private ParticleMesh particleMesh;
     private ParticleInfluencer particleInfluencer = DEFAULT_INFLUENCER;
-    private ParticleMesh.Type meshType;
     private Particle[] particles;
     private int firstUnUsed;
     private int lastUsed;
@@ -176,25 +174,16 @@ public class ParticleEmitter extends Geometry {
         clone.controls.add(clone.control);
 
         // Reinitialize particle mesh
-        switch (meshType) {
-            case Point:
-                clone.particleMesh = new ParticlePointMesh();
-                clone.setMesh(clone.particleMesh);
-                break;
-            case Triangle:
-                clone.particleMesh = new ParticleTriMesh();
-                clone.setMesh(clone.particleMesh);
-                break;
-            default:
-                throw new IllegalStateException("Unrecognized particle type: " + meshType);
-        }
+        clone.particleMesh = particleMesh.clone();
+        clone.setMesh(clone.particleMesh);
+
         clone.particleMesh.initParticleData(clone, clone.particles.length);
         clone.particleMesh.setImagesXY(clone.imagesX, clone.imagesY);
 
         return clone;
     }
 
-    public ParticleEmitter(String name, Type type, int numParticles) {
+    public ParticleEmitter(String name, ParticleMesh particleMesh, int numParticles) {
         super(name);
         setBatchHint(BatchHint.Never);
         // ignore world transform, unless user sets inLocalSpace
@@ -206,8 +195,6 @@ public class ParticleEmitter extends Geometry {
         // particles are usually transparent
         this.setQueueBucket(Bucket.Transparent);
 
-        meshType = type;
-
         // Must create clone of shape/influencer so that a reference to a static is 
         // not maintained
         shape = shape.deepClone();
@@ -216,18 +203,9 @@ public class ParticleEmitter extends Geometry {
         control = new ParticleEmitterControl(this);
         controls.add(control);
 
-        switch (meshType) {
-            case Point:
-                particleMesh = new ParticlePointMesh();
-                this.setMesh(particleMesh);
-                break;
-            case Triangle:
-                particleMesh = new ParticleTriMesh();
-                this.setMesh(particleMesh);
-                break;
-            default:
-                throw new IllegalStateException("Unrecognized particle type: " + meshType);
-        }
+        this.particleMesh = particleMesh;
+        this.setMesh(particleMesh);
+
         this.setNumParticles(numParticles);
 //        particleMesh.initParticleData(this, particles.length);
     }
@@ -278,32 +256,21 @@ public class ParticleEmitter extends Geometry {
      * 
      * 
      * @return the mesh type used by the particle emitter.
-     * 
-     * @see #setMeshType(com.jme3.effect.ParticleMesh.Type)
-     * @see ParticleEmitter#ParticleEmitter(java.lang.String, com.jme3.effect.ParticleMesh.Type, int) 
+     *
+     * @see ParticleEmitter#ParticleEmitter(java.lang.String, com.jme3.effect.ParticleMesh, int)
      */
-    public ParticleMesh.Type getMeshType() {
-        return meshType;
+    public ParticleMesh getMeshType() {
+        return particleMesh;
     }
 
     /**
      * Sets the type of mesh used by the particle emitter.
      * @param meshType The mesh type to use
      */
-    public void setMeshType(ParticleMesh.Type meshType) {
-        this.meshType = meshType;
-        switch (meshType) {
-            case Point:
-                particleMesh = new ParticlePointMesh();
-                this.setMesh(particleMesh);
-                break;
-            case Triangle:
-                particleMesh = new ParticleTriMesh();
-                this.setMesh(particleMesh);
-                break;
-            default:
-                throw new IllegalStateException("Unrecognized particle type: " + meshType);
-        }
+    public void setMeshType(ParticleMesh particleMesh) {
+        this.particleMesh = particleMesh;
+        this.setMesh(particleMesh);
+
         this.setNumParticles(particles.length);
     }
 
@@ -1088,7 +1055,7 @@ public class ParticleEmitter extends Geometry {
     private void renderFromControl(RenderManager rm, ViewPort vp) {
         Camera cam = vp.getCamera();
 
-        if (meshType == ParticleMesh.Type.Point) {
+        if (particleMesh.isPoint()) {
             float C = cam.getProjectionMatrix().m00;
             C *= cam.getWidth() * 0.5f;
 
@@ -1119,7 +1086,7 @@ public class ParticleEmitter extends Geometry {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
         oc.write(shape, "shape", DEFAULT_SHAPE);
-        oc.write(meshType, "meshType", ParticleMesh.Type.Triangle);
+        ParticleMesh.writeParticleMesh(oc, particleMesh);
         oc.write(enabled, "enabled", true);
         oc.write(particles.length, "numParticles", 0);
         oc.write(particlesPerSec, "particlesPerSec", 0);
@@ -1154,7 +1121,6 @@ public class ParticleEmitter extends Geometry {
             shape = shape.deepClone();
         }
 
-        meshType = ic.readEnum("meshType", ParticleMesh.Type.class, ParticleMesh.Type.Triangle);
         int numParticles = ic.readInt("numParticles", 0);
 
 
@@ -1178,18 +1144,9 @@ public class ParticleEmitter extends Geometry {
         randomAngle = ic.readBoolean("randomAngle", false);
         rotateSpeed = ic.readFloat("rotateSpeed", 0);
 
-        switch (meshType) {
-            case Point:
-                particleMesh = new ParticlePointMesh();
-                this.setMesh(particleMesh);
-                break;
-            case Triangle:
-                particleMesh = new ParticleTriMesh();
-                this.setMesh(particleMesh);
-                break;
-            default:
-                throw new IllegalStateException("Unrecognized particle type: " + meshType);
-        }
+        particleMesh = ParticleMesh.readParticleMesh(ic);
+        this.setMesh(particleMesh);
+
         this.setNumParticles(numParticles);
 //        particleMesh.initParticleData(this, particles.length);
 //        particleMesh.setImagesXY(imagesX, imagesY);
