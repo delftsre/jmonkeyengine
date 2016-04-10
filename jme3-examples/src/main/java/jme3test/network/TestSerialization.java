@@ -33,14 +33,12 @@
 package jme3test.network;
 
 import com.jme3.network.*;
-import com.jme3.network.serializing.Serializable;
 import com.jme3.network.serializing.Serializer;
 import java.io.IOException;
 import java.util.*;
 
 public class TestSerialization implements MessageListener<HostedConnection> {
 
-    @Serializable
     public static class SomeObject {
 
         private int val;
@@ -68,7 +66,6 @@ public class TestSerialization implements MessageListener<HostedConnection> {
         Low;
     }
 
-    @Serializable
     public static class TestSerializationMessage extends AbstractMessage {
 
         boolean z;
@@ -121,7 +118,7 @@ public class TestSerialization implements MessageListener<HostedConnection> {
         }
     }
 
-    public void messageReceived(HostedConnection source, Message m) {
+    public void messageReceived(HostedConnection source, AbstractMessage m) {
         TestSerializationMessage cm = (TestSerializationMessage) m;
         System.out.println(cm.z);
         System.out.println(cm.b);
@@ -140,8 +137,8 @@ public class TestSerialization implements MessageListener<HostedConnection> {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException{
-        Serializer.registerClass(SomeObject.class);
-        Serializer.registerClass(TestSerializationMessage.class);
+//        Serializer.registerClass(SomeObject.class);
+//        Serializer.registerClass(TestSerializationMessage.class);
 
         Server server = Network.createServer( 5110 );
         server.start();

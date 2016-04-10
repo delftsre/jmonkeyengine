@@ -32,7 +32,6 @@
 
 package com.jme3.network.service.rmi;
 
-import com.jme3.network.serializing.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,6 @@ import java.util.List;
  *
  *  @author    Paul Speed
  */
-@Serializable
 public final class ClassInfo {
     private String name;
     private short typeId;

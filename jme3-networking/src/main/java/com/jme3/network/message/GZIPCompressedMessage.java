@@ -31,8 +31,7 @@
  */
 package com.jme3.network.message;
 
-import com.jme3.network.Message;
-import com.jme3.network.serializing.Serializable;
+import com.jme3.network.AbstractMessage;
 
 /**
  * GZIPCompressedMessage is the class that you need to use should you want to
@@ -40,13 +39,12 @@ import com.jme3.network.serializing.Serializable;
  *
  * @author Lars Wesselius
  */
-@Serializable()
 public class GZIPCompressedMessage extends CompressedMessage {
     public GZIPCompressedMessage() {
         super();
     }
 
-    public GZIPCompressedMessage(Message msg) {
+    public GZIPCompressedMessage(AbstractMessage msg) {
         super(msg);
     }
 }

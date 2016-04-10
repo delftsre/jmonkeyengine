@@ -33,7 +33,7 @@ package com.jme3.network.message;
 
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.*;
-import com.jme3.network.serializing.serializers.StringSerializer;
+//import com.jme3.network.serializing.serializers.StringSerializer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -42,7 +42,6 @@ import java.nio.ByteBuffer;
  *
  * @author Lars Wesselius, Paul Speed
  */
-@Serializable()
 public class DisconnectMessage extends AbstractMessage {
 
     public static final short SERIALIZER_ID = -42;
@@ -83,7 +82,7 @@ public class DisconnectMessage extends AbstractMessage {
      */   
     public static class DisconnectSerializer extends Serializer {
      
-        public DisconnectMessage readObject( ByteBuffer data, Class c ) throws IOException {
+        public static DisconnectMessage readObject( ByteBuffer data, Class c ) throws IOException {
     
             // Read the null/non-null marker
             if (data.get() == 0x0)
@@ -91,13 +90,13 @@ public class DisconnectMessage extends AbstractMessage {
  
             DisconnectMessage msg = new DisconnectMessage();
             
-            msg.reason = StringSerializer.readString(data);
-            msg.type = StringSerializer.readString(data);
+//            msg.reason = StringSerializer.readString(data);
+//            msg.type = StringSerializer.readString(data);
             
             return msg;
         }
 
-        public void writeObject(ByteBuffer buffer, Object object) throws IOException {
+        public static void writeObject(ByteBuffer buffer, Object object) throws IOException {
     
             // Add the null/non-null marker
             buffer.put( (byte)(object != null ? 0x1 : 0x0) );
@@ -107,8 +106,8 @@ public class DisconnectMessage extends AbstractMessage {
             }
             
             DisconnectMessage msg = (DisconnectMessage)object;
-            StringSerializer.writeString( msg.reason, buffer );           
-            StringSerializer.writeString( msg.type, buffer );           
+//            StringSerializer.writeString( msg.reason, buffer );           
+//            StringSerializer.writeString( msg.type, buffer );           
         }
     }     
 }

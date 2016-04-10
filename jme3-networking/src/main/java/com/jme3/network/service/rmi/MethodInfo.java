@@ -32,7 +32,6 @@
 
 package com.jme3.network.service.rmi;
 
-import com.jme3.network.serializing.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.jws.Oneway;
@@ -44,7 +43,6 @@ import javax.jws.Oneway;
  *
  *  @author    Paul Speed
  */
-@Serializable
 public final class MethodInfo {
     
     public static final MethodInfo NULL_INFO = new MethodInfo();

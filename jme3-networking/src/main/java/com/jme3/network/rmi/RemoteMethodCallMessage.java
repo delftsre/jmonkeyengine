@@ -32,14 +32,12 @@
 package com.jme3.network.rmi;
 
 import com.jme3.network.AbstractMessage;
-import com.jme3.network.serializing.Serializable;
 
 /**
  * Sent to a remote client to make a remote method invocation.
  *
  * @author Kirill Vainer
  */
-@Serializable
 public class RemoteMethodCallMessage extends AbstractMessage {
 
     public RemoteMethodCallMessage(){

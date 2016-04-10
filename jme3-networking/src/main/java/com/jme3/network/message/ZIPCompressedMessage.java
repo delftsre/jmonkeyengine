@@ -31,15 +31,14 @@
  */
 package com.jme3.network.message;
 
-import com.jme3.network.Message;
-import com.jme3.network.serializing.Serializable;
+import com.jme3.network.AbstractMessage;
+//import com.jme3.network.Message;
 
 /**
  * Compress a message using this ZIPCompressedMessage class
  *
  * @author Lars Wesselius
  */
-@Serializable()
 public class ZIPCompressedMessage extends CompressedMessage {
     private static int compressionLevel = 6;
 
@@ -47,11 +46,11 @@ public class ZIPCompressedMessage extends CompressedMessage {
         super();
     }
 
-    public ZIPCompressedMessage(Message msg) {
+    public ZIPCompressedMessage(AbstractMessage msg) {
         super(msg);
     }
 
-    public ZIPCompressedMessage(Message msg, int level) {
+    public ZIPCompressedMessage(AbstractMessage msg, int level) {
         super(msg);
         setLevel(level);
     }

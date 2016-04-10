@@ -36,6 +36,7 @@ import com.jme3.network.MessageConnection;
 import com.jme3.network.service.AbstractClientService;
 import com.jme3.network.service.ClientServiceManager;
 import com.jme3.network.service.rpc.RpcClientService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,7 +173,7 @@ public class RmiClientService extends AbstractClientService {
             isStarted = true;
         }
     }
-    
+
     private class ObjectInfo {
         byte channel;
         String name;

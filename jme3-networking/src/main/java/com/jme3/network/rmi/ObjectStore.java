@@ -87,7 +87,7 @@ public class ObjectStore {
     public class ServerEventHandler implements MessageListener<HostedConnection>,
                                                       ConnectionListener {
 
-        public void messageReceived(HostedConnection source, Message m) {
+        public void messageReceived(HostedConnection source, AbstractMessage m) {
             onMessage(source, m);
         }
 
@@ -103,7 +103,7 @@ public class ObjectStore {
     public class ClientEventHandler implements MessageListener,
                                                       ClientStateListener {
 
-        public void messageReceived(Object source, Message m) {
+        public void messageReceived(Object source, AbstractMessage m) {
             onMessage(null, m);
         }
 
@@ -118,9 +118,9 @@ public class ObjectStore {
     
     static {
         Serializer s = new RmiSerializer();
-        Serializer.registerClass(RemoteObjectDefMessage.class, s);
-        Serializer.registerClass(RemoteMethodCallMessage.class, s);
-        Serializer.registerClass(RemoteMethodReturnMessage.class, s);
+//        Serializer.registerClass(RemoteObjectDefMessage.class, s);
+//        Serializer.registerClass(RemoteMethodCallMessage.class, s);
+//        Serializer.registerClass(RemoteMethodReturnMessage.class, s);
     }
 
     public ObjectStore(Client client) {
@@ -247,7 +247,7 @@ public class ObjectStore {
         }
     }
 
-    private void onMessage(HostedConnection source, Message message) {
+    private void onMessage(HostedConnection source, AbstractMessage message) {
         // Might want to do more strict validation of the data
         // in the message to prevent crashes
 

@@ -31,16 +31,14 @@
  */
 package com.jme3.network;
 
-import com.jme3.network.serializing.Serializable;
-
 /**
  *  Interface implemented by all network messages.
  *
  *  @version   $Revision$
  *  @author    Paul Speed
  */
-@Serializable()
-public abstract class AbstractMessage implements Message
+
+public abstract class AbstractMessage implements java.io.Serializable
 {
     private transient boolean reliable = true;
 
@@ -57,7 +55,7 @@ public abstract class AbstractMessage implements Message
      *  Sets this message to 'reliable' or not and returns this
      *  message.
      */
-    public Message setReliable(boolean f)
+    public AbstractMessage setReliable(boolean f)
     {
         this.reliable = f;
         return this;

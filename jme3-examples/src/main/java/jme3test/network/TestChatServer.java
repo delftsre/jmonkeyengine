@@ -35,7 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jme3.network.*;
-import com.jme3.network.serializing.Serializable;
 import com.jme3.network.serializing.Serializer;
 import java.io.IOException;
 
@@ -70,6 +69,7 @@ public class TestChatServer {
 
         ChatHandler handler = new ChatHandler();
         server.addMessageListener(handler, ChatMessage.class);
+        server.addMessageListener(new CommandHandler(), CommandMessage.class);
         
         server.addConnectionListener(new ChatConnectionListener());
     }
@@ -124,7 +124,8 @@ public class TestChatServer {
     public static void initializeClasses() {
         // Doing it here means that the client code only needs to
         // call our initialize. 
-        Serializer.registerClass(ChatMessage.class);
+//        Serializer.registerClass(ChatMessage.class);
+//        Serializer.registerClass(CommandMessage.class);
     }
 
     public static void main(String... args) throws Exception {
@@ -160,7 +161,7 @@ public class TestChatServer {
         }
 
         @Override
-        public void messageReceived(HostedConnection source, Message m) {
+        public void messageReceived(HostedConnection source, AbstractMessage m) {
             if (m instanceof ChatMessage) {
                 // Keep track of the name just in case we 
                 // want to know it for some other reason later and it's
@@ -168,17 +169,32 @@ public class TestChatServer {
                 ChatMessage cm = (ChatMessage)m;
                 source.setAttribute("name", cm.getName());
 
-                // Check for a / command
-                if( cm.message.startsWith("/") ) {
-                    runCommand(source, cm.name, cm.message);
-                    return;
-                }
-
                 System.out.println("Broadcasting:" + m + "  reliable:" + m.isReliable());
 
                 // Just rebroadcast... the reliable flag will stay the
                 // same so if it came in on UDP it will go out on that too
                 source.getServer().broadcast(cm);
+            } else {
+                System.err.println("Received odd message:" + m);
+            }
+        }
+    }
+    
+    private class CommandHandler implements MessageListener<HostedConnection> {
+
+        public CommandHandler() {
+        }
+
+        @Override
+        public void messageReceived(HostedConnection source, AbstractMessage m) {
+            if (m instanceof CommandMessage) {
+                // Keep track of the name just in case we 
+                // want to know it for some other reason later and it's
+                // a good example of session data
+            	CommandMessage cm = (CommandMessage)m;
+                source.setAttribute("name", cm.getName());
+
+                runCommand(source, cm.name, cm.command);
             } else {
                 System.err.println("Received odd message:" + m);
             }
@@ -199,7 +215,6 @@ public class TestChatServer {
         
     }
     
-    @Serializable
     public static class ChatMessage extends AbstractMessage {
 
         private String name;
@@ -232,6 +247,41 @@ public class TestChatServer {
         @Override
         public String toString() {
             return name + ":" + message;
+        }
+    }
+    
+    public static class CommandMessage extends AbstractMessage {
+
+        private String name;
+        private String command;
+
+        public CommandMessage() {
+        }
+
+        public CommandMessage(String name, String message) {
+            setName(name);
+            setMessage(message);
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setMessage(String s) {
+            this.command = s;
+        }
+
+        public String getMessage() {
+            return command;
+        }
+
+        @Override
+        public String toString() {
+            return name + ":" + command;
         }
     }
 }

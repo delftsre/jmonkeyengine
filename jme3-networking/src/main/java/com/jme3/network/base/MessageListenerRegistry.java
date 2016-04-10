@@ -31,7 +31,8 @@
  */
 package com.jme3.network.base;
 
-import com.jme3.network.Message;
+import com.jme3.network.AbstractMessage;
+//import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +62,7 @@ public class MessageListenerRegistry<S> implements MessageListener<S>
     }
  
     @Override
-    public void messageReceived( S source, Message m )
+    public void messageReceived( S source, AbstractMessage m )
     {
         boolean delivered = false;
         boolean trace = log.isLoggable(Level.FINER);

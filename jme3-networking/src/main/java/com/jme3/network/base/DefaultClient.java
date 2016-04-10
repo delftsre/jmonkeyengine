@@ -38,7 +38,7 @@ import com.jme3.network.message.ChannelInfoMessage;
 import com.jme3.network.message.ClientRegistrationMessage;
 import com.jme3.network.message.DisconnectMessage;
 import com.jme3.network.service.ClientServiceManager;
-import com.jme3.network.service.serializer.ClientSerializerRegistrationsService;
+//import com.jme3.network.service.serializer.ClientSerializerRegistrationsService;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -101,7 +101,7 @@ public class DefaultClient implements Client
 
     protected void addStandardServices() {
         log.fine("Adding standard services...");
-        services.addService(new ClientSerializerRegistrationsService());
+//        services.addService(new ClientSerializerRegistrationsService());
     }
 
     protected void setPrimaryConnectors( Connector reliable, Connector fast, ConnectorFactory connectorFactory )
@@ -229,7 +229,7 @@ public class DefaultClient implements Client
     }
    
     @Override
-    public void send( Message message )
+    public void send( AbstractMessage message )
     {
         if( log.isLoggable(Level.FINER) ) {
             log.log(Level.FINER, "send({0})", message);
@@ -242,7 +242,7 @@ public class DefaultClient implements Client
     }
  
     @Override
-    public void send( int channel, Message message )
+    public void send( int channel, AbstractMessage message )
     {
         if( log.isLoggable(Level.FINER) ) {
             log.log(Level.FINER, "send({0}, {1})", new Object[]{channel, message});
@@ -262,7 +262,7 @@ public class DefaultClient implements Client
         send(channel + CH_FIRST, message, true);
     }
     
-    protected void send( int channel, Message message, boolean waitForConnected )
+    protected void send( int channel, AbstractMessage message, boolean waitForConnected )
     {
         checkRunning();
  
@@ -387,7 +387,7 @@ public class DefaultClient implements Client
     {
         for( ClientStateListener l : stateListeners ) {
             l.clientConnected( this );
-        }            
+        }
     }
 
     protected void startServices() 
@@ -449,7 +449,7 @@ public class DefaultClient implements Client
         }
     }
  
-    protected void dispatch( Message m )
+    protected void dispatch( AbstractMessage m )
     {
         if( log.isLoggable(Level.FINER) ) {
             log.log(Level.FINER, "{0} received:{1}", new Object[]{this, m});
@@ -503,7 +503,7 @@ public class DefaultClient implements Client
     protected class Redispatch implements MessageListener<Object>, ErrorListener<Object>
     {
         @Override
-        public void messageReceived( Object source, Message m )
+        public void messageReceived( Object source, AbstractMessage m )
         {
             dispatch( m );
         }

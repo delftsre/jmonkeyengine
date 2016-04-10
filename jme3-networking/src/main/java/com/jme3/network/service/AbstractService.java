@@ -80,6 +80,7 @@ public abstract class AbstractService<S extends ServiceManager> implements Servi
      */   
     protected abstract void onInitialize( S serviceManager );
     
+    
     /**
      *  Default implementation does nothing.  Implementations can
      *  override this to peform custom startup behavior.

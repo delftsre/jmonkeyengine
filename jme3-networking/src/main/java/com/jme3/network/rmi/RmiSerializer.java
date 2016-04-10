@@ -32,7 +32,7 @@
 package com.jme3.network.rmi;
 
 import com.jme3.network.serializing.Serializer;
-import com.jme3.network.serializing.SerializerRegistration;
+//import com.jme3.network.serializing.SerializerRegistration;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -50,9 +50,9 @@ public class RmiSerializer extends Serializer {
     private static final Logger logger = Logger.getLogger(RmiSerializer.class.getName());
 
     // not good for multithread applications
-    private char[] chrBuf = new char[256];
+    private static char[] chrBuf = new char[256];
 
-    private void writeString(ByteBuffer buffer, String string) throws IOException{
+    private static void writeString(ByteBuffer buffer, String string) throws IOException{
         int length = string.length();
         if (length > 255){
             logger.log(Level.WARNING, "The string length exceeds the limit! {0} > 255", length);
@@ -66,7 +66,7 @@ public class RmiSerializer extends Serializer {
         }
     }
 
-    private String readString(ByteBuffer buffer){
+    private static String readString(ByteBuffer buffer){
         int length = buffer.get() & 0xff;
         for (int i = 0; i < length; i++){
             chrBuf[i] = (char) (buffer.get() & 0xff);
@@ -74,35 +74,36 @@ public class RmiSerializer extends Serializer {
         return String.valueOf(chrBuf, 0, length);
     }
 
-    private void writeType(ByteBuffer buffer, Class<?> clazz) throws IOException{
+    private static void writeType(ByteBuffer buffer, Class<?> clazz) throws IOException{
         if (clazz == void.class){
             buffer.putShort((short)0);
         } else {
-            SerializerRegistration reg = Serializer.getSerializerRegistration(clazz);
-            if (reg == null){
-                logger.log(Level.WARNING, "Unknown class: {0}", clazz);
-                throw new IOException(); // prevents message from being serialized
-            }
-            buffer.putShort(reg.getId());
+//            SerializerRegistration reg = Serializer.getSerializerRegistration(clazz);
+//            if (reg == null){
+//                logger.log(Level.WARNING, "Unknown class: {0}", clazz);
+//                throw new IOException(); // prevents message from being serialized
+//            }
+//            buffer.putShort(reg.getId());
         }
     }
 
-    private Class<?> readType(ByteBuffer buffer) throws IOException{
-        SerializerRegistration reg = Serializer.readClass(buffer);
-        if (reg == null){
-            // either "void" or unknown val
-            short id = buffer.getShort(buffer.position()-2);
-            if (id == 0){
-                return void.class;
-            } else{
-                logger.log(Level.WARNING, "Undefined class ID: {0}", id);
-                throw new IOException(); // prevents message from being serialized
-            }
-        }
-        return reg.getType();
+    private static Class<?> readType(ByteBuffer buffer) throws IOException{
+//        SerializerRegistration reg = Serializer.readClass(buffer);
+//        if (reg == null){
+//            // either "void" or unknown val
+//            short id = buffer.getShort(buffer.position()-2);
+//            if (id == 0){
+//                return void.class;
+//            } else{
+//                logger.log(Level.WARNING, "Undefined class ID: {0}", id);
+//                throw new IOException(); // prevents message from being serialized
+//            }
+//        }
+//        return reg.getType();
+    	return Object.class;
     }
 
-    private void writeMethod(ByteBuffer buffer, Method method) throws IOException{
+    private static void writeMethod(ByteBuffer buffer, Method method) throws IOException{
         String     name = method.getName();
         Class<?>[] paramTypes = method.getParameterTypes();
         Class<?>   returnType = method.getReturnType();
@@ -114,7 +115,7 @@ public class RmiSerializer extends Serializer {
             writeType(buffer, paramType);
     }
 
-    private MethodDef readMethod(ByteBuffer buffer) throws IOException{
+    private static MethodDef readMethod(ByteBuffer buffer) throws IOException{
         String name = readString(buffer);
         Class<?> retType = readType(buffer);
         
@@ -131,7 +132,7 @@ public class RmiSerializer extends Serializer {
         return def;
     }
 
-    private void writeObjectDef(ByteBuffer buffer, ObjectDef def) throws IOException{
+    private static void writeObjectDef(ByteBuffer buffer, ObjectDef def) throws IOException{
         buffer.putShort((short)def.objectId);
         writeString(buffer, def.objectName);
         Method[] methods = def.methods;
@@ -141,7 +142,7 @@ public class RmiSerializer extends Serializer {
         }
     }
 
-    private ObjectDef readObjectDef(ByteBuffer buffer) throws IOException{
+    private static ObjectDef readObjectDef(ByteBuffer buffer) throws IOException{
         ObjectDef def = new ObjectDef();
 
         def.objectId = buffer.getShort();
@@ -156,14 +157,14 @@ public class RmiSerializer extends Serializer {
         return def;
     }
 
-    private void writeObjectDefs(ByteBuffer buffer, RemoteObjectDefMessage defMsg) throws IOException{
+    private static void writeObjectDefs(ByteBuffer buffer, RemoteObjectDefMessage defMsg) throws IOException{
         ObjectDef[] defs = defMsg.objects;
         buffer.put( (byte) defs.length );
         for (ObjectDef def : defs)
             writeObjectDef(buffer, def);
     }
 
-    private RemoteObjectDefMessage readObjectDefs(ByteBuffer buffer) throws IOException{
+    private static RemoteObjectDefMessage readObjectDefs(ByteBuffer buffer) throws IOException{
         RemoteObjectDefMessage defMsg = new RemoteObjectDefMessage();
         int numObjs = buffer.get() & 0xff;
         ObjectDef[] defs = new ObjectDef[numObjs];
@@ -174,7 +175,7 @@ public class RmiSerializer extends Serializer {
         return defMsg;
     }
 
-    private void writeMethodCall(ByteBuffer buffer, RemoteMethodCallMessage call) throws IOException{
+    private static void writeMethodCall(ByteBuffer buffer, RemoteMethodCallMessage call) throws IOException{
         buffer.putShort((short)call.objectId);
         buffer.putShort(call.methodId);
         buffer.putShort(call.invocationId);
@@ -189,7 +190,7 @@ public class RmiSerializer extends Serializer {
             for (Object obj : call.args){
                 if (obj != null){
                     buffer.put((byte)0x01);
-                    Serializer.writeClassAndObject(buffer, obj);
+//                    Serializer.writeClassAndObject(buffer, obj);
                 }else{
                     buffer.put((byte)0x00);
                 }
@@ -197,7 +198,7 @@ public class RmiSerializer extends Serializer {
         }
     }
 
-    private RemoteMethodCallMessage readMethodCall(ByteBuffer buffer) throws IOException{
+    private static RemoteMethodCallMessage readMethodCall(ByteBuffer buffer) throws IOException{
         RemoteMethodCallMessage call = new RemoteMethodCallMessage();
         call.objectId = buffer.getShort();
         call.methodId = buffer.getShort();
@@ -207,7 +208,7 @@ public class RmiSerializer extends Serializer {
             Object[] args = new Object[numArgs];
             for (int i = 0; i < numArgs; i++){
                 if (buffer.get() == (byte)0x01){
-                    args[i] = Serializer.readClassAndObject(buffer);
+//                    args[i] = Serializer.readClassAndObject(buffer);
                 }
             }
             call.args = args;
@@ -215,27 +216,26 @@ public class RmiSerializer extends Serializer {
         return call;
     }
 
-    private void writeMethodReturn(ByteBuffer buffer, RemoteMethodReturnMessage ret) throws IOException{
+    private static void writeMethodReturn(ByteBuffer buffer, RemoteMethodReturnMessage ret) throws IOException{
         buffer.putShort(ret.invocationID);
         if (ret.retVal != null){
             buffer.put((byte)0x01);
-            Serializer.writeClassAndObject(buffer, ret.retVal);
+//            Serializer.writeClassAndObject(buffer, ret.retVal);
         }else{
             buffer.put((byte)0x00);
         }
     }
 
-    private RemoteMethodReturnMessage readMethodReturn(ByteBuffer buffer) throws IOException{
+    private static RemoteMethodReturnMessage readMethodReturn(ByteBuffer buffer) throws IOException{
         RemoteMethodReturnMessage ret = new RemoteMethodReturnMessage();
         ret.invocationID = buffer.getShort();
         if (buffer.get() == (byte)0x01){
-            ret.retVal = Serializer.readClassAndObject(buffer);
+//            ret.retVal = Serializer.readClassAndObject(buffer);
         }
         return ret;
     }
             
-    @Override
-    public <T> T readObject(ByteBuffer data, Class<T> c) throws IOException {
+    public static <T> T readObject(ByteBuffer data, Class<T> c) throws IOException {
         if (c == RemoteObjectDefMessage.class){
             return (T) readObjectDefs(data);
         }else if (c == RemoteMethodCallMessage.class){
@@ -246,8 +246,7 @@ public class RmiSerializer extends Serializer {
         return null;
     }
 
-    @Override
-    public void writeObject(ByteBuffer buffer, Object object) throws IOException {
+    public static void writeObject(ByteBuffer buffer, Object object) throws IOException {
 //        int p = buffer.position();
         if (object instanceof RemoteObjectDefMessage){
             RemoteObjectDefMessage def = (RemoteObjectDefMessage) object;

@@ -49,5 +49,5 @@ package com.jme3.network;
  */
 public interface MessageListener<S>
 {
-    public void messageReceived( S source, Message m );
+    public void messageReceived( S source, AbstractMessage m );
 }
