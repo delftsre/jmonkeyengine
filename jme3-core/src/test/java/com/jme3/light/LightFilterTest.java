@@ -36,10 +36,12 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.SpatialTransformer;
 import com.jme3.scene.shape.Box;
 import com.jme3.util.TempVars;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test light filtering for various light types.
@@ -52,30 +54,33 @@ public class LightFilterTest {
     private Camera cam;
     private Geometry geom;
     private LightList list;
+    private SpatialTransformer spatialTransformer;
     
     private void checkFilteredLights(int expected) {
         geom.updateGeometricState();
         filter.setCamera(cam); // setCamera resets the intersection cache
         list.clear();
         filter.filterLights(geom, list);
-        assert list.size() == expected;
+        assertTrue("list has expected size", list.size() == expected);
     }
     
     @Before
     public void setUp() {
         filter = new DefaultLightFilter();
-        
+
         cam = new Camera(512, 512);
-        cam.setFrustumPerspective(45, 1, 1, 1000);
+        cam.frustum.setPerspective(45, 1, 1, 1000);
         cam.setLocation(Vector3f.ZERO);
         cam.lookAtDirection(Vector3f.UNIT_Z, Vector3f.UNIT_Y);
         filter.setCamera(cam);
-        
+
         Box box = new Box(1, 1, 1);
         geom = new Geometry("geom", box);
         geom.setLocalTranslation(0, 0, 10);
         geom.updateGeometricState();
         list = new LightList(geom);
+
+        spatialTransformer = new SpatialTransformer();
     }
     
     @Test
@@ -118,7 +123,7 @@ public class LightFilterTest {
         checkFilteredLights(1);
         
         // Move the geometry away
-        geom.move(0, 0, FastMath.ZERO_TOLERANCE);
+        spatialTransformer.move(geom, 0, 0, FastMath.ZERO_TOLERANCE);
         checkFilteredLights(0);
         
         // Test if the algorithm converts the sphere 
@@ -190,7 +195,7 @@ public class LightFilterTest {
             // The spot is not touching the near plane of the camera yet, 
             // should still be culled.
             sl.setSpotRange(1f - FastMath.ZERO_TOLERANCE);
-            assert !sl.intersectsFrustum(cam, vars);
+            assertTrue("spotlight intersects frustum", !sl.intersectsFrustum(cam, vars));
             // should be culled from the geometry's PoV
             checkFilteredLights(0);
             
@@ -198,7 +203,7 @@ public class LightFilterTest {
             sl.setSpotRange(1f);
             // still culled from the geometry's PoV
             checkFilteredLights(0);
-            assert sl.intersectsFrustum(cam, vars);
+            assertTrue("spotlight intersects frustum after touching near plane", sl.intersectsFrustum(cam, vars));
         } finally {
             vars.release();
         }

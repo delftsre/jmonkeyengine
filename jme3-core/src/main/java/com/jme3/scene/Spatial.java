@@ -41,6 +41,7 @@ import com.jme3.light.LightList;
 import com.jme3.material.Material;
 import com.jme3.math.*;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.CameraFrustum;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
@@ -137,7 +138,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      */
     protected String name;
     // scale values
-    protected transient Camera.FrustumIntersect frustrumIntersects = Camera.FrustumIntersect.Intersects;
+    protected transient CameraFrustum.Intersect frustrumIntersects = CameraFrustum.Intersect.Intersects;
     protected RenderQueue.Bucket queueBucket = RenderQueue.Bucket.Inherit;
     protected ShadowMode shadowMode = RenderQueue.ShadowMode.Inherit;
     public transient float queueDistance = Float.NEGATIVE_INFINITY;
@@ -357,26 +358,26 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         CullHint cm = getCullHint();
         assert cm != CullHint.Inherit;
         if (cm == Spatial.CullHint.Always) {
-            setLastFrustumIntersection(Camera.FrustumIntersect.Outside);
+            setLastFrustumIntersection(CameraFrustum.Intersect.Outside);
             return false;
         } else if (cm == Spatial.CullHint.Never) {
-            setLastFrustumIntersection(Camera.FrustumIntersect.Intersects);
+            setLastFrustumIntersection(CameraFrustum.Intersect.Intersects);
             return true;
         }
 
         // check to see if we can cull this node
         frustrumIntersects = (parent != null ? parent.frustrumIntersects
-                : Camera.FrustumIntersect.Intersects);
+                : CameraFrustum.Intersect.Intersects);
 
-        if (frustrumIntersects == Camera.FrustumIntersect.Intersects) {
+        if (frustrumIntersects == CameraFrustum.Intersect.Intersects) {
             if (getQueueBucket() == Bucket.Gui) {
                 return cam.containsGui(getWorldBound());
             } else {
-                frustrumIntersects = cam.contains(getWorldBound());
+                frustrumIntersects = cam.frustum.contains(getWorldBound());
             }
         }
 
-        return frustrumIntersects != Camera.FrustumIntersect.Outside;
+        return frustrumIntersects != CameraFrustum.Intersect.Outside;
     }
 
     /**
@@ -1077,93 +1078,6 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
     }
 
     /**
-     * Translates the spatial by the given translation vector.
-     *
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial move(float x, float y, float z) {
-        this.localTransform.getTranslation().addLocal(x, y, z);
-        setTransformRefresh();
-
-        return this;
-    }
-
-    /**
-     * Translates the spatial by the given translation vector.
-     *
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial move(Vector3f offset) {
-        this.localTransform.getTranslation().addLocal(offset);
-        setTransformRefresh();
-
-        return this;
-    }
-
-    /**
-     * Scales the spatial by the given value
-     *
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial scale(float s) {
-        return scale(s, s, s);
-    }
-
-    /**
-     * Scales the spatial by the given scale vector.
-     *
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial scale(float x, float y, float z) {
-        this.localTransform.getScale().multLocal(x, y, z);
-        setTransformRefresh();
-
-        return this;
-    }
-
-    /**
-     * Rotates the spatial by the given rotation.
-     *
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial rotate(Quaternion rot) {
-        this.localTransform.getRotation().multLocal(rot);
-        setTransformRefresh();
-
-        return this;
-    }
-
-    /**
-     * Rotates the spatial by the xAngle, yAngle and zAngle angles (in radians),
-     * (aka pitch, yaw, roll) in the local coordinate space.
-     *
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial rotate(float xAngle, float yAngle, float zAngle) {
-        TempVars vars = TempVars.get();
-        Quaternion q = vars.quat1;
-        q.fromAngles(xAngle, yAngle, zAngle);
-        rotate(q);
-        vars.release();
-
-        return this;
-    }
-
-    /**
-     * Centers the spatial in the origin of the world bound.
-     * @return The spatial on which this method is called, e.g <code>this</code>.
-     */
-    public Spatial center() {
-        Vector3f worldTrans = getWorldTranslation();
-        Vector3f worldCenter = getWorldBound().getCenter();
-
-        Vector3f absTrans = worldTrans.subtract(worldCenter);
-        setLocalTranslation(absTrans);
-
-        return this;
-    }
-
-    /**
      * @see #setCullHint(CullHint)
      * @return the cull mode of this spatial, or if set to CullHint.Inherit, the
      * cull mode of its parent.
@@ -1350,7 +1264,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         }
 
         if(data == null){
-            userData.remove(key);            
+            userData.remove(key);
         }else if (data instanceof Savable) {
             userData.put(key, (Savable) data);
         } else {
@@ -1558,7 +1472,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @return The spatial's last frustum intersection result.
      */
-    public Camera.FrustumIntersect getLastFrustumIntersection() {
+    public CameraFrustum.Intersect getLastFrustumIntersection() {
         return frustrumIntersects;
     }
 
@@ -1570,7 +1484,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * @param intersects
      *            the new value
      */
-    public void setLastFrustumIntersection(Camera.FrustumIntersect intersects) {
+    public void setLastFrustumIntersection(CameraFrustum.Intersect intersects) {
         frustrumIntersects = intersects;
     }
 

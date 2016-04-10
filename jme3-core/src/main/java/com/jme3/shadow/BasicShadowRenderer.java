@@ -154,8 +154,8 @@ public class BasicShadowRenderer implements SceneProcessor {
         // update frustum points based on current camera
         Camera viewCam = viewPort.getCamera();
         ShadowUtil.updateFrustumPoints(viewCam,
-                viewCam.getFrustumNear(),
-                viewCam.getFrustumFar(),
+                viewCam.frustum.getNear(),
+                viewCam.frustum.getFar(),
                 1.0f,
                 points);
 

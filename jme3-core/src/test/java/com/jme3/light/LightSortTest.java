@@ -36,6 +36,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test light sorting (in the scene graph) for various light types.
@@ -43,7 +44,21 @@ import org.junit.Test;
  * @author Kirill Vainer
  */
 public class LightSortTest {
-    
+
+    private void checkDefaultLightListSorting(LightList list) {
+      assertTrue("first AmbientLight", list.get(0) instanceof AmbientLight); // Ambients always first
+      assertTrue("second DirectionalLight", list.get(1) instanceof DirectionalLight); // .. then directionals
+      assertTrue("third SpotLight", list.get(2) instanceof SpotLight); // Spot is 0 units away from geom
+      assertTrue("fourth PointLight", list.get(3) instanceof PointLight); // .. and point is 1 unit away.
+    }
+
+    private void checkMovedLightListSorting(LightList list) {
+      assertTrue("first AmbientLight after moving geometry", list.get(0) instanceof AmbientLight);
+      assertTrue("second DirectionalLight after moving geometry", list.get(1) instanceof DirectionalLight);
+      assertTrue("third SpotLight after moving geometry", list.get(2) instanceof PointLight);
+      assertTrue("fourth PointLight after moving geometry", list.get(3) instanceof SpotLight);
+    }
+
     @Test
     public void testSimpleSort() {
         Geometry g = new Geometry("test", new Mesh());
@@ -55,11 +70,8 @@ public class LightSortTest {
         list.add(new AmbientLight());
         
         list.sort(true);
-        
-        assert list.get(0) instanceof AmbientLight;     // Ambients always first
-        assert list.get(1) instanceof DirectionalLight; // .. then directionals
-        assert list.get(2) instanceof SpotLight;        // Spot is 0 units away from geom
-        assert list.get(3) instanceof PointLight;       // .. and point is 1 unit away.
+
+        checkDefaultLightListSorting(list);
     }
     
     @Test
@@ -85,20 +97,14 @@ public class LightSortTest {
         LightList list = g.getWorldLightList();
         
         // check the sorting (when geom is at 0,0,0)
-        assert list.get(0) instanceof AmbientLight;
-        assert list.get(1) instanceof DirectionalLight;
-        assert list.get(2) instanceof SpotLight;
-        assert list.get(3) instanceof PointLight;
-        
+        checkDefaultLightListSorting(list);
+
         // move the geometry closer to the point light
         g.setLocalTranslation(Vector3f.UNIT_X);
         n.updateGeometricState();
-        
-        assert list.get(0) instanceof AmbientLight;
-        assert list.get(1) instanceof DirectionalLight;
-        assert list.get(2) instanceof PointLight;
-        assert list.get(3) instanceof SpotLight;
-        
+
+        checkMovedLightListSorting(list);
+
         // now move the point light away from the geometry
         // and the spot light closer
         

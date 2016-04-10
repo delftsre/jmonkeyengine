@@ -39,6 +39,7 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.CameraFrustum;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.GeometryList;
 import com.jme3.renderer.queue.RenderQueue;
@@ -103,11 +104,11 @@ public class ShadowUtil {
         Vector3f dir = viewCam.getDirection();
         Vector3f up = viewCam.getUp();
 
-        float depthHeightRatio = viewCam.getFrustumTop() / viewCam.getFrustumNear();
+        float depthHeightRatio = viewCam.frustum.getTop() / viewCam.frustum.getNear();
         float near = nearOverride;
         float far = farOverride;
-        float ftop = viewCam.getFrustumTop();
-        float fright = viewCam.getFrustumRight();
+        float ftop = viewCam.frustum.getTop();
+        float fright = viewCam.frustum.getRight();
         float ratio = fright / ftop;
 
         float near_height;
@@ -288,9 +289,9 @@ public class ShadowUtil {
         shadowCam.setProjectionMatrix(null);
 
         if (ortho) {
-            shadowCam.setFrustum(-1, 1, -1, 1, 1, -1);
+            shadowCam.frustum.set(-1, 1, -1, 1, 1, -1);
         } else {
-            shadowCam.setFrustumPerspective(45, 1, 1, 150);
+            shadowCam.frustum.setPerspective(45, 1, 1, 150);
         }
 
         Matrix4f viewProjMatrix = shadowCam.getViewProjectionMatrix();
@@ -465,7 +466,7 @@ public class ShadowUtil {
         shadowCam.setProjectionMatrix(null);
 
         if (ortho) {
-            shadowCam.setFrustum(-1, 1, -1, 1, 1, -1);
+            shadowCam.frustum.set(-1, 1, -1, 1, 1, -1);
         }
 
         // create transform to rotate points to viewspace        
@@ -608,7 +609,7 @@ public class ShadowUtil {
             Geometry g = inputGeometryList.get(i);
             int planeState = camera.getPlaneState();
             camera.setPlaneState(0);
-            if (camera.contains(g.getWorldBound()) != Camera.FrustumIntersect.Outside) {
+            if (camera.frustum.contains(g.getWorldBound()) != CameraFrustum.Intersect.Outside) {
                 outputGeometryList.add(g);
             }
             camera.setPlaneState(planeState);
@@ -667,14 +668,14 @@ public class ShadowUtil {
     private static void addGeometriesInCamFrustumFromNode(Camera camera, Node scene, RenderQueue.ShadowMode mode, GeometryList outputGeometryList) {
         if (scene.getCullHint() == Spatial.CullHint.Always) return;
         camera.setPlaneState(0);
-        if (camera.contains(scene.getWorldBound()) != Camera.FrustumIntersect.Outside) {
+        if (camera.frustum.contains(scene.getWorldBound()) != CameraFrustum.Intersect.Outside) {
             for (Spatial child: scene.getChildren()) {
                 if (child instanceof Node) addGeometriesInCamFrustumFromNode(camera, (Node)child, mode, outputGeometryList);
                 else if (child instanceof Geometry && child.getCullHint() != Spatial.CullHint.Always) {
                     camera.setPlaneState(0);
                     if (checkShadowMode(child.getShadowMode(), mode) &&
                             !((Geometry)child).isGrouped() &&
-                            camera.contains(child.getWorldBound()) != Camera.FrustumIntersect.Outside) {
+                            camera.frustum.contains(child.getWorldBound()) != CameraFrustum.Intersect.Outside) {
                       outputGeometryList.add((Geometry)child);
                     }
                 }
@@ -703,7 +704,7 @@ public class ShadowUtil {
                 Camera camera = cameras[j];
                 int planeState = camera.getPlaneState();
                 camera.setPlaneState(0);
-                inFrustum = camera.contains(g.getWorldBound()) != Camera.FrustumIntersect.Outside;
+                inFrustum = camera.frustum.contains(g.getWorldBound()) != CameraFrustum.Intersect.Outside;
                 camera.setPlaneState(planeState);
             }
             if (inFrustum) {
@@ -743,7 +744,7 @@ public class ShadowUtil {
             Camera camera = cameras[j];
             int planeState = camera.getPlaneState();
             camera.setPlaneState(0);
-            inFrustum = camera.contains(scene.getWorldBound()) != Camera.FrustumIntersect.Outside && scene.checkCulling(vpCamera);
+            inFrustum = camera.frustum.contains(scene.getWorldBound()) != CameraFrustum.Intersect.Outside && scene.checkCulling(vpCamera);
             camera.setPlaneState(planeState);
         }
         if (inFrustum) {

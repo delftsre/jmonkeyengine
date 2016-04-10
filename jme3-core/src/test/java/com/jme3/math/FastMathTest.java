@@ -32,6 +32,7 @@
 package com.jme3.math;
 
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Verifies that algorithms in {@link FastMath} are working correctly.
@@ -47,13 +48,13 @@ public class FastMathTest {
     @Test
     public void testNearestPowerOfTwo() {
         for (int i = -100; i < 1; i++) {
-            assert FastMath.nearestPowerOfTwo(i) == 1;
+            assertTrue("is 1 for negative power", FastMath.nearestPowerOfTwo(i) == 1);
         }
         for (int i = 1; i < 10000; i++) {
             int nextPowerOf2 = FastMath.nearestPowerOfTwo(i);
-            assert i <= nextPowerOf2;
-            assert FastMath.isPowerOfTwo(nextPowerOf2);
-            assert nextPowerOf2 == nearestPowerOfTwoSlow(i);
+            assertTrue("is not smaller than the power", i <= nextPowerOf2);
+            assertTrue("is actually a power of two", FastMath.isPowerOfTwo(nextPowerOf2));
+            assertTrue("is correct", nextPowerOf2 == nearestPowerOfTwoSlow(i));
         }
     }
 }

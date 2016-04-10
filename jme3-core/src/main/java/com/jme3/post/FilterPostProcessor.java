@@ -148,10 +148,10 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
         Camera cam = vp.getCamera();
 
         //save view port diensions
-        left = cam.getViewPortLeft();
-        right = cam.getViewPortRight();
-        top = cam.getViewPortTop();
-        bottom = cam.getViewPortBottom();
+        left = cam.viewPort.getLeft();
+        right = cam.viewPort.getRight();
+        top = cam.viewPort.getTop();
+        bottom = cam.viewPort.getBottom();
         originalWidth = cam.getWidth();
         originalHeight = cam.getHeight();
         //first call to reshape
@@ -187,7 +187,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
     private void renderProcessing(Renderer r, FrameBuffer buff, Material mat) {
         if (buff == outputBuffer) {
             viewPort.getCamera().resize(originalWidth, originalHeight, false);
-            viewPort.getCamera().setViewPort(left, right, bottom, top);
+            viewPort.getCamera().viewPort.set(left, right, bottom, top);
             // update is redundant because resize and setViewPort will both
             // run the appropriate (and same) onXXXChange methods.
             // Also, update() updates some things that don't need to be updated.
@@ -199,7 +199,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
             }
         }else{
             viewPort.getCamera().resize(buff.getWidth(), buff.getHeight(), false);
-            viewPort.getCamera().setViewPort(0, 1, 0, 1);
+            viewPort.getCamera().viewPort.set(0, 1, 0, 1);
             // update is redundant because resize and setViewPort will both
             // run the appropriate (and same) onXXXChange methods.
             // Also, update() updates some things that don't need to be updated.
@@ -332,7 +332,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
             //If the camera is initialized and there are no filter to render, the camera viewport is restored as it was
             if (cameraInit) {
                 viewPort.getCamera().resize(originalWidth, originalHeight, true);
-                viewPort.getCamera().setViewPort(left, right, bottom, top);
+                viewPort.getCamera().viewPort.set(left, right, bottom, top);
                 viewPort.setOutputFrameBuffer(outputBuffer);
                 cameraInit = false;
             }
@@ -343,7 +343,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
            //to the viewportsize so that the backbuffer is rendered correctly
            if (multiView) {
                 viewPort.getCamera().resize(width, height, false);
-                viewPort.getCamera().setViewPort(0, 1, 0, 1);
+                viewPort.getCamera().viewPort.set(0, 1, 0, 1);
                 viewPort.getCamera().update();
                 renderManager.setCamera(viewPort.getCamera(), false);
            }
@@ -398,7 +398,7 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
         if (viewPort != null) {
             //reseting the viewport camera viewport to its initial value
             viewPort.getCamera().resize(originalWidth, originalHeight, true);
-            viewPort.getCamera().setViewPort(left, right, bottom, top);
+            viewPort.getCamera().viewPort.set(left, right, bottom, top);
             viewPort.setOutputFrameBuffer(outputBuffer);
             viewPort = null;
 
@@ -422,13 +422,13 @@ public class FilterPostProcessor implements SceneProcessor, Savable {
     public void reshape(ViewPort vp, int w, int h) {
         Camera cam = vp.getCamera();
         //this has no effect at first init but is useful when resizing the canvas with multi views
-        cam.setViewPort(left, right, bottom, top);
+        cam.viewPort.set(left, right, bottom, top);
         //resizing the camera to fit the new viewport and saving original dimensions
         cam.resize(w, h, false);
-        left = cam.getViewPortLeft();
-        right = cam.getViewPortRight();
-        top = cam.getViewPortTop();
-        bottom = cam.getViewPortBottom();
+        left = cam.viewPort.getLeft();
+        right = cam.viewPort.getRight();
+        top = cam.viewPort.getTop();
+        bottom = cam.viewPort.getBottom();
         originalWidth = w;
         originalHeight = h;
 

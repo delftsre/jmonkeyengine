@@ -99,7 +99,7 @@ public class SpotLightShadowRenderer extends AbstractShadowRenderer {
     protected void initFrustumCam() {
         Camera viewCam = viewPort.getCamera();
         frustumCam = viewCam.clone();
-        frustumCam.setFrustum(viewCam.getFrustumNear(), zFarOverride, viewCam.getFrustumLeft(), viewCam.getFrustumRight(), viewCam.getFrustumTop(), viewCam.getFrustumBottom());
+        frustumCam.frustum.set(viewCam.frustum.getNear(), zFarOverride, viewCam.frustum.getLeft(), viewCam.frustum.getRight(), viewCam.frustum.getTop(), viewCam.frustum.getBottom());
     }
 
     /**
@@ -125,15 +125,15 @@ public class SpotLightShadowRenderer extends AbstractShadowRenderer {
 
         float zFar = zFarOverride;
         if (zFar == 0) {
-            zFar = viewCam.getFrustumFar();
+            zFar = viewCam.frustum.getFar();
         }
 
         //We prevent computing the frustum points and splits with zeroed or negative near clip value
-        float frustumNear = Math.max(viewCam.getFrustumNear(), 0.001f);
+        float frustumNear = Math.max(viewCam.frustum.getNear(), 0.001f);
         ShadowUtil.updateFrustumPoints(viewCam, frustumNear, zFar, 1.0f, points);
         //shadowCam.setDirection(direction);
 
-        shadowCam.setFrustumPerspective(light.getSpotOuterAngle() * FastMath.RAD_TO_DEG * 2.0f, 1, 1f, light.getSpotRange());
+        shadowCam.frustum.setPerspective(light.getSpotOuterAngle() * FastMath.RAD_TO_DEG * 2.0f, 1, 1f, light.getSpotRange());
         shadowCam.getRotation().lookAt(light.getDirection(), shadowCam.getUp());
         shadowCam.setLocation(light.getPosition());
 

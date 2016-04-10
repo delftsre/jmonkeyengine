@@ -6,8 +6,6 @@ sourceSets {
     main {
         java {
             srcDir 'src/main/java'
-            srcDir 'src/plugins/java'
-            srcDir 'src/tools/java'
         }
     }
     test {
@@ -20,16 +18,16 @@ sourceSets {
 task updateVersionPropertiesFile << {
     def verfile = file('src/main/resources/com/jme3/system/version.properties')
     verfile.text = "# THIS IS AN AUTO-GENERATED FILE..\n" +
-                   "# DO NOT MODIFY!\n" + 
+                   "# DO NOT MODIFY!\n" +
                    "build.date=${jmeBuildDate}\n" +
                    "git.revision=${jmeRevision}\n" +
-                   "git.branch=${jmeBranchName}\n" + 
-                   "git.hash=${jmeGitHash}\n" + 
-                   "git.hash.short=${jmeShortGitHash}\n" + 
-                   "git.tag=${jmeGitTag}\n" + 
+                   "git.branch=${jmeBranchName}\n" +
+                   "git.hash=${jmeGitHash}\n" +
+                   "git.hash.short=${jmeShortGitHash}\n" +
+                   "git.tag=${jmeGitTag}\n" +
                    "name.full=jMonkeyEngine ${jmeFullVersion}\n" +
                    "version.full=${jmeFullVersion}\n" +
-                   "version.number=${jmeVersion}\n" + 
+                   "version.number=${jmeVersion}\n" +
                    "version.tag=${jmeVersionTag}"
 }
 

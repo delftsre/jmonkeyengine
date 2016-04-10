@@ -585,6 +585,26 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
     }
 
     /**
+     * <code>set</code> sets the values of this matrix from another (3D) matrix, leaving the fourth dimension values
+     * untouched.
+     *
+     * @param matrix
+     *            the matrix to read the value from.
+     */
+    public Matrix4f set(Matrix3f matrix) {
+        m00 = matrix.m00;
+        m01 = matrix.m01;
+        m02 = matrix.m02;
+        m10 = matrix.m10;
+        m11 = matrix.m11;
+        m12 = matrix.m12;
+        m20 = matrix.m20;
+        m21 = matrix.m21;
+        m22 = matrix.m22;
+        return this;
+    }
+
+    /**
      * <code>set</code> sets the values of this matrix from an array of
      * values assuming that the data is rowMajor order;
      * 
@@ -2163,59 +2183,63 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
         }
 
         Matrix4f comp = (Matrix4f) o;
-        if (Float.compare(m00, comp.m00) != 0) {
-            return false;
-        }
-        if (Float.compare(m01, comp.m01) != 0) {
-            return false;
-        }
-        if (Float.compare(m02, comp.m02) != 0) {
-            return false;
-        }
-        if (Float.compare(m03, comp.m03) != 0) {
+
+        return
+            Float.compare(m00, comp.m00) == 0 &&
+            Float.compare(m01, comp.m01) == 0 &&
+            Float.compare(m02, comp.m02) == 0 &&
+            Float.compare(m02, comp.m03) == 0 &&
+            Float.compare(m10, comp.m10) == 0 &&
+            Float.compare(m11, comp.m11) == 0 &&
+            Float.compare(m12, comp.m12) == 0 &&
+            Float.compare(m12, comp.m13) == 0 &&
+            Float.compare(m20, comp.m20) == 0 &&
+            Float.compare(m21, comp.m21) == 0 &&
+            Float.compare(m22, comp.m22) == 0 &&
+            Float.compare(m22, comp.m23) == 0 &&
+            Float.compare(m30, comp.m30) == 0 &&
+            Float.compare(m31, comp.m31) == 0 &&
+            Float.compare(m32, comp.m32) == 0 &&
+            Float.compare(m32, comp.m33) == 0;
+    }
+
+    /**
+     * are these two matrices the same? they are is they both have mXX values with less than delta difference.
+     *
+     * @param o
+     *            the object to compare for equality
+     * @param delta
+     *            accepted limit for float comparison
+     * @return true if they are equal
+     */
+    public boolean equals(Object o, float delta) {
+        if (!(o instanceof Matrix4f) || o == null) {
             return false;
         }
 
-        if (Float.compare(m10, comp.m10) != 0) {
-            return false;
-        }
-        if (Float.compare(m11, comp.m11) != 0) {
-            return false;
-        }
-        if (Float.compare(m12, comp.m12) != 0) {
-            return false;
-        }
-        if (Float.compare(m13, comp.m13) != 0) {
-            return false;
+        if (this == o) {
+            return true;
         }
 
-        if (Float.compare(m20, comp.m20) != 0) {
-            return false;
-        }
-        if (Float.compare(m21, comp.m21) != 0) {
-            return false;
-        }
-        if (Float.compare(m22, comp.m22) != 0) {
-            return false;
-        }
-        if (Float.compare(m23, comp.m23) != 0) {
-            return false;
-        }
+        Matrix4f comp = (Matrix4f) o;
 
-        if (Float.compare(m30, comp.m30) != 0) {
-            return false;
-        }
-        if (Float.compare(m31, comp.m31) != 0) {
-            return false;
-        }
-        if (Float.compare(m32, comp.m32) != 0) {
-            return false;
-        }
-        if (Float.compare(m33, comp.m33) != 0) {
-            return false;
-        }
-
-        return true;
+        return
+            Equality.equals(m00, comp.m00, delta) &&
+            Equality.equals(m01, comp.m01, delta) &&
+            Equality.equals(m02, comp.m02, delta) &&
+            Equality.equals(m03, comp.m03, delta) &&
+            Equality.equals(m10, comp.m10, delta) &&
+            Equality.equals(m11, comp.m11, delta) &&
+            Equality.equals(m12, comp.m12, delta) &&
+            Equality.equals(m13, comp.m13, delta) &&
+            Equality.equals(m20, comp.m20, delta) &&
+            Equality.equals(m21, comp.m21, delta) &&
+            Equality.equals(m22, comp.m22, delta) &&
+            Equality.equals(m23, comp.m23, delta) &&
+            Equality.equals(m30, comp.m30, delta) &&
+            Equality.equals(m31, comp.m31, delta) &&
+            Equality.equals(m32, comp.m32, delta) &&
+            Equality.equals(m33, comp.m33, delta);
     }
 
     public void write(JmeExporter e) throws IOException {

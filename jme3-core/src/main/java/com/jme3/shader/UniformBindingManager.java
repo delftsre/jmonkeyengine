@@ -242,8 +242,8 @@ public class UniformBindingManager {
         cam.getUp(camUp);
         cam.getDirection(camDir);
 
-        near = cam.getFrustumNear();
-        far = cam.getFrustumFar();
+        near = cam.frustum.getNear();
+        far = cam.frustum.getFar();
     }
 
     public void setViewPort(int viewX, int viewY, int viewWidth, int viewHeight) {

@@ -76,6 +76,6 @@ public final class PssmShadowUtil {
         BoundingBox bbOcc = ShadowUtil.computeUnionBound(occ, mat);
         BoundingBox bbRecv = ShadowUtil.computeUnionBound(recv, mat);
 
-        return min(max(bbOcc.getZExtent() - bbOcc.getCenter().z, bbRecv.getZExtent() - bbRecv.getCenter().z), cam.getFrustumFar());
+        return min(max(bbOcc.getZExtent() - bbOcc.getCenter().z, bbRecv.getZExtent() - bbRecv.getCenter().z), cam.frustum.getFar());
     }
 }

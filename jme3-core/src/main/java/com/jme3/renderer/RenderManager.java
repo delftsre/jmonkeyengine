@@ -874,10 +874,10 @@ public class RenderManager {
     private void setViewPort(Camera cam) {
         // this will make sure to update viewport only if needed
         if (cam != prevCam || cam.isViewportChanged()) {
-            viewX      = (int) (cam.getViewPortLeft() * cam.getWidth());
-            viewY      = (int) (cam.getViewPortBottom() * cam.getHeight());
-            int viewX2 = (int) (cam.getViewPortRight() * cam.getWidth());
-            int viewY2 = (int) (cam.getViewPortTop() * cam.getHeight());
+            viewX      = (int) (cam.viewPort.getLeft() * cam.getWidth());
+            viewY      = (int) (cam.viewPort.getBottom() * cam.getHeight());
+            int viewX2 = (int) (cam.viewPort.getRight() * cam.getWidth());
+            int viewY2 = (int) (cam.viewPort.getTop() * cam.getHeight());
             viewWidth  = viewX2 - viewX;
             viewHeight = viewY2 - viewY;
             uniformBindingManager.setViewPort(viewX, viewY, viewWidth, viewHeight);
@@ -913,7 +913,7 @@ public class RenderManager {
      * Set the camera to use for rendering.
      * <p>
      * First, the camera's 
-     * {@link Camera#setViewPort(float, float, float, float) view port parameters}
+     * {@link Camera#viewPort#set(float, float, float, float) view port parameters}
      * are applied. Then, the camera's {@link Camera#getViewMatrix() view} and 
      * {@link Camera#getProjectionMatrix() projection} matrices are set
      * on the renderer. If <code>ortho</code> is <code>true</code>, then

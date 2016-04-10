@@ -92,7 +92,7 @@ public class PointLightShadowRenderer extends AbstractShadowRenderer {
     protected void initFrustumCam() {
         Camera viewCam = viewPort.getCamera();
         frustumCam = viewCam.clone();
-        frustumCam.setFrustum(viewCam.getFrustumNear(), zFarOverride, viewCam.getFrustumLeft(), viewCam.getFrustumRight(), viewCam.getFrustumTop(), viewCam.getFrustumBottom());
+        frustumCam.frustum.set(viewCam.frustum.getNear(), zFarOverride, viewCam.frustum.getLeft(), viewCam.frustum.getRight(), viewCam.frustum.getTop(), viewCam.frustum.getBottom());
     }
     
 
@@ -122,7 +122,7 @@ public class PointLightShadowRenderer extends AbstractShadowRenderer {
         shadowCams[5].setAxes(Vector3f.UNIT_Z.mult(-1f), Vector3f.UNIT_Y, Vector3f.UNIT_X);
 
         for (int i = 0; i < CAM_NUMBER; i++) {
-            shadowCams[i].setFrustumPerspective(90f, 1f, 0.1f, light.getRadius());
+            shadowCams[i].frustum.setPerspective(90f, 1f, 0.1f, light.getRadius());
             shadowCams[i].setLocation(light.getPosition());
             shadowCams[i].update();
             shadowCams[i].updateViewProjection();
