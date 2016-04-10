@@ -106,7 +106,7 @@ public abstract class ImageRaster {
         if (image.getData().size() > 1) {
             throw new IllegalStateException("Use constructor that takes slices argument to read from multislice image");
         }
-        return create(image, 0, 0, false);
+        return create(image, 0);
     }
     
     public ImageRaster() {

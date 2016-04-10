@@ -34,6 +34,7 @@ package com.jme3.texture;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
+import com.jme3.export.xml.XMLExporter;
 import com.jme3.texture.image.*;
 import org.junit.*;
 import com.jme3.texture.Image.*;
@@ -47,7 +48,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * Verifies that class {@link Image} in package {@link Texture} is working correctly.
+ * Verifies that class {@link Image} in package {@package texture} is working correctly.
  * 
  * @author Mart Oude Weernink
  * @author Remco Tjeerdsma
@@ -216,10 +217,10 @@ public class ImageTest {
         myImage.setMultiSamples(4);
     }
 
-    //TODO: @Test
+    @Test
     public void readwriteTest(){
         boolean exception = false;
-        BinaryExporter be = new BinaryExporter();
+        XMLExporter be = new XMLExporter();
         try {
             myImage.write(be);
         } catch (IOException e) {
