@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,11 +83,11 @@ public class TextureArrayTest extends Texture2DTest {
 
         // Test Constructor
         texture = new TextureArray(images);
-        verify(image).getHeight();
-        verify(image).getWidth();
-        verify(image).getFormat();
+        verify(image, times(3)).getHeight();
+        verify(image, times(3)).getWidth();
+        verify(image, times(3)).getFormat();
         verify(image).getColorSpace();
-        verify(image).getMipMapSizes();
+        verify(image, times(3)).getMipMapSizes();
     }
 
     @Test
