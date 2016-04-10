@@ -32,8 +32,10 @@
 package com.jme3.texture.image;
 
 import com.jme3.math.ColorRGBA;
-import com.jme3.system.JmeSystem;
+import com.jme3.math.FastMath;
 import com.jme3.texture.Image;
+
+import java.nio.ByteBuffer;
 
 /**
  * Utility class for reading and writing from jME3 {@link Image images}.
@@ -108,8 +110,30 @@ public abstract class ImageRaster {
         }
         return create(image, 0);
     }
-    
-    public ImageRaster() {
+
+    protected final int[] components = new int[4];
+    protected ByteBuffer buffer;
+    protected final Image image;
+    protected final ImageCodec codec;
+    protected final byte[] temp;
+    protected int slice;
+
+    protected void rangeCheck(int x, int y) {
+        if (x < 0 || y < 0 || x >= this.getWidth() || y >= this.getHeight()) {
+            throw new IllegalArgumentException("x and y must be inside the image dimensions");
+        }
+    }
+
+    public ImageRaster(Image image, int slice) {
+        this.image = image;
+        this.slice = slice;
+        this.buffer = image.getData(slice);
+        this.codec = ImageCodec.lookup(image.getFormat());
+        if (codec instanceof ByteAlignedImageCodec || codec instanceof ByteOffsetImageCodec) {
+            this.temp = new byte[codec.bpp];
+        } else {
+            this.temp = null;
+        }
     }
     
     /**
@@ -150,10 +174,44 @@ public abstract class ImageRaster {
      * 
      * @param x The x coordinate, from 0 to width - 1.
      * @param y The y coordinate, from 0 to height - 1.
-     * @param color The color to write. 
-     * @throws IllegalArgumentException If x or y are outside the image dimensions.
+     * @param color The color to write.
      */
-    public abstract void setPixel(int x, int y, ColorRGBA color);
+
+    public void setPixel(int x, int y, ColorRGBA color) {
+        rangeCheck(x, y);
+
+        this.linearConversion(color);
+
+        // Check flags for grayscale
+        if (codec.isGray) {
+            float gray = color.r * 0.27f + color.g * 0.67f + color.b * 0.06f;
+            color = new ColorRGBA(gray, gray, gray, color.a);
+        }
+
+        switch (codec.type) {
+            case ImageCodec.FLAG_F16:
+                components[0] = (int) FastMath.convertFloatToHalf(color.a);
+                components[1] = (int) FastMath.convertFloatToHalf(color.r);
+                components[2] = (int) FastMath.convertFloatToHalf(color.g);
+                components[3] = (int) FastMath.convertFloatToHalf(color.b);
+                break;
+            case ImageCodec.FLAG_F32:
+                components[0] = (int) Float.floatToIntBits(color.a);
+                components[1] = (int) Float.floatToIntBits(color.r);
+                components[2] = (int) Float.floatToIntBits(color.g);
+                components[3] = (int) Float.floatToIntBits(color.b);
+                break;
+            case 0:
+                // Convert color to bits by multiplying by size
+                components[0] = Math.min((int) (color.a * codec.maxAlpha + 0.5f), codec.maxAlpha);
+                components[1] = Math.min((int) (color.r * codec.maxRed + 0.5f), codec.maxRed);
+                components[2] = Math.min((int) (color.g * codec.maxGreen + 0.5f), codec.maxGreen);
+                components[3] = Math.min((int) (color.b * codec.maxBlue + 0.5f), codec.maxBlue);
+                break;
+        }
+        this.codecWrite(x, y);
+        image.setUpdateNeeded();
+    }
     
     /**
      * Retrieve the color at the given coordinate.
@@ -183,7 +241,56 @@ public abstract class ImageRaster {
      * with the read color.
      * @throws IllegalArgumentException If x or y are outside the image dimensions.
      */
-    public abstract ColorRGBA getPixel(int x, int y, ColorRGBA store);
+
+    public ColorRGBA getPixel(int x, int y, ColorRGBA store) {
+        rangeCheck(x, y);
+
+        this.codecRead(x, y);
+        if (store == null) {
+            store = new ColorRGBA();
+        }
+        switch (codec.type) {
+            case ImageCodec.FLAG_F16:
+                store.set(FastMath.convertHalfToFloat((short) components[1]),
+                        FastMath.convertHalfToFloat((short) components[2]),
+                        FastMath.convertHalfToFloat((short) components[3]),
+                        FastMath.convertHalfToFloat((short) components[0]));
+                break;
+            case ImageCodec.FLAG_F32:
+                store.set(Float.intBitsToFloat((int) components[1]),
+                        Float.intBitsToFloat((int) components[2]),
+                        Float.intBitsToFloat((int) components[3]),
+                        Float.intBitsToFloat((int) components[0]));
+                break;
+            case 0:
+                // Convert to float and divide by bitsize to get into range 0.0 - 1.0.
+                store.set((float) components[1] / codec.maxRed,
+                        (float) components[2] / codec.maxGreen,
+                        (float) components[3] / codec.maxBlue,
+                        (float) components[0] / codec.maxAlpha);
+                break;
+        }
+        if (codec.isGray) {
+            store.g = store.b = store.r;
+        } else {
+            if (codec.maxRed == 0) {
+                store.r = 1;
+            }
+            if (codec.maxGreen == 0) {
+                store.g = 1;
+            }
+            if (codec.maxBlue == 0) {
+                store.b = 1;
+            }
+            if (codec.maxAlpha == 0) {
+                store.a = 1;
+            }
+        }
+
+        this.linearBackConversion(store);
+
+        return store;
+    }
     
     /**
      * Retrieve the color at the given coordinate.
@@ -201,4 +308,22 @@ public abstract class ImageRaster {
     public ColorRGBA getPixel(int x, int y) { 
         return getPixel(x, y, null);
     }
+
+    protected ByteBuffer getBuffer() {
+        if (buffer == null) {
+            this.buffer = image.getData(slice);
+        }
+        return buffer;
+    }
+
+    public void setSlice(int slice) {
+        this.slice = slice;
+        this.buffer = image.getData(slice);
+    }
+
+    public abstract void codecRead(int x, int y);
+    public abstract void codecWrite(int x, int y);
+    public void linearConversion(ColorRGBA color){};
+    public void linearBackConversion(ColorRGBA store){};
+
 }
