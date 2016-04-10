@@ -40,8 +40,9 @@ public class MipMapImageRaster extends CommonImageRaster {
 
     private int width[];
     private int height[];
-    private int mipLevel;
     private int[] offsets;
+    private int mipLevel;
+    private int maxMipLevel;
 
     public MipMapImageRaster(Image image, int slice) {
         super(image, slice);
@@ -57,15 +58,15 @@ public class MipMapImageRaster extends CommonImageRaster {
                     offsets[i] = image.getMipMapSizes()[i - 1] + offsets[i - 1];
                 }
             }
-
+            this.maxMipLevel = image.getMipMapSizes().length;
         } else {
             throw new IllegalArgumentException("Image must have MipMapSizes initialized.");
         }
     }
 
     public void setMipLevel(int mipLevel) {
-        if (mipLevel >= image.getMipMapSizes().length || mipLevel < 0) {
-            throw new IllegalArgumentException("Mip level must be between 0 and " + image.getMipMapSizes().length);
+        if (mipLevel >= maxMipLevel || mipLevel < 0) {
+            throw new IllegalArgumentException("Mip level must be between 0 and " + maxMipLevel);
         }
         this.mipLevel = mipLevel;
     }
