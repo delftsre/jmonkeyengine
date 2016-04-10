@@ -63,11 +63,26 @@ public class Texture2DTest {
     }
 
     @Test
-    public void testInitialisationOfTextureFromImage(){
+    public void testConstructorTexture(){
         final Image image = Mockito.mock(Image.class);
         when(image.getData(0)).thenReturn(null);
+
+        // Test Constructor with Image
         texture = new Texture2D(image);
         assert texture.getImage().equals(image);
+
+        // Test Constructor with width, height and Format
+        texture = new Texture2D(8, 2, Image.Format.ABGR8);
+        assert texture.getImage().getWidth() == 8;
+        assert texture.getImage().getHeight() == 2;
+        assert texture.getImage().getFormat().equals(Image.Format.ABGR8);
+
+        // Test Constructor with width, height numSamples and Format
+        texture = new Texture2D(4, 10, 5, Image.Format.Alpha8);
+        assert texture.getImage().getWidth() == 4;
+        assert texture.getImage().getHeight() == 10;
+        assert texture.getImage().getMultiSamples() == 5;
+        assert texture.getImage().getFormat().equals(Image.Format.Alpha8);
     }
 
     @Test
@@ -76,13 +91,49 @@ public class Texture2DTest {
         assert texture.equals(clone);
     }
 
-    @Test(expected = Exception.class)
-    public void testSetWrapNull(){
-        texture.setWrap(null);
-    }
-
     @Test
     public void testSetWrap(){
+        // Invalid setWrap
+        Exception exception = new Exception();
+        try{
+            texture.setWrap(null);
+        } catch (Exception e) {
+            exception = e;
+        }
+        assert exception instanceof IllegalArgumentException;
+
+        // Invalid setWrap - Use a non existing WrapAxis
+        try{
+            texture.setWrap(WrapAxis.R, WrapMode.Repeat);
+        } catch (Exception e){
+            exception = e;
+        }
+        assert exception instanceof IllegalArgumentException;
+
+        // Invalid setWrap - WrapAxis null
+        try{
+            texture.setWrap(null, WrapMode.Repeat);
+        } catch (Exception e){
+            exception = e;
+        }
+        assert exception instanceof IllegalArgumentException;
+
+        // Invalid setwrap - WrapMode null
+        try{
+            texture.setWrap(WrapAxis.T, null);
+        } catch (Exception e){
+            exception = e;
+        }
+        assert exception instanceof  IllegalArgumentException;
+
+        // Invalid getWrap - Use a non existing WrapAxis
+        try{
+            texture.getWrap(WrapAxis.R);
+        } catch (Exception e){
+            exception = e;
+        }
+        assert exception instanceof IllegalArgumentException;
+
         texture.setWrap(WrapAxis.S, WrapMode.Repeat);
         assert texture.getWrap(WrapAxis.S).equals(WrapMode.Repeat);
 
@@ -94,15 +145,24 @@ public class Texture2DTest {
         assert texture.getWrap(WrapAxis.T).equals(WrapMode.EdgeClamp);
     }
 
-    @Test(expected = Exception.class)
-    public void testInvalidGetWrap(){
-        texture.getWrap(null);
-    }
-
     @Test
     public void testHash(){
-        int expected = new Integer(941204392);
-        assert texture.hashCode() == expected;
+        int old_hash = texture.hashCode();
+        texture.setWrap(WrapMode.Repeat);
+        assert texture.hashCode() != old_hash;
+        texture.setWrap(WrapMode.EdgeClamp);
+        assert texture.hashCode() == old_hash;
+
+        texture.setWrap(WrapAxis.S, WrapMode.Repeat);
+        assert texture.hashCode() != old_hash;
+
+        texture.setWrap(WrapMode.EdgeClamp);
+        assert texture.hashCode() == old_hash;
+
+
+        texture.setWrap(WrapAxis.T, WrapMode.MirroredRepeat);
+        assert texture.hashCode() != old_hash;
+
     }
 
     @Test
@@ -117,8 +177,6 @@ public class Texture2DTest {
         clone.setWrap(WrapAxis.T, WrapMode.MirroredRepeat);
 
         assert clone.equals(texture) == false;
-
-
     }
 
 

@@ -92,7 +92,7 @@ public class Texture2D extends Texture {
      * @param numSamples
      */
     public Texture2D(int width, int height, int numSamples, Image.Format format){
-        this(new Image(format, width, height, null, ColorSpace.Linear));
+        this(width, height, format);
         getImage().setMultiSamples(numSamples);
     }
 
@@ -151,8 +151,8 @@ public class Texture2D extends Texture {
         if (mode == null) {
             throw new IllegalArgumentException("mode can not be null.");
         }
-        this.wrapS = mode;
-        this.wrapT = mode;
+        setWrap(WrapAxis.S, mode);
+        setWrap(WrapAxis.T, mode);
     }
 
     /**
