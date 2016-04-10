@@ -212,10 +212,14 @@ public class Texture2DTest {
     @Test
     public void readwriteTest() {
         Texture2D loaded_texture = new Texture2D();
-        this.writeAndRead(loaded_texture);
+        loaded_texture = (Texture2D) this.writeAndRead(loaded_texture);
+        assert texture_extended.getImage().getWidth() == loaded_texture.getImage().getWidth();
+        assert texture_extended.getImage().getHeight() == loaded_texture.getImage().getHeight();
+        assert texture_extended.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
+        assert texture_extended.getImage().equals(loaded_texture.getImage());
     }
 
-    public Texture2D writeAndRead(Texture2D loaded_texture){
+    public Texture writeAndRead(Texture loaded_texture){
         Boolean exception = false;
         String userHome = System.getProperty("user.home");
         BinaryExporter exporter = BinaryExporter.getInstance();
@@ -228,15 +232,11 @@ public class Texture2DTest {
         }
         BinaryImporter importer = BinaryImporter.getInstance();
         try{
-            loaded_texture = (Texture2D) importer.load(file);
+            loaded_texture = (Texture) importer.load(file);
         } catch(IOException e){
             System.out.println(e);
             exception = true;
         }
-        assert texture_extended.getImage().getWidth() == loaded_texture.getImage().getWidth();
-        assert texture_extended.getImage().getHeight() == loaded_texture.getImage().getHeight();
-        assert texture_extended.getImage().getFormat().equals(loaded_texture.getImage().getFormat());
-        assert texture_extended.getImage().equals(loaded_texture.getImage());
         return loaded_texture;
     }
 }

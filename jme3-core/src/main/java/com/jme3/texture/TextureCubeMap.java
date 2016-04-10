@@ -99,8 +99,7 @@ public class TextureCubeMap extends Texture3D {
 
     @Override
     public Texture createSimpleClone() {
-        TextureCubeMap clone = new TextureCubeMap();
-        createSimpleClone(clone);
-        return clone;
+        return createSimpleClone(new TextureCubeMap());
+
     }
 }
