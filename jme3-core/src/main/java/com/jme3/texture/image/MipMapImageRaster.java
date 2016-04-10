@@ -80,7 +80,7 @@ public class MipMapImageRaster extends CommonImageRaster {
     }
 
     @Override
-    public int getOffset() {
+    protected int getOffset() {
         return offsets[mipLevel];
     }
 }
