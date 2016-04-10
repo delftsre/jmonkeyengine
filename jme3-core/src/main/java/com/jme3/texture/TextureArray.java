@@ -45,10 +45,7 @@ import java.util.logging.Logger;
  * renderManager.getRenderer().getCaps().contains(Caps.TextureArray)
  * @author phate666
  */
-public class TextureArray extends Texture {
-
-    private WrapMode wrapS = WrapMode.EdgeClamp;
-    private WrapMode wrapT = WrapMode.EdgeClamp;
+public class TextureArray extends Texture2D {
 
     /**
      * Construct a TextureArray
@@ -95,61 +92,14 @@ public class TextureArray extends Texture {
     }
 
     @Override
-    public Texture createSimpleClone() {
-        TextureArray clone = new TextureArray();
-        createSimpleClone(clone);
-        return clone;
-    }
-
-    @Override
-    public Texture createSimpleClone(Texture rVal) {
-        rVal.setWrap(WrapAxis.S, wrapS);
-        rVal.setWrap(WrapAxis.T, wrapT);
-        return super.createSimpleClone(rVal);
-    }
-
-    @Override
     public Type getType() {
         return Type.TwoDimensionalArray;
     }
 
     @Override
-    public WrapMode getWrap(WrapAxis axis) {
-        switch (axis) {
-            case S:
-                return wrapS;
-            case T:
-                return wrapT;
-            default:
-                throw new IllegalArgumentException("invalid WrapAxis: " + axis);
-        }
+    public Texture createSimpleClone() {
+        return createSimpleClone(new TextureArray());
+
     }
 
-    @Override
-    public void setWrap(WrapAxis axis, WrapMode mode) {
-        if (mode == null) {
-            throw new IllegalArgumentException("mode can not be null.");
-        } else if (axis == null) {
-            throw new IllegalArgumentException("axis can not be null.");
-        }
-        switch (axis) {
-            case S:
-                this.wrapS = mode;
-                break;
-            case T:
-                this.wrapT = mode;
-                break;
-            default:
-                throw new IllegalArgumentException("Not applicable for 2D textures");
-        }
-    }
-
-    @Override
-    public void setWrap(WrapMode mode) {
-        if (mode == null) {
-            throw new IllegalArgumentException("mode can not be null.");
-        }
-        this.wrapS = mode;
-        this.wrapT = mode;
-    }
 }
