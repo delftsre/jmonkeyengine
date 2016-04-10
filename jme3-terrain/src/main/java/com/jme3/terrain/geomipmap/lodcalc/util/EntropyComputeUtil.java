@@ -31,19 +31,20 @@
  */
 package com.jme3.terrain.geomipmap.lodcalc.util;
 
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * Computes the entropy value δ (delta) for a given terrain block and
@@ -93,7 +94,7 @@ public class EntropyComputeUtil {
             ray.setOrigin(pos);
 
             results.clear();
-            terrainBlock.collideWith(ray, Matrix4f.IDENTITY, bbox, results);
+            terrainBlock.collideWith(ray, new Matrix(4), bbox, results);
 
             if (results.size() > 0){
                 Vector3f contactPoint = results.getClosestCollision().getContactPoint();

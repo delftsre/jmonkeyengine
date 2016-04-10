@@ -34,7 +34,7 @@ package jme3test.effect;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.ParticlePointMesh;
 import com.jme3.effect.shapes.EmitterBoxShape;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -52,7 +52,7 @@ public class TestPointSprite extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        final ParticleEmitter emit = new ParticleEmitter("Emitter", Type.Point, 10000);
+        final ParticleEmitter emit = new ParticleEmitter("Emitter", new ParticlePointMesh(), 10000);
         emit.setShape(new EmitterBoxShape(new Vector3f(-1.8f, -1.8f, -1.8f),
                                           new Vector3f(1.8f, 1.8f, 1.8f)));
         emit.setGravity(0, 0, 0);

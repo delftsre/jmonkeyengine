@@ -1,7 +1,7 @@
 package jme3tools.optimize;
 
 import com.jme3.material.Material;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
@@ -23,7 +23,7 @@ public class GeometryBatchFactory {
 
     private static final Logger logger = Logger.getLogger(GeometryBatchFactory.class.getName());
 
-    private static void doTransformVerts(FloatBuffer inBuf, int offset, FloatBuffer outBuf, Matrix4f transform) {
+    private static void doTransformVerts(FloatBuffer inBuf, int offset, FloatBuffer outBuf, Matrixable transform) {
         Vector3f pos = new Vector3f();
 
         // offset is given in element units
@@ -43,7 +43,7 @@ public class GeometryBatchFactory {
         }
     }
 
-    private static void doTransformNorms(FloatBuffer inBuf, int offset, FloatBuffer outBuf, Matrix4f transform) {
+    private static void doTransformNorms(FloatBuffer inBuf, int offset, FloatBuffer outBuf, Matrixable transform) {
         Vector3f norm = new Vector3f();
 
         // offset is given in element units
@@ -63,7 +63,7 @@ public class GeometryBatchFactory {
         }
     }
 
-    private static void doTransformTangents(FloatBuffer inBuf, int offset, int components, FloatBuffer outBuf, Matrix4f transform) {
+    private static void doTransformTangents(FloatBuffer inBuf, int offset, int components, FloatBuffer outBuf, Matrixable transform) {
         Vector3f tan = new Vector3f();
 
         // offset is given in element units
@@ -190,7 +190,7 @@ public class GeometryBatchFactory {
         for (Geometry geom : geometries) {
             Mesh inMesh = geom.getMesh();
             geom.computeWorldMatrix();
-            Matrix4f worldMatrix = geom.getWorldMatrix();
+            Matrixable worldMatrix = geom.getWorldMatrix();
 
             int geomVertCount = inMesh.getVertexCount();
             int geomTriCount = inMesh.getTriangleCount();

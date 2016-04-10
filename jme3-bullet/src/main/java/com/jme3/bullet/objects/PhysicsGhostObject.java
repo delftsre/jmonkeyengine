@@ -37,7 +37,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -117,11 +118,11 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Sets the physics object rotation
      * @param rotation the rotation of the actual physics object
      */
-    public void setPhysicsRotation(Matrix3f rotation) {
+    public void setPhysicsRotation(Matrixable rotation) {
         setPhysicsRotation(objectId, rotation);
     }
 
-    private native void setPhysicsRotation(long objectId, Matrix3f rotation);
+    private native void setPhysicsRotation(long objectId, Matrixable rotation);
 
     /**
      * Sets the physics object rotation
@@ -162,15 +163,15 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * @return the physicsLocation
      */
-    public Matrix3f getPhysicsRotationMatrix(Matrix3f rot) {
+    public Matrix getPhysicsRotationMatrix(Matrix rot) {
         if (rot == null) {
-            rot = new Matrix3f();
+            rot = new Matrix(3);
         }
         getPhysicsRotationMatrix(objectId, rot);
         return rot;
     }
 
-    private native void getPhysicsRotationMatrix(long objectId, Matrix3f rot);
+    private native void getPhysicsRotationMatrix(long objectId, Matrixable rot);
 
     /**
      * @return the physicsLocation
@@ -190,8 +191,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         return quat;
     }
 
-    public Matrix3f getPhysicsRotationMatrix() {
-        Matrix3f mtx = new Matrix3f();
+    public Matrixable getPhysicsRotationMatrix() {
+        Matrixable mtx = new Matrix(3);
         getPhysicsRotationMatrix(objectId, mtx);
         return mtx;
     }
@@ -283,7 +284,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         super.write(e);
         OutputCapsule capsule = e.getCapsule(this);
         capsule.write(getPhysicsLocation(new Vector3f()), "physicsLocation", new Vector3f());
-        capsule.write(getPhysicsRotationMatrix(new Matrix3f()), "physicsRotation", new Matrix3f());
+        capsule.write(getPhysicsRotationMatrix(new Matrix(3)), "physicsRotation", new Matrix(3));
         capsule.write(getCcdMotionThreshold(), "ccdMotionThreshold", 0);
         capsule.write(getCcdSweptSphereRadius(), "ccdSweptSphereRadius", 0);
     }
@@ -294,7 +295,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         InputCapsule capsule = e.getCapsule(this);
         buildObject();
         setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation", new Vector3f()));
-        setPhysicsRotation(((Matrix3f) capsule.readSavable("physicsRotation", new Matrix3f())));
+        setPhysicsRotation(((Matrixable) capsule.readSavable("physicsRotation", new Matrix(3))));
         setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0));
         setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0));
     }

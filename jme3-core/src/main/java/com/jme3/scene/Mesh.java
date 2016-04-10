@@ -38,7 +38,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.collision.bih.BIHTree;
 import com.jme3.export.*;
 import com.jme3.material.RenderState;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Triangle;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -919,7 +919,7 @@ public class Mesh implements Savable, Cloneable {
     /**
      * Generates a collision tree for the mesh.
      * Called automatically by {@link #collideWith(com.jme3.collision.Collidable, 
-     * com.jme3.math.Matrix4f, 
+     * com.jme3.math.Matrix, 
      * com.jme3.bounding.BoundingVolume, 
      * com.jme3.collision.CollisionResults) }.
      */
@@ -944,7 +944,7 @@ public class Mesh implements Savable, Cloneable {
      * graph elements such as {@link Spatial}s.
      */
     public int collideWith(Collidable other, 
-                           Matrix4f worldMatrix,
+                           Matrix worldMatrix,
                            BoundingVolume worldBound,
                            CollisionResults results){
 

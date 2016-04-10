@@ -46,7 +46,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
@@ -155,7 +156,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Sets the physics object rotation
      * @param rotation the rotation of the actual physics object
      */
-    public void setPhysicsRotation(Matrix3f rotation) {
+    public void setPhysicsRotation(Matrixable rotation) {
         rBody.getCenterOfMassTransform(tempTrans);
         Converter.convert(rotation, tempTrans.basis);
         rBody.setCenterOfMassTransform(tempTrans);
@@ -183,7 +184,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Gets the physics object rotation
      */
-    public Matrix3f getPhysicsRotationMatrix() {
+    public Matrixable getPhysicsRotationMatrix() {
         return getPhysicsRotationMatrix(null);
     }
 
@@ -203,9 +204,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Gets the physics object rotation as a matrix, no conversions and no object instantiation
      * @param rotation the rotation of the actual physics object is stored in this Matrix3f
      */
-    public Matrix3f getPhysicsRotationMatrix(Matrix3f rotation) {
+    public Matrix getPhysicsRotationMatrix(Matrix rotation) {
         if (rotation == null) {
-            rotation = new Matrix3f();
+            rotation = new Matrix(3);
         }
         rBody.getCenterOfMassTransform(tempTrans);
         return Converter.convert(tempTrans.basis, rotation);
@@ -247,9 +248,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Gets the physics object rotation
      * @param rotation the rotation of the actual physics object is stored in this Matrix3f
      */
-    public Matrix3f getInterpolatedPhysicsRotation(Matrix3f rotation) {
+    public Matrixable getInterpolatedPhysicsRotation(Matrix rotation) {
         if (rotation == null) {
-            rotation = new Matrix3f();
+            rotation = new Matrix(3);
         }
         rBody.getInterpolationWorldTransform(tempTrans);
         return Converter.convert(tempTrans.basis, rotation);
@@ -636,7 +637,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         capsule.write(getCcdSweptSphereRadius(), "ccdSweptSphereRadius", 0);
 
         capsule.write(getPhysicsLocation(new Vector3f()), "physicsLocation", new Vector3f());
-        capsule.write(getPhysicsRotationMatrix(new Matrix3f()), "physicsRotation", new Matrix3f());
+        capsule.write(getPhysicsRotationMatrix(new Matrix(3)), "physicsRotation", new Matrix(3));
 
         capsule.writeSavableArrayList(joints, "joints", null);
     }
@@ -661,7 +662,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0));
 
         setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation", new Vector3f()));
-        setPhysicsRotation((Matrix3f) capsule.readSavable("physicsRotation", new Matrix3f()));
+        setPhysicsRotation((Matrixable) capsule.readSavable("physicsRotation", new Matrix(3)));
 
         joints = capsule.readSavableArrayList("joints", null);
     }

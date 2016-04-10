@@ -34,6 +34,7 @@ package com.jme3.bullet.util;
 import com.bulletphysics.collision.shapes.IndexedMesh;
 import com.bulletphysics.dom.HeightfieldTerrainShape;
 import com.jme3.math.FastMath;
+import com.jme3.math.Matrixable;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
@@ -173,13 +174,13 @@ public class Converter {
         return newMatrix;
     }
 
-    public static com.jme3.math.Matrix3f convert(javax.vecmath.Matrix3f oldMatrix) {
-        com.jme3.math.Matrix3f newMatrix = new com.jme3.math.Matrix3f();
+    public static Matrixable convert(javax.vecmath.Matrix3f oldMatrix) {
+        com.jme3.math.Matrix newMatrix = new com.jme3.math.Matrix(3);
         convert(oldMatrix, newMatrix);
         return newMatrix;
     }
 
-    public static com.jme3.math.Matrix3f convert(javax.vecmath.Matrix3f oldMatrix, com.jme3.math.Matrix3f newMatrix) {
+    public static com.jme3.math.Matrix convert(javax.vecmath.Matrix3f oldMatrix, com.jme3.math.Matrix newMatrix) {
         newMatrix.set(0, 0, oldMatrix.m00);
         newMatrix.set(0, 1, oldMatrix.m01);
         newMatrix.set(0, 2, oldMatrix.m02);
@@ -192,13 +193,13 @@ public class Converter {
         return newMatrix;
     }
 
-    public static javax.vecmath.Matrix3f convert(com.jme3.math.Matrix3f oldMatrix) {
+    public static javax.vecmath.Matrix3f convert(Matrixable oldMatrix) {
         javax.vecmath.Matrix3f newMatrix = new javax.vecmath.Matrix3f();
         convert(oldMatrix, newMatrix);
         return newMatrix;
     }
 
-    public static javax.vecmath.Matrix3f convert(com.jme3.math.Matrix3f oldMatrix, javax.vecmath.Matrix3f newMatrix) {
+    public static javax.vecmath.Matrix3f convert(Matrixable oldMatrix, javax.vecmath.Matrix3f newMatrix) {
         newMatrix.m00 = oldMatrix.get(0, 0);
         newMatrix.m01 = oldMatrix.get(0, 1);
         newMatrix.m02 = oldMatrix.get(0, 2);

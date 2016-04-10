@@ -38,7 +38,9 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
+
 import java.io.IOException;
 
 /**
@@ -71,7 +73,7 @@ public class NewtonianParticleInfluencer extends DefaultParticleInfluencer {
             // calculating surface tangent (velocity contains the 'normal' value)
             temp.set(particle.velocity.z * surfaceTangentFactor, particle.velocity.y * surfaceTangentFactor, -particle.velocity.x * surfaceTangentFactor);
             if (surfaceTangentRotation != 0.0f) {// rotating the tangent
-                Matrix3f m = new Matrix3f();
+                Matrixable m = new Matrix(3);
                 m.fromAngleNormalAxis(FastMath.PI * surfaceTangentRotation, particle.velocity);
                 temp = m.multLocal(temp);
             }

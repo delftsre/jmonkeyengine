@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.SafeArrayList;
@@ -120,7 +120,7 @@ public class BatchNode extends GeometryGroupNode {
         setNeedsFullRebatch(true);
     }
 
-    protected Matrix4f getTransformMatrix(Geometry g){
+    protected Matrixable getTransformMatrix(Geometry g){
         return g.cachedWorldMat;
     }
     
@@ -139,7 +139,7 @@ public class BatchNode extends GeometryGroupNode {
             FloatBuffer oposBuf = (FloatBuffer) opvb.getData();
             VertexBuffer onvb = origMesh.getBuffer(VertexBuffer.Type.Normal);
             FloatBuffer onormBuf = (FloatBuffer) onvb.getData();
-            Matrix4f transformMat = getTransformMatrix(bg);
+            Matrixable transformMat = getTransformMatrix(bg);
             
             if (mesh.getBuffer(VertexBuffer.Type.Tangent) != null) {
 
@@ -525,7 +525,7 @@ public class BatchNode extends GeometryGroupNode {
         }
     }
 
-    private void doTransforms(FloatBuffer bindBufPos, FloatBuffer bindBufNorm, FloatBuffer bufPos, FloatBuffer bufNorm, int start, int end, Matrix4f transform) {
+    private void doTransforms(FloatBuffer bindBufPos, FloatBuffer bindBufNorm, FloatBuffer bufPos, FloatBuffer bufNorm, int start, int end, Matrixable transform) {
         TempVars vars = TempVars.get();
         Vector3f pos = vars.vect1;
         Vector3f norm = vars.vect2;
@@ -571,7 +571,7 @@ public class BatchNode extends GeometryGroupNode {
         bufNorm.put(tmpFloatN, 0, length);
     }
 
-    private void doTransformsTangents(FloatBuffer bindBufPos, FloatBuffer bindBufNorm, FloatBuffer bindBufTangents,FloatBuffer bufPos, FloatBuffer bufNorm, FloatBuffer bufTangents, int start, int end, Matrix4f transform) {
+    private void doTransformsTangents(FloatBuffer bindBufPos, FloatBuffer bindBufNorm, FloatBuffer bindBufTangents,FloatBuffer bufPos, FloatBuffer bufNorm, FloatBuffer bufTangents, int start, int end, Matrixable transform) {
         TempVars vars = TempVars.get();
         Vector3f pos = vars.vect1;
         Vector3f norm = vars.vect2;

@@ -35,6 +35,7 @@ package jme3test.helloworld;
 import com.jme3.app.SimpleApplication;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -50,7 +51,7 @@ public class HelloEffects extends SimpleApplication {
   @Override
   public void simpleInitApp() {
     ParticleEmitter fire = 
-            new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 30);
+            new ParticleEmitter("Emitter", new ParticleTriMesh(), 30);
     Material mat_red = new Material(assetManager, 
             "Common/MatDefs/Misc/Particle.j3md");
     mat_red.setTexture("Texture", assetManager.loadTexture(
@@ -70,7 +71,7 @@ public class HelloEffects extends SimpleApplication {
     rootNode.attachChild(fire);
 
     ParticleEmitter debris = 
-            new ParticleEmitter("Debris", ParticleMesh.Type.Triangle, 10);
+            new ParticleEmitter("Debris", new ParticleTriMesh(), 10);
     Material debris_mat = new Material(assetManager, 
             "Common/MatDefs/Misc/Particle.j3md");
     debris_mat.setTexture("Texture", assetManager.loadTexture(

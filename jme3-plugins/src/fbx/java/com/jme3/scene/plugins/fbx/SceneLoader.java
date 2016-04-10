@@ -60,7 +60,8 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -910,7 +911,7 @@ public class SceneLoader implements AssetLoader {
 		float[] m = new float[transform.length];
 		for(int i = 0; i < transform.length; ++i)
 			m[i] = (float) transform[i];
-		Matrix4f matrix = new Matrix4f(m);
+		Matrixable matrix = new Matrix(m);
 		Vector3f pos = matrix.toTranslationVector();
 		Quaternion rot = matrix.toRotationQuat();
 		Vector3f scale = matrix.toScaleVector();

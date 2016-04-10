@@ -33,7 +33,7 @@ package jme3test.effect;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -140,7 +140,7 @@ public class TestSoftParticles extends SimpleApplication {
         material.setFloat("Softness", 3f); // 
         
         //Fire
-        ParticleEmitter fire = new ParticleEmitter("Fire", ParticleMesh.Type.Triangle, 30);
+        ParticleEmitter fire = new ParticleEmitter("Fire", new ParticleTriMesh(), 30);
         fire.setMaterial(material);
         fire.setShape(new EmitterSphereShape(Vector3f.ZERO, 0.1f));
         fire.setImagesX(2);
@@ -157,7 +157,7 @@ public class TestSoftParticles extends SimpleApplication {
         particleNode.attachChild(fire);
         
         
-        ParticleEmitter smoke = new ParticleEmitter("Smoke", ParticleMesh.Type.Triangle, 30);
+        ParticleEmitter smoke = new ParticleEmitter("Smoke", new ParticleTriMesh(), 30);
         smoke.setMaterial(material);
         smoke.setShape(new EmitterSphereShape(Vector3f.ZERO, 5));
         smoke.setImagesX(1);

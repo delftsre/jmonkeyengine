@@ -32,7 +32,7 @@
 package com.jme3.bullet.joints;
 
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector3f;
 
 /**
@@ -60,7 +60,7 @@ public class SixDofSpringJoint extends SixDofJoint {
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */
-    public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, boolean useLinearReferenceFrameA) {
+    public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrixable rotA, Matrixable rotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB, rotA, rotB, useLinearReferenceFrameA);
     }
     public void enableSpring(int index, boolean onOff) {
@@ -87,6 +87,6 @@ public class SixDofSpringJoint extends SixDofJoint {
     }
     native void setEquilibriumPoint(long objctId, int index);
     @Override
-    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB, boolean useLinearReferenceFrameA);
+    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrixable rotA, Vector3f pivotB, Matrixable rotB, boolean useLinearReferenceFrameA);
 
 }

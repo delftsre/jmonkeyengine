@@ -34,7 +34,7 @@ package jme3test.effect;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
@@ -52,7 +52,7 @@ public class TestParticleExportingCloning extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        ParticleEmitter emit = new ParticleEmitter("Emitter", Type.Triangle, 200);
+        ParticleEmitter emit = new ParticleEmitter("Emitter", new ParticleTriMesh(), 200);
         emit.setShape(new EmitterSphereShape(Vector3f.ZERO, 1f));
         emit.setGravity(0, 0, 0);
         emit.setLowLife(5);

@@ -207,7 +207,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
             if (value) {
                 System.out.println("Reset");
                 hoverControl.setPhysicsLocation(new Vector3f(-140, 14, -23));
-                hoverControl.setPhysicsRotation(new Matrix3f());
+                hoverControl.setPhysicsRotation(new Matrix(3));
                 hoverControl.clearForces();
             } else {
             }

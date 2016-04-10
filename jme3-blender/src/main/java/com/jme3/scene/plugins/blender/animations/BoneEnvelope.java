@@ -1,6 +1,6 @@
 package com.jme3.scene.plugins.blender.animations;
 
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.plugins.blender.file.DynamicArray;
 import com.jme3.scene.plugins.blender.file.Structure;
@@ -36,7 +36,7 @@ public class BoneEnvelope {
      *            a variable that tells if we use the Y-is up axis orientation
      */
     @SuppressWarnings("unchecked")
-    public BoneEnvelope(Structure boneStructure, Matrix4f armatureWorldMatrix, boolean fixUpAxis) {
+    public BoneEnvelope(Structure boneStructure, Matrixable armatureWorldMatrix, boolean fixUpAxis) {
         distance = ((Number) boneStructure.getFieldValue("dist")).floatValue();
         weight = ((Number) boneStructure.getFieldValue("weight")).floatValue();
         boneHeadRadius = ((Number) boneStructure.getFieldValue("rad_head")).floatValue();

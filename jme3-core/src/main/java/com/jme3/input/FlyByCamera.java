@@ -34,7 +34,8 @@ package com.jme3.input;
 import com.jme3.collision.MotionAllowedListener;
 import com.jme3.input.controls.*;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -311,7 +312,7 @@ public class FlyByCamera implements AnalogListener, ActionListener {
             }
         }
 
-        Matrix3f mat = new Matrix3f();
+        Matrixable mat = new Matrix(3);
         mat.fromAngleNormalAxis(rotationSpeed * value, axis);
 
         Vector3f up = cam.getUp();

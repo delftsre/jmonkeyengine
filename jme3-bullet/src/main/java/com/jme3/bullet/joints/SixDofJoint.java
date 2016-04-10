@@ -38,7 +38,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.Iterator;
@@ -59,7 +60,7 @@ import java.util.logging.Logger;
  */
 public class SixDofJoint extends PhysicsJoint {
 
-    Matrix3f rotA, rotB;
+    Matrixable rotA, rotB;
     boolean useLinearReferenceFrameA;
     LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<RotationalLimitMotor>();
     TranslationalLimitMotor translationalMotor;
@@ -75,7 +76,7 @@ public class SixDofJoint extends PhysicsJoint {
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */
-    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, boolean useLinearReferenceFrameA) {
+    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrixable rotA, Matrixable rotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         this.rotA = rotA;
@@ -93,8 +94,8 @@ public class SixDofJoint extends PhysicsJoint {
     public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
-        rotA = new Matrix3f();
-        rotB = new Matrix3f();
+        rotA = new Matrix(3);
+        rotB = new Matrix(3);
 
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
@@ -160,7 +161,7 @@ public class SixDofJoint extends PhysicsJoint {
 
     private native void setAngularLowerLimit(long objctId, Vector3f vector);
 
-    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB, boolean useLinearReferenceFrameA);
+    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrixable rotA, Vector3f pivotB, Matrixable rotB, boolean useLinearReferenceFrameA);
 
     @Override
     public void read(JmeImporter im) throws IOException {

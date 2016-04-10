@@ -45,7 +45,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
@@ -251,7 +251,7 @@ public class TestFancyCar extends SimpleApplication implements ActionListener {
             if (value) {
                 System.out.println("Reset");
                 player.setPhysicsLocation(Vector3f.ZERO);
-                player.setPhysicsRotation(new Matrix3f());
+                player.setPhysicsRotation(new Matrix(3));
                 player.setLinearVelocity(Vector3f.ZERO);
                 player.setAngularVelocity(Vector3f.ZERO);
                 player.resetSuspension();

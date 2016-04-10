@@ -5,6 +5,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.LowPassFilter;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -222,7 +223,7 @@ public class TestPostWater extends SimpleApplication {
         /**
          * Uses Texture from jme3-test-data library!
          */
-        ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 30);
+        ParticleEmitter fire = new ParticleEmitter("Emitter", new ParticleTriMesh(), 30);
         Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
         mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/flame.png"));
 

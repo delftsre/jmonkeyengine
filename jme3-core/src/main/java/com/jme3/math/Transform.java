@@ -259,15 +259,15 @@ public final class Transform implements Savable, Cloneable, java.io.Serializable
         return store;
     }
 
-    public Matrix4f toTransformMatrix() {
-        Matrix4f trans = new Matrix4f();
+    public Matrixable toTransformMatrix() {
+        Matrixable trans = new Matrix(4);
         trans.setTranslation(translation);
         trans.setRotationQuaternion(rot);
         trans.setScale(scale);
         return trans;
     }
     
-    public void fromTransformMatrix(Matrix4f mat) {
+    public void fromTransformMatrix(Matrixable mat) {
         translation.set(mat.toTranslationVector());
         rot.set(mat.toRotationQuat());
         scale.set(mat.toScaleVector());

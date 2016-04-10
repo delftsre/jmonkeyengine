@@ -282,7 +282,7 @@ public class TestAttachDriver extends SimpleApplication implements ActionListene
             if (value) {
                 System.out.println("Reset");
                 vehicle.setPhysicsLocation(new Vector3f(0, 0, 0));
-                vehicle.setPhysicsRotation(new Matrix3f());
+                vehicle.setPhysicsRotation(new Matrix(3));
                 vehicle.setLinearVelocity(Vector3f.ZERO);
                 vehicle.setAngularVelocity(Vector3f.ZERO);
                 vehicle.resetSuspension();

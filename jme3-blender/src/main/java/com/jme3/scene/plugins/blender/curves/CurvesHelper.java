@@ -34,7 +34,8 @@ package com.jme3.scene.plugins.blender.curves;
 import java.util.logging.Logger;
 
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.plugins.blender.AbstractBlenderHelper;
@@ -145,7 +146,7 @@ public class CurvesHelper extends AbstractBlenderHelper {
         float angle = FastMath.acos(planeNormal.dot(Vector3f.UNIT_X));
         Vector3f rotationVector = Vector3f.UNIT_X.cross(planeNormal).normalizeLocal();
         
-        Matrix4f m = new Matrix4f();
+        Matrixable m = new Matrix(4);
         m.setRotationQuaternion(new Quaternion().fromAngleAxis(angle, rotationVector));
         m.setTranslation(firstCurvePoint);
 

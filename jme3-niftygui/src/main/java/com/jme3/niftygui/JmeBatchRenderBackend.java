@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.scene.Geometry;
@@ -88,7 +88,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
   private Map<Integer, Texture2D> textures = new HashMap<Integer, Texture2D>();
   private int textureAtlasId = 1;
   private Batch currentBatch;
-  private Matrix4f tempMat = new Matrix4f();
+  private Matrix tempMat = new Matrix(4);
   private ByteBuffer initialData;
 
   // this is only used for debugging purpose and will make the removed textures filled with a color

@@ -34,7 +34,9 @@ package jme3test.effect;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.ParticlePointMesh;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -56,7 +58,7 @@ public class TestExplosionEffect extends SimpleApplication {
     private static final float COUNT_FACTOR_F = 1f;
 
     private static final boolean POINT_SPRITE = true;
-    private static final Type EMITTER_TYPE = POINT_SPRITE ? Type.Point : Type.Triangle;
+    private static final ParticleMesh EMITTER_TYPE = POINT_SPRITE ? new ParticlePointMesh() : new ParticleTriMesh();
 
     public static void main(String[] args){
         TestExplosionEffect app = new TestExplosionEffect();
@@ -132,7 +134,7 @@ public class TestExplosionEffect extends SimpleApplication {
     }
 
     private void createSpark(){
-        spark = new ParticleEmitter("Spark", Type.Triangle, 30 * COUNT_FACTOR);
+        spark = new ParticleEmitter("Spark", new ParticleTriMesh(), 30 * COUNT_FACTOR);
         spark.setStartColor(new ColorRGBA(1f, 0.8f, 0.36f, (float) (1.0f / COUNT_FACTOR_F)));
         spark.setEndColor(new ColorRGBA(1f, 0.8f, 0.36f, 0f));
         spark.setStartSize(.5f);
@@ -153,7 +155,7 @@ public class TestExplosionEffect extends SimpleApplication {
     }
 
     private void createSmokeTrail(){
-        smoketrail = new ParticleEmitter("SmokeTrail", Type.Triangle, 22 * COUNT_FACTOR);
+        smoketrail = new ParticleEmitter("SmokeTrail", new ParticleTriMesh(), 22 * COUNT_FACTOR);
         smoketrail.setStartColor(new ColorRGBA(1f, 0.8f, 0.36f, (float) (1.0f / COUNT_FACTOR_F)));
         smoketrail.setEndColor(new ColorRGBA(1f, 0.8f, 0.36f, 0f));
         smoketrail.setStartSize(.2f);
@@ -176,7 +178,7 @@ public class TestExplosionEffect extends SimpleApplication {
     }
 
     private void createDebris(){
-        debris = new ParticleEmitter("Debris", Type.Triangle, 15 * COUNT_FACTOR);
+        debris = new ParticleEmitter("Debris", new ParticleTriMesh(), 15 * COUNT_FACTOR);
         debris.setSelectRandomImage(true);
         debris.setRandomAngle(true);
         debris.setRotateSpeed(FastMath.TWO_PI * 4);
@@ -201,7 +203,7 @@ public class TestExplosionEffect extends SimpleApplication {
     }
 
     private void createShockwave(){
-        shockwave = new ParticleEmitter("Shockwave", Type.Triangle, 1 * COUNT_FACTOR);
+        shockwave = new ParticleEmitter("Shockwave", new ParticleTriMesh(), 1 * COUNT_FACTOR);
 //        shockwave.setRandomAngle(true);
         shockwave.setFaceNormal(Vector3f.UNIT_Y);
         shockwave.setStartColor(new ColorRGBA(.48f, 0.17f, 0.01f, (float) (.8f / COUNT_FACTOR_F)));

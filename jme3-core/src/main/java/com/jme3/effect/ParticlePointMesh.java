@@ -31,7 +31,8 @@
  */
 package com.jme3.effect;
 
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrixable;
+import com.jme3.material.Material;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
@@ -113,7 +114,7 @@ public class ParticlePointMesh extends ParticleMesh {
     }
 
     @Override
-    public void updateParticleData(Particle[] particles, Camera cam, Matrix3f inverseRotation) {
+    public void updateParticleData(Particle[] particles, Camera cam, Matrixable inverseRotation) {
         VertexBuffer pvb = getBuffer(VertexBuffer.Type.Position);
         FloatBuffer positions = (FloatBuffer) pvb.getData();
 
@@ -163,5 +164,14 @@ public class ParticlePointMesh extends ParticleMesh {
         cvb.updateData(colors);
         svb.updateData(sizes);
         tvb.updateData(texcoords);
+    }
+
+    @Override
+    public void setQuadraticFloat(Camera cam, Material material) {
+        float C = cam.getProjectionMatrix().get(0, 0);
+        C *= cam.getWidth() * 0.5f;
+
+        // send attenuation params
+        material.setFloat("Quadratic", C);
     }
 }
