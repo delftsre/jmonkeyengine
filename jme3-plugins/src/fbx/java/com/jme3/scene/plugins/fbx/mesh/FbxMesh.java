@@ -162,7 +162,7 @@ public final class FbxMesh extends FbxNodeAttribute<IntMap<Mesh>> {
     }
     
     private void setPositions(double[] positions) {
-        this.positions = FbxLayerElement.toVector3(positions);
+        this.positions = Vector3f.toVector3(positions);
     }
     
     private void setEdges(int[] edges) {

@@ -1,0 +1,50 @@
+{
+    "NodeAttribute": {
+        "Root": "com.jme3.scene.plugins.fbx.node.FbxNullAttribute",
+        "LimbNode": "com.jme3.scene.plugins.fbx.node.FbxNullAttribute",
+        "Null": "com.jme3.scene.plugins.fbx.node.FbxNullAttribute",
+        "IKEffector": "com.jme3.scene.plugins.fbx.node.FbxNullAttribute",
+        "FKEffector": "com.jme3.scene.plugins.fbx.node.FbxNullAttribute"
+    },
+    "Geometry": {
+        "Mesh": "com.jme3.scene.plugins.fbx.mesh.FbxMesh"
+    },
+    "Model": {
+        "LimbNode": "com.jme3.scene.plugins.fbx.anim.FbxLimbNode",
+        "*": "com.jme3.scene.plugins.fbx.node.FbxNode"
+    },
+    "Pose": {
+        "BindPose": "com.jme3.scene.plugins.fbx.anim.FbxBindPose"
+    },
+    "Material": {
+        "*": "com.jme3.scene.plugins.fbx.material.FbxMaterial"
+    },
+    "Deformer": {
+        "Skin": "com.jme3.scene.plugins.fbx.anim.FbxSkinDeformer",
+        "Cluster": "com.jme3.scene.plugins.fbx.anim.FbxCluster"
+    },
+    "Video": {
+        "Clip": "com.jme3.scene.plugins.fbx.material.FbxImage"
+    },
+    "Texture": {
+        "*": "com.jme3.scene.plugins.fbx.material.FbxTexture"
+    },
+    "AnimationStack": { 
+        "*": "com.jme3.scene.plugins.fbx.anim.FbxAnimStack"
+    },
+    "AnimationCurve": {
+        "*": "com.jme3.scene.plugins.fbx.anim.FbxAnimCurve"
+    }, 
+    "AnimationCurveNode": {
+        "*": "com.jme3.scene.plugins.fbx.anim.FbxAnimCurveNode"
+    }, 
+    "AnimationLayer": { 
+        "*": "com.jme3.scene.plugins.fbx.anim.FbxAnimLayer"    
+    }, 
+    "SceneInfo": {
+        "*": "com.jme3.scene.plugins.fbx.obj.FbxUnknownObject"
+    },
+    "*": {
+        "*": "com.jme3.scene.plugins.fbx.obj.FbxUnknownObject"
+    }
+}

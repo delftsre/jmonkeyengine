@@ -95,61 +95,75 @@ public class UVCoordinatesGenerator {
         BoundingBox bb = UVCoordinatesGenerator.getBoundingBox(geometries);
         float[] inputData = null;// positions, normals, reflection vectors, etc.
 
-        switch (texco) {
-            case TEXCO_ORCO:
-                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Position));
-                break;
-            case TEXCO_UV:// this should be used if not defined by user explicitly
-                Vector2f[] data = new Vector2f[] { new Vector2f(0, 1), new Vector2f(0, 0), new Vector2f(1, 0) };
-                for (int i = 0; i < mesh.getVertexCount(); ++i) {
-                    result.add(data[i % 3]);
-                }
-                break;
-            case TEXCO_NORM:
-                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Normal));
-                break;
-            case TEXCO_REFL:
-            case TEXCO_GLOB:
-            case TEXCO_TANGENT:
-            case TEXCO_STRESS:
-            case TEXCO_LAVECTOR:
-            case TEXCO_OBJECT:
-            case TEXCO_OSA:
-            case TEXCO_PARTICLE_OR_STRAND:
-            case TEXCO_SPEED:
-            case TEXCO_STICKY:
-            case TEXCO_VIEW:
-            case TEXCO_WINDOW:
-                LOGGER.warning("Texture coordinates type not currently supported: " + texco);
-                break;
-            default:
-                throw new IllegalStateException("Unknown texture coordinates value: " + texco);
+        //Check whether texco is supported, to reduce the switch statements needed
+        boolean texcoSupported = isTextureCoordinateTypeSupported(texco);
+        
+        if (texcoSupported) {
+        	//Only if texco is supported, there will be additional calculations done
+        	switch (texco) {
+	            case TEXCO_ORCO:
+	                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Position));
+	                break;
+	            case TEXCO_UV:// this should be used if not defined by user explicitly
+	                Vector2f[] data = new Vector2f[] { new Vector2f(0, 1), new Vector2f(0, 0), new Vector2f(1, 0) };
+	                for (int i = 0; i < mesh.getVertexCount(); ++i) {
+	                    result.add(data[i % 3]);
+	                }
+	                break;
+	            case TEXCO_NORM:
+	                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Normal));
+	                break;
+	            default:
+	            	throw new IllegalStateException("Unknown texture coordinates value: " + texco);
+        	}
+        } else {
+        	LOGGER.warning("Texture coordinates type not currently supported: " + texco);
         }
 
         if (inputData != null) {// make projection calculations
-            switch (projection) {
-                case PROJECTION_FLAT:
-                    inputData = UVProjectionGenerator.flatProjection(inputData, bb);
-                    break;
-                case PROJECTION_CUBE:
-                    inputData = UVProjectionGenerator.cubeProjection(inputData, bb);
-                    break;
-                case PROJECTION_TUBE:
-                    BoundingTube bt = UVCoordinatesGenerator.getBoundingTube(geometries);
-                    inputData = UVProjectionGenerator.tubeProjection(inputData, bt);
-                    break;
-                case PROJECTION_SPHERE:
-                    BoundingSphere bs = UVCoordinatesGenerator.getBoundingSphere(geometries);
-                    inputData = UVProjectionGenerator.sphereProjection(inputData, bs);
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown projection type: " + projection);
-            }
-            for (int i = 0; i < inputData.length; i += 2) {
-                result.add(new Vector2f(inputData[i], inputData[i + 1]));
-            }
+            result = projectionCalculations(inputData, projection, bb, geometries);
         }
         return result;
+    }
+    
+    /**
+     * Makes the projection calculations on the given inputData
+     * 
+     * @param inputData
+     * 			the inputdata of the mesh (positions, normals, etc)
+     * @param projection
+     * 			projection type
+     * @param bb
+     * 			the bounding box
+     * @param geometries
+     * 			the geometris the given mesh belongs to (required to compute
+     *          bounding box, sphere or tube)
+     * @return List of vector2f with projection calculations applied to it
+     */
+    private static List<Vector2f> projectionCalculations(float[] inputData, UVProjectionType projection, BoundingBox bb, Geometry geometries) {
+    	List<Vector2f> result = new ArrayList<Vector2f>();
+    	switch (projection) {
+	        case PROJECTION_FLAT:
+	            inputData = UVProjectionGenerator.flatProjection(inputData, bb);
+	            break;
+	        case PROJECTION_CUBE:
+	            inputData = UVProjectionGenerator.cubeProjection(inputData, bb);
+	            break;
+	        case PROJECTION_TUBE:
+	            BoundingTube bt = UVCoordinatesGenerator.getBoundingTube(geometries);
+	            inputData = UVProjectionGenerator.tubeProjection(inputData, bt);
+	            break;
+	        case PROJECTION_SPHERE:
+	            BoundingSphere bs = UVCoordinatesGenerator.getBoundingSphere(geometries);
+	            inputData = UVProjectionGenerator.sphereProjection(inputData, bs);
+	            break;
+	        default:
+	            throw new IllegalStateException("Unknown projection type: " + projection);
+	    }
+	    for (int i = 0; i < inputData.length; i += 2) {
+	        result.add(new Vector2f(inputData[i], inputData[i + 1]));
+	    }
+	    return result;
     }
 
     /**
@@ -170,56 +184,62 @@ public class UVCoordinatesGenerator {
         List<Vector3f> result = new ArrayList<Vector3f>();
         BoundingBox bb = UVCoordinatesGenerator.getBoundingBox(geometries);
         float[] inputData = null;// positions, normals, reflection vectors, etc.
-
-        switch (texco) {
-            case TEXCO_ORCO:
-                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Position));
-                break;
-            case TEXCO_UV:
-                Vector2f[] data = new Vector2f[] { new Vector2f(0, 1), new Vector2f(0, 0), new Vector2f(1, 0) };
-                for (int i = 0; i < mesh.getVertexCount(); ++i) {
-                    Vector2f uv = data[i % 3];
-                    result.add(new Vector3f(uv.x, uv.y, 0));
-                }
-                break;
-            case TEXCO_NORM:
-                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Normal));
-                break;
-            case TEXCO_REFL:
-            case TEXCO_GLOB:
-            case TEXCO_TANGENT:
-            case TEXCO_STRESS:
-            case TEXCO_LAVECTOR:
-            case TEXCO_OBJECT:
-            case TEXCO_OSA:
-            case TEXCO_PARTICLE_OR_STRAND:
-            case TEXCO_SPEED:
-            case TEXCO_STICKY:
-            case TEXCO_VIEW:
-            case TEXCO_WINDOW:
-                LOGGER.warning("Texture coordinates type not currently supported: " + texco);
-                break;
-            default:
-                throw new IllegalStateException("Unknown texture coordinates value: " + texco);
+        
+        //Check whether texco is supported, to reduce the switch statements needed
+        boolean texcoSupported = isTextureCoordinateTypeSupported(texco);
+        
+        if (texcoSupported) {
+        	//Only if texco is supported, there will be additional calculations done
+	        switch (texco) {
+	            case TEXCO_ORCO:
+	                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Position));
+	                break;
+	            case TEXCO_UV:
+	                Vector2f[] data = new Vector2f[] { new Vector2f(0, 1), new Vector2f(0, 0), new Vector2f(1, 0) };
+	                for (int i = 0; i < mesh.getVertexCount(); ++i) {
+	                    Vector2f uv = data[i % 3];
+	                    result.add(new Vector3f(uv.x, uv.y, 0));
+	                }
+	                break;
+	            case TEXCO_NORM:
+	                inputData = BufferUtils.getFloatArray(mesh.getFloatBuffer(VertexBuffer.Type.Normal));
+	                break;
+	            default:
+	                throw new IllegalStateException("Unknown texture coordinates value: " + texco);
+	        }
         }
 
         if (inputData != null) {// make calculations
-            Vector3f min = bb.getMin(null);
-            float[] uvCoordsResults = new float[4];// used for coordinates swapping
-            float[] ext = new float[] { bb.getXExtent() * 2, bb.getYExtent() * 2, bb.getZExtent() * 2 };
-            for (int i = 0; i < ext.length; ++i) {
-                if (ext[i] == 0) {
-                    ext[i] = 1;
-                }
+            result = coordinateCalculation(inputData, bb, coordinatesSwappingIndexes);
+        }
+        return result;
+    }
+    
+    /**
+     * Makes coordinate calculations
+     * 
+     * @param inputData
+     * @param bb
+     * @param coordinatesSwappingIndexes
+     * @return
+     */
+    private static List<Vector3f> coordinateCalculation(float[] inputData, BoundingBox bb, int[] coordinatesSwappingIndexes) {
+        List<Vector3f> result = new ArrayList<Vector3f>();
+        Vector3f min = bb.getMin(null);
+        float[] uvCoordsResults = new float[4];// used for coordinates swapping
+        float[] ext = new float[] { bb.getXExtent() * 2, bb.getYExtent() * 2, bb.getZExtent() * 2 };
+        for (int i = 0; i < ext.length; ++i) {
+            if (ext[i] == 0) {
+                ext[i] = 1;
             }
-            // now transform the coordinates so that they are in the range of
-            // <0; 1>
-            for (int i = 0; i < inputData.length; i += 3) {
-                uvCoordsResults[1] = (inputData[i] - min.x) / ext[0];
-                uvCoordsResults[2] = (inputData[i + 1] - min.y) / ext[1];
-                uvCoordsResults[3] = (inputData[i + 2] - min.z) / ext[2];
-                result.add(new Vector3f(uvCoordsResults[coordinatesSwappingIndexes[0]], uvCoordsResults[coordinatesSwappingIndexes[1]], uvCoordsResults[coordinatesSwappingIndexes[2]]));
-            }
+        }
+        // now transform the coordinates so that they are in the range of
+        // <0; 1>
+        for (int i = 0; i < inputData.length; i += 3) {
+            uvCoordsResults[1] = (inputData[i] - min.x) / ext[0];
+            uvCoordsResults[2] = (inputData[i + 1] - min.y) / ext[1];
+            uvCoordsResults[3] = (inputData[i + 2] - min.z) / ext[2];
+            result.add(new Vector3f(uvCoordsResults[coordinatesSwappingIndexes[0]], uvCoordsResults[coordinatesSwappingIndexes[1]], uvCoordsResults[coordinatesSwappingIndexes[2]]));
         }
         return result;
     }
