@@ -39,10 +39,10 @@ import java.util.Arrays;
  */
 public class IDList {
 
-    public int[] newList = new int[16];
-    public int[] oldList = new int[16];
-    public int newLen = 0;
-    public int oldLen = 0;
+    private int[] newList = new int[16];
+    private int[] oldList = new int[16];
+    private int newLen = 0;
+    private int oldLen = 0;
 
     /**
      * Reset all states to zero
@@ -92,29 +92,68 @@ public class IDList {
         oldLen = newLen;
         newLen = 0;
     }
+    
+	/**
+	 * @return the newList
+	 */
+	public int[] getNewList() {
+		return newList;
+	}
 
-    /**
-     * Prints the contents of the lists
-     */
-    public void print(){
-        if (newLen > 0){
-            System.out.print("New List: ");
-            for (int i = 0; i < newLen; i++){
-                if (i == newLen -1)
-                    System.out.println(newList[i]);
-                else
-                    System.out.print(newList[i]+", ");
-            }
-        }
-        if (oldLen > 0){
-            System.out.print("Old List: ");
-            for (int i = 0; i < oldLen; i++){
-                if (i == oldLen -1)
-                    System.out.println(oldList[i]);
-                else
-                    System.out.print(oldList[i]+", ");
-            }
-        }
-    }
+	/**
+	 * @param newList the newList to set
+	 */
+	public void setNewList(int[] newList) {
+		this.newList = newList;
+	}
 
+	/**
+	 * @return the oldList
+	 */
+	public int[] getOldList() {
+		return oldList;
+	}
+
+	/**
+	 * @param oldList the oldList to set
+	 */
+	public void setOldList(int[] oldList) {
+		this.oldList = oldList;
+	}
+
+	/**
+	 * @return the newLen
+	 */
+	public int getNewLen() {
+		return newLen;
+	}
+
+	/**
+	 * @param newLen the newLen to set
+	 */
+	public void setNewLen(int newLen) {
+		this.newLen = newLen;
+	}
+
+	/**
+	 * @return the oldLen
+	 */
+	public int getOldLen() {
+		return oldLen;
+	}
+
+	/**
+	 * @param oldLen the oldLen to set
+	 */
+	public void setOldLen(int oldLen) {
+		this.oldLen = oldLen;
+	}
+	
+	public int getOldListElem(int i){
+		return oldList[i];
+	}
+	
+	public int getNewListElem(int i){
+		return newList[i];
+	}
 }

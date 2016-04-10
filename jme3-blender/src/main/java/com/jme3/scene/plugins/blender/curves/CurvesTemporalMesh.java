@@ -12,9 +12,11 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import com.jme3.material.RenderState.FaceCullMode;
+import com.jme3.math.BezierSpline;
 import com.jme3.math.FastMath;
+import com.jme3.math.LinearSpline;
+import com.jme3.math.NurbSpline;
 import com.jme3.math.Spline;
-import com.jme3.math.Spline.SplineType;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.scene.VertexBuffer.Type;
@@ -273,7 +275,7 @@ public class CurvesTemporalMesh extends TemporalMesh {
             controlPoints.remove(controlPoints.size() - 1);
 
             // creating curve
-            Curve curve = new Curve(new Spline(SplineType.Bezier, controlPoints, 0, false), resolution);
+            Curve curve = new Curve(new BezierSpline(controlPoints, false), resolution);
 
             FloatBuffer vertsBuffer = (FloatBuffer) curve.getBuffer(Type.Position).getData();
             beziers.add(new BezierLine(BufferUtils.getVector3Array(vertsBuffer), materialIndex, smooth, cyclic));
@@ -344,7 +346,7 @@ public class CurvesTemporalMesh extends TemporalMesh {
         int originalVerticesAmount = vertices.size();
         int resolu = ((Number) nurb.getFieldValue("resolu")).intValue();
         if (knots[1] == null) {// creating the NURB curve
-            Curve curve = new Curve(new Spline(controlPoints.get(0), knots[0]), resolu);
+            Curve curve = new Curve(new NurbSpline(controlPoints.get(0), knots[0]), resolu);
             FloatBuffer vertsBuffer = (FloatBuffer) curve.getBuffer(Type.Position).getData();
             beziers.add(new BezierLine(BufferUtils.getVector3Array(vertsBuffer), materialIndex, smooth, false));
         } else {// creating the NURB surface
@@ -506,9 +508,9 @@ public class CurvesTemporalMesh extends TemporalMesh {
                     }
                 }
 
-                bevelCurve = new Curve(new Spline(SplineType.Bezier, conrtolPoints, 0, false), bevResol);
+                bevelCurve = new Curve(new BezierSpline(conrtolPoints, false), bevResol);
             } else if (extrude > 0.0f) {
-                Spline bevelSpline = new Spline(SplineType.Linear, new Vector3f[] { new Vector3f(0, extrude, 0), new Vector3f(0, -extrude, 0) }, 1, false);
+                Spline bevelSpline = new LinearSpline(new Vector3f[] { new Vector3f(0, extrude, 0), new Vector3f(0, -extrude, 0) }, false);
                 bevelCurve = new Curve(bevelSpline, bevResol);
             }
             if (bevelCurve != null) {

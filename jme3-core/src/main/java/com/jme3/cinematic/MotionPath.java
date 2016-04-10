@@ -31,13 +31,22 @@
  */
 package com.jme3.cinematic;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.export.*;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
+import com.jme3.math.CatmullRomSpline;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Spline;
-import com.jme3.math.Spline.SplineType;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -45,10 +54,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Curve;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Motion path is used to create a path between way points.
@@ -59,7 +64,7 @@ public class MotionPath implements Savable {
     private Node debugNode;
     private AssetManager assetManager;
     private List<MotionPathListener> listeners;
-    private Spline spline = new Spline();
+    private Spline spline = new CatmullRomSpline();
     int prevWayPoint = 0;
 
     /**
@@ -126,17 +131,22 @@ public class MotionPath implements Savable {
                 debugNode.attachChild(geo);
 
             }
-            switch (spline.getType()) {
-                case CatmullRom:
-                    debugNode.attachChild(CreateCatmullRomPath());
-                    break;
-                case Linear:
-                    debugNode.attachChild(CreateLinearPath());
-                    break;
-                default:
-                    debugNode.attachChild(CreateLinearPath());
-                    break;
+            if(spline instanceof CatmullRomSpline) {
+            	debugNode.attachChild(CreateCatmullRomPath());
+            } else {
+            	debugNode.attachChild(CreateLinearPath());
             }
+//            switch (spline.getType()) {
+//                case CatmullRom:
+//                    debugNode.attachChild(CreateCatmullRomPath());
+//                    break;
+//                case Linear:
+//                    debugNode.attachChild(CreateLinearPath());
+//                    break;
+//                default:
+//                    debugNode.attachChild(CreateLinearPath());
+//                    break;
+//            }
 
             root.attachChild(debugNode);
         }
@@ -253,17 +263,21 @@ public class MotionPath implements Savable {
      * return the type of spline used for the path interpolation for this path
      * @return the path interpolation spline type
      */
-    public SplineType getPathSplineType() {
-        return spline.getType();
-    }
+//    public SplineType getPathSplineType() {
+//        return spline.getType();
+//    }
 
     /**
      * sets the type of spline used for the path interpolation for this path
      * @param pathSplineType
      */
-    public void setPathSplineType(SplineType pathSplineType) {
-        spline.setType(pathSplineType);
-        if (debugNode != null) {
+//    public void setPathSplineType(SplineType pathSplineType) {
+//        spline.setType(pathSplineType);
+//        changeDebugNodeAfterSplinePropertiesChange();
+//    }
+    
+    private void changeDebugNodeAfterSplinePropertiesChange() {
+    	if (debugNode != null) {
             Node parent = debugNode.getParent();
             debugNode.removeFromParent();
             debugNode.detachAllChildren();
@@ -336,7 +350,11 @@ public class MotionPath implements Savable {
      * @return
      */
     public float getCurveTension() {
-        return spline.getCurveTension();
+    	if(spline instanceof CatmullRomSpline) {
+    		return ((CatmullRomSpline)spline).getCurveTension();
+    	} else {
+    		return 0;
+    	}
     }
 
     /**
@@ -344,14 +362,10 @@ public class MotionPath implements Savable {
      * @param curveTension
      */
     public void setCurveTension(float curveTension) {
-        spline.setCurveTension(curveTension);
-        if (debugNode != null) {
-            Node parent = debugNode.getParent();
-            debugNode.removeFromParent();
-            debugNode.detachAllChildren();
-            debugNode = null;
-            attachDebugNode(parent);
-        }
+    	if(spline instanceof CatmullRomSpline) {
+	    	((CatmullRomSpline)spline).setCurveTension(curveTension);
+	        changeDebugNodeAfterSplinePropertiesChange();
+    	}
     }
 
     public void clearWayPoints() {
@@ -363,16 +377,8 @@ public class MotionPath implements Savable {
      * @param cycle
      */
     public void setCycle(boolean cycle) {
-
         spline.setCycle(cycle);
-        if (debugNode != null) {
-            Node parent = debugNode.getParent();
-            debugNode.removeFromParent();
-            debugNode.detachAllChildren();
-            debugNode = null;
-            attachDebugNode(parent);
-        }
-
+        changeDebugNodeAfterSplinePropertiesChange();
     }
 
     /**
@@ -385,5 +391,10 @@ public class MotionPath implements Savable {
 
     public Spline getSpline() {
         return spline;
+    }
+    
+    public void setSpline(Spline spline) {
+    	this.spline = spline;
+    	changeDebugNodeAfterSplinePropertiesChange();
     }
 }

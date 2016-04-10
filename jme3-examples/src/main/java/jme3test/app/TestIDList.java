@@ -131,8 +131,8 @@ public class TestIDList {
     }
 
     static void clearSlots(){
-        for (int i = 0; i < list.oldLen; i++){
-            int slot = list.oldList[i];
+        for (int i = 0; i < list.getOldLen(); i++){
+            int slot = list.getOldListElem(i);
             disable(slot);
             slots[slot] = null;
         }
