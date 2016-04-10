@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 /**
  * Verifies that {@link Texture2D} works correctly.
  *
- * @author Kirill Vainer
+ * @author Mart Oude Weernink
  */
 @RunWith(MockitoJUnitRunner.class)
 public class Texture2DTest {
@@ -58,8 +58,6 @@ public class Texture2DTest {
     @Before
     public void initiate(){
         texture = new Texture2D();
-
-
     }
 
     @Test
