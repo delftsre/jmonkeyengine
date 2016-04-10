@@ -53,6 +53,8 @@ public class UpdatedTerrainPatch {
     //private boolean reIndexNeeded = false;
     private boolean fixEdges = false;
 
+    private final int DIR_RIGHT = 0, DIR_DOWN = 1, DIR_LEFT = 2, DIR_TOP = 3;
+
     public UpdatedTerrainPatch(TerrainPatch updatedPatch) {
         this.updatedPatch = updatedPatch;
     }
@@ -99,12 +101,21 @@ public class UpdatedTerrainPatch {
         this.newIndexBuffer = newIndexBuffer;
     }
 
+    protected void setLod(int lod, int dir) {
+        switch (dir) {
+            case DIR_LEFT: this.leftLod = lod; break;
+            case DIR_TOP: this.topLod = lod; break;
+            case DIR_RIGHT: this.rightLod = lod; break;
+            case DIR_DOWN: this.bottomLod = lod; break;
+        }
+    }
 
     protected int getRightLod() {
         return rightLod;
     }
 
 
+    @Deprecated
     protected void setRightLod(int rightLod) {
         this.rightLod = rightLod;
     }
@@ -115,6 +126,7 @@ public class UpdatedTerrainPatch {
     }
 
 
+    @Deprecated
     protected void setTopLod(int topLod) {
         this.topLod = topLod;
     }
@@ -125,6 +137,7 @@ public class UpdatedTerrainPatch {
     }
 
 
+    @Deprecated
     protected void setLeftLod(int leftLod) {
         this.leftLod = leftLod;
     }
@@ -135,6 +148,7 @@ public class UpdatedTerrainPatch {
     }
 
 
+    @Deprecated
     protected void setBottomLod(int bottomLod) {
         this.bottomLod = bottomLod;
     }
