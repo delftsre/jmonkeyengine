@@ -200,7 +200,7 @@ public class TerrainGrid extends TerrainQuad {
                         for (Spatial s : getChildren()) {
                             if (s instanceof TerrainQuad) {
                                 TerrainQuad tq = (TerrainQuad)s;
-                                tq.resetCachedNeighbours();
+                                TerrainTransform.resetCachedNeighbours(tq);
                             }
                         }
                         System.out.println("fixed normals "+location.clone().mult(size));

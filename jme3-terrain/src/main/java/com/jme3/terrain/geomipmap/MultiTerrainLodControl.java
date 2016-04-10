@@ -104,7 +104,7 @@ public class MultiTerrainLodControl extends TerrainLodControl {
         }
         
         for (TerrainQuad terrain : terrains)
-            terrain.cacheTerrainTransforms();// cache the terrain's world transforms so they can be accessed on the separate thread safely
+            TerrainTransform.cacheTerrainTransforms(terrain);// cache the terrain's world transforms so they can be accessed on the separate thread safely
     }
     
     /**
@@ -127,22 +127,22 @@ public class MultiTerrainLodControl extends TerrainLodControl {
             
             for (TerrainQuad terrainQuad : terrains) {
                 // go through each patch and calculate its LOD based on camera distance
-                terrainQuad.calculateLod(camLocations, updated, lodCalculator); // 'updated' gets populated here
+                TerrainTransform.calculateLod(camLocations, updated, lodCalculator, terrainQuad); // 'updated' gets populated here
             }
             
             for (TerrainQuad terrainQuad : terrains) {
                 // then calculate the neighbour LOD values for seaming
-                terrainQuad.findNeighboursLod(updated);
+            	TerrainQuadrants.findNeighboursLod(updated, terrainQuad);
             }
             
             for (TerrainQuad terrainQuad : terrains) {
                 // check neighbour quads that need their edges seamed
-                terrainQuad.fixEdges(updated);
+            	TerrainQuadrants.fixEdges(updated, terrainQuad);
             }
             
             for (TerrainQuad terrainQuad : terrains) {
                 // perform the edge seaming, if it requires it
-                terrainQuad.reIndexPages(updated, lodCalculator.usesVariableLod());
+                TerrainTransform.reIndexPages(updated, lodCalculator.usesVariableLod(), terrainQuad);
             }
             
             //setUpdateQuadLODs(updated); // set back to main ogl thread

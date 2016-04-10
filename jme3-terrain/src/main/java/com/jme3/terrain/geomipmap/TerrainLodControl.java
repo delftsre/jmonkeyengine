@@ -233,7 +233,7 @@ public class TerrainLodControl extends AbstractControl {
     
     protected void prepareTerrain() {
         TerrainQuad terrain = (TerrainQuad)getSpatial();
-        terrain.cacheTerrainTransforms();// cache the terrain's world transforms so they can be accessed on the separate thread safely
+        TerrainTransform.cacheTerrainTransforms(terrain);// cache the terrain's world transforms so they can be accessed on the separate thread safely
     }
     
     protected UpdateLOD getLodThread(List<Vector3f> locations, LodCalculator lodCalculator) {
@@ -386,7 +386,7 @@ public class TerrainLodControl extends AbstractControl {
             
             // go through each patch and calculate its LOD based on camera distance
             HashMap<String,UpdatedTerrainPatch> updated = new HashMap<String,UpdatedTerrainPatch>();
-            boolean lodChanged = terrainQuad.calculateLod(camLocations, updated, lodCalculator); // 'updated' gets populated here
+            boolean lodChanged = TerrainTransform.calculateLod(camLocations, updated, lodCalculator, terrainQuad); // 'updated' gets populated here
 
             if (!lodChanged) {
                 // not worth updating anything else since no one's LOD changed
@@ -396,11 +396,11 @@ public class TerrainLodControl extends AbstractControl {
             
             
             // then calculate its neighbour LOD values for seaming in the shader
-            terrainQuad.findNeighboursLod(updated);
+            TerrainQuadrants.findNeighboursLod(updated, terrainQuad);
 
-            terrainQuad.fixEdges(updated); // 'updated' can get added to here
+            TerrainQuadrants.fixEdges(updated, terrainQuad); // 'updated' can get added to here
 
-            terrainQuad.reIndexPages(updated, lodCalculator.usesVariableLod());
+            TerrainTransform.reIndexPages(updated, lodCalculator.usesVariableLod(), terrainQuad);
 
             //setUpdateQuadLODs(updated); // set back to main ogl thread
 

@@ -59,7 +59,7 @@ public class NormalRecalcControl extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        terrain.updateNormals();
+       TerrainNormals.updateNormals(terrain);
     }
 
     @Override

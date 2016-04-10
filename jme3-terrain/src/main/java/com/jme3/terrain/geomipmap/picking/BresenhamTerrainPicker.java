@@ -39,6 +39,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.terrain.geomipmap.TerrainPatch;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.jme3.terrain.geomipmap.TerrainTransform;
 import com.jme3.terrain.geomipmap.picking.BresenhamYUpGridTracer.Direction;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class BresenhamTerrainPicker implements TerrainPicker {
 
         worldPickRay.set(worldPick);
         List<TerrainPickData> pickData = new ArrayList<TerrainPickData>();
-        root.findPick(worldPick.clone(), pickData);
+        TerrainTransform.findPick(worldPick.clone(), pickData, root);
         Collections.sort(pickData);
 
         if (pickData.isEmpty())
