@@ -37,6 +37,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.texture.image.ImageRaster;
+import com.jme3.texture.image.MipMapImageRaster;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -85,6 +86,35 @@ public class ImageRasterTest {
         ColorRGBA result = new ColorRGBA();
         myImageRaster.getPixel(0,0,result);
         assertEquals(new ColorRGBA(1,1,1,1), result);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void mipmapRasterFailTest() {
+        ByteBuffer bb = ByteBuffer.allocate(10000).put ((byte)0xff );
+        Image myImage = new Image(Format.RGB8,400,500, bb,ColorSpace.Linear);
+        myImageRaster = new MipMapImageRaster(myImage,0);
+    }
+
+    @Test
+    public void mipmapRasterTest() {
+        ByteBuffer bb = ByteBuffer.allocate(10000).put ((byte)0xff );
+        Image myImage = new Image(Format.RGB8,400,500, bb,ColorSpace.Linear);
+        myImage.setMipMapSizes(new int[]{1,5,7});
+        myImageRaster = new MipMapImageRaster(myImage,0);
+        ((MipMapImageRaster) myImageRaster).setSlice(1);
+        ((MipMapImageRaster) myImageRaster).setMipLevel(1);
+        boolean caughtException = false;
+        try{
+            myImageRaster.getPixel(0,0);
+        } catch (NullPointerException e) {
+            caughtException = true;
+        }
+        assertTrue(caughtException);
+        ((MipMapImageRaster) myImageRaster).setSlice(0);
+        ((MipMapImageRaster) myImageRaster).setMipLevel(0);
+        pixelTest();
+        getterTest();
+
     }
 
 
