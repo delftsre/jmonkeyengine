@@ -36,7 +36,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -49,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class SliderJoint extends PhysicsJoint {
 
-    protected Matrix3f rotA, rotB;
+    protected Matrixable rotA, rotB;
     protected boolean useLinearReferenceFrameA;
 
     public SliderJoint() {
@@ -59,7 +60,7 @@ public class SliderJoint extends PhysicsJoint {
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */
-    public SliderJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, boolean useLinearReferenceFrameA) {
+    public SliderJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrixable rotA, Matrixable rotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.rotA = rotA;
         this.rotB = rotB;
@@ -73,8 +74,8 @@ public class SliderJoint extends PhysicsJoint {
      */
     public SliderJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = new Matrix3f();
-        this.rotB = new Matrix3f();
+        this.rotA = new Matrix(3);
+        this.rotB = new Matrix(3);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         createJoint();
     }
@@ -534,5 +535,5 @@ public class SliderJoint extends PhysicsJoint {
         // = new SliderConstraint(nodeA.getObjectId(), nodeB.getObjectId(), transA, transB, useLinearReferenceFrameA);
     }
 
-    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB, boolean useLinearReferenceFrameA);
+    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrixable rotA, Vector3f pivotB, Matrixable rotB, boolean useLinearReferenceFrameA);
 }

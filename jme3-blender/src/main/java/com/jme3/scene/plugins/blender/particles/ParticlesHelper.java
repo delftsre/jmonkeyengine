@@ -1,7 +1,7 @@
 package com.jme3.scene.plugins.blender.particles;
 
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.effect.influencers.EmptyParticleInfluencer;
 import com.jme3.effect.influencers.NewtonianParticleInfluencer;
 import com.jme3.effect.influencers.ParticleInfluencer;
@@ -125,7 +125,7 @@ public class ParticlesHelper extends AbstractBlenderHelper {
                 default:// all others are rendered as points in blender
                     nameSuffix = 'P';
             }
-            result = new ParticleEmitter(particleSettings.getName() + nameSuffix, Type.Triangle, totPart);
+            result = new ParticleEmitter(particleSettings.getName() + nameSuffix, new ParticleTriMesh(), totPart);
             if (nameSuffix == 'N') {
                 return result;// no need to set anything else
             }

@@ -33,7 +33,8 @@ package com.jme3.bullet.objects;
 
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.export.*;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -63,7 +64,7 @@ public class VehicleWheel implements Savable {
     protected Vector3f wheelWorldLocation = new Vector3f();
     protected Quaternion wheelWorldRotation = new Quaternion();
     protected Spatial wheelSpatial;
-    protected Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
+    protected Matrix tmp_Matrix = new Matrix(3);
     protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
     private boolean applyLocal = false;
 
@@ -94,7 +95,7 @@ public class VehicleWheel implements Savable {
 
     private native void getWheelLocation(long vehicleId, int wheelId, Vector3f location);
 
-    private native void getWheelRotation(long vehicleId, int wheelId, Matrix3f location);
+    private native void getWheelRotation(long vehicleId, int wheelId, Matrixable location);
 
     public void applyWheelTransform() {
         if (wheelSpatial == null) {

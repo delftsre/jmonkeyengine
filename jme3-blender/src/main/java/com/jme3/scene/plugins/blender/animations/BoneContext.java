@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -36,7 +37,8 @@ public class BoneContext {
      * The bones' matrices have, unlike objects', the coordinate system identical to JME's (Y axis is UP, X to the right and Z toward us).
      * So in order to have them loaded properly we need to transform their armature matrix (which blender sees as rotated) to make sure we get identical results.
      */
-    public static final Matrix4f BONE_ARMATURE_TRANSFORMATION_MATRIX = new Matrix4f(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
+    public static final float[] data = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1};
+    public static final Matrixable BONE_ARMATURE_TRANSFORMATION_MATRIX = new Matrix(data);
 
     private static final int     IKFLAG_LOCK_X                       = 0x01;
     private static final int     IKFLAG_LOCK_Y                       = 0x02;
@@ -57,9 +59,9 @@ public class BoneContext {
     /** The bone's flag. */
     private int                  flag;
     /** The bone's matrix in world space. */
-    private Matrix4f             globalBoneMatrix;
+    private Matrixable             globalBoneMatrix;
     /** The bone's matrix in the model space. */
-    private Matrix4f             boneMatrixInModelSpace;
+    private Matrixable             boneMatrixInModelSpace;
     /** The parent context. */
     private BoneContext          parent;
     /** The children of this context. */
@@ -139,7 +141,7 @@ public class BoneContext {
         Structure armatureStructure = blenderContext.getFileBlock(armatureObjectOMA).getStructure(blenderContext);
         Spatial armature = (Spatial) objectHelper.toObject(armatureStructure, blenderContext);
         ConstraintHelper constraintHelper = blenderContext.getHelper(ConstraintHelper.class);
-        Matrix4f armatureWorldMatrix = constraintHelper.toMatrix(armature.getWorldTransform(), new Matrix4f());
+        Matrixable armatureWorldMatrix = constraintHelper.toMatrix(armature.getWorldTransform(), new Matrix(4));
 
         // and now compute the final bone matrix in world space
         globalBoneMatrix = armatureWorldMatrix.mult(globalBoneMatrix);
@@ -207,14 +209,14 @@ public class BoneContext {
         Structure skeletonOwnerObjectStructure = (Structure) blenderContext.getLoadedFeature(skeletonOwnerOma, LoadedDataType.STRUCTURE);
         // I could load 'imat' here, but apparently in some older blenders there were bugs or unfinished functionalities that stored ZERO matrix in imat field
         // loading 'obmat' and inverting it makes us avoid errors in such cases
-        Matrix4f invertedObjectOwnerGlobalMatrix = objectHelper.getMatrix(skeletonOwnerObjectStructure, "obmat", blenderContext.getBlenderKey().isFixUpAxis()).invertLocal();
+        Matrixable invertedObjectOwnerGlobalMatrix = objectHelper.getMatrix(skeletonOwnerObjectStructure, "obmat", blenderContext.getBlenderKey().isFixUpAxis()).invertLocal();
         if (objectHelper.isParent(skeletonOwnerOma, armatureObjectOMA)) {
             boneMatrixInModelSpace = globalBoneMatrix.mult(invertedObjectOwnerGlobalMatrix);
         } else {
             boneMatrixInModelSpace = invertedObjectOwnerGlobalMatrix.mult(globalBoneMatrix);
         }
 
-        Matrix4f boneLocalMatrix = parent == null ? boneMatrixInModelSpace : parent.boneMatrixInModelSpace.invert().multLocal(boneMatrixInModelSpace);
+        Matrixable boneLocalMatrix = parent == null ? boneMatrixInModelSpace : parent.boneMatrixInModelSpace.invert().multLocal(boneMatrixInModelSpace);
 
         Vector3f poseLocation = parent == null || !this.is(CONNECTED_TO_PARENT) ? boneLocalMatrix.toTranslationVector() : new Vector3f(0, parent.length, 0);
         Quaternion rotation = boneLocalMatrix.toRotationQuat().normalizeLocal();
@@ -278,7 +280,7 @@ public class BoneContext {
     /**
      * @return the initial bone's matrix in model space
      */
-    public Matrix4f getBoneMatrixInModelSpace() {
+    public Matrixable getBoneMatrixInModelSpace() {
         return boneMatrixInModelSpace;
     }
 

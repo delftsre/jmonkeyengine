@@ -32,7 +32,8 @@
 package com.jme3.animation;
 
 import com.jme3.export.*;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public final class Skeleton implements Savable {
      * Contains the skinning matrices, multiplying it by a vertex effected by a bone
      * will cause it to go to the animated position.
      */
-    private transient Matrix4f[] skinningMatrixes;
+    private transient Matrixable[] skinningMatrixes;
 
     /**
      * Creates a skeleton from a bone list. 
@@ -119,9 +120,9 @@ public final class Skeleton implements Savable {
     }
 
     private void createSkinningMatrices() {
-        skinningMatrixes = new Matrix4f[boneList.length];
+        skinningMatrixes = new Matrixable[boneList.length];
         for (int i = 0; i < skinningMatrixes.length; i++) {
-            skinningMatrixes[i] = new Matrix4f();
+            skinningMatrixes[i] = new Matrix(4);
         }
     }
 
@@ -243,7 +244,7 @@ public final class Skeleton implements Savable {
      * Compute the skining matrices for each bone of the skeleton that would be used to transform vertices of associated meshes
      * @return 
      */
-    public Matrix4f[] computeSkinningMatrices() {
+    public Matrixable[] computeSkinningMatrices() {
         TempVars vars = TempVars.get();
         for (int i = 0; i < boneList.length; i++) {
             boneList[i].getOffsetTransform(skinningMatrixes[i], vars.quat1, vars.vect1, vars.vect2, vars.tempMat3);

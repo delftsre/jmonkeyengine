@@ -33,7 +33,7 @@ package jme3test.effect;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -58,7 +58,7 @@ public class TestMovingParticle extends SimpleApplication {
     
     @Override
     public void simpleInitApp() {
-        emit = new ParticleEmitter("Emitter", Type.Triangle, 300);
+        emit = new ParticleEmitter("Emitter", new ParticleTriMesh(), 300);
         emit.setGravity(0, 0, 0);
         emit.setVelocityVariation(1);
         emit.setLowLife(1);

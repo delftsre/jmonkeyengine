@@ -128,7 +128,7 @@ public abstract class BoundingVolume implements Savable, Cloneable, Collidable {
      */
     public abstract BoundingVolume transform(Transform trans, BoundingVolume store);
 
-    public abstract BoundingVolume transform(Matrix4f trans, BoundingVolume store);
+    public abstract BoundingVolume transform(Matrixable trans, BoundingVolume store);
 
     /**
      *

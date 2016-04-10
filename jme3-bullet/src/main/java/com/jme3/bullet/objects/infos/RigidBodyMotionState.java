@@ -32,7 +32,8 @@
 package com.jme3.bullet.objects.infos;
 
 import com.jme3.bullet.objects.PhysicsVehicle;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -47,7 +48,7 @@ import java.util.logging.Logger;
 public class RigidBodyMotionState {
     long motionStateId = 0;
     private Vector3f worldLocation = new Vector3f();
-    private Matrix3f worldRotation = new Matrix3f();
+    private Matrix worldRotation = new Matrix(3);
     private Quaternion worldRotationQuat = new Quaternion();
     private Quaternion tmp_inverseWorldRotation = new Quaternion();
     private PhysicsVehicle vehicle;
@@ -109,12 +110,12 @@ public class RigidBodyMotionState {
     /**
      * @return the worldRotation
      */
-    public Matrix3f getWorldRotation() {
+    public Matrixable getWorldRotation() {
         getWorldRotation(motionStateId, worldRotation);
         return worldRotation;
     }
 
-    private native void getWorldRotation(long stateId, Matrix3f vec);
+    private native void getWorldRotation(long stateId, Matrixable vec);
 
     /**
      * @return the worldRotationQuat

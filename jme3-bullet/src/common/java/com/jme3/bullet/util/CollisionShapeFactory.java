@@ -31,17 +31,27 @@
  */
 package com.jme3.bullet.util;
 
-import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.collision.shapes.*;
-import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Transform;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.*;
-import com.jme3.terrain.geomipmap.TerrainPatch;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
+import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
+import com.jme3.math.Matrixable;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.UserData;
+import com.jme3.terrain.geomipmap.TerrainPatch;
+import com.jme3.terrain.geomipmap.TerrainQuad;
 
 /**
  *
@@ -255,7 +265,7 @@ public class CollisionShapeFactory {
             ChildCollisionShape childCollisionShape = it.next();
             CollisionShape child = childCollisionShape.shape;
             Vector3f location = childCollisionShape.location;
-            Matrix3f rotation = childCollisionShape.rotation;
+            Matrixable rotation = childCollisionShape.rotation;
             compoundShape.removeChildShape(child);
             compoundShape.addChildShape(child, location.add(vector), rotation);
         }

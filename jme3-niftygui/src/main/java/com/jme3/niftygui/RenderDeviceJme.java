@@ -36,7 +36,7 @@ import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.scene.Geometry;
@@ -71,7 +71,7 @@ public class RenderDeviceJme implements RenderDevice {
     private VertexBuffer quadDefaultTC = quad.getBuffer(Type.TexCoord);
     private VertexBuffer quadModTC = quadDefaultTC.clone();
     private VertexBuffer quadColor;
-    private Matrix4f tempMat = new Matrix4f();
+    private Matrix tempMat = new Matrix(4);
     private ColorRGBA tempColor = new ColorRGBA();
     private RenderState renderState = new RenderState();
     

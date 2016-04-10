@@ -36,7 +36,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -51,7 +52,7 @@ import java.util.logging.Logger;
  */
 public class ConeJoint extends PhysicsJoint {
 
-    protected Matrix3f rotA, rotB;
+    protected Matrix rotA, rotB;
     protected float swingSpan1 = 1e30f;
     protected float swingSpan2 = 1e30f;
     protected float twistSpan = 1e30f;
@@ -66,8 +67,8 @@ public class ConeJoint extends PhysicsJoint {
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
         super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = new Matrix3f();
-        this.rotB = new Matrix3f();
+        this.rotA = new Matrix(3);
+        this.rotB = new Matrix(3);
         createJoint();
     }
 
@@ -75,7 +76,7 @@ public class ConeJoint extends PhysicsJoint {
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */
-    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB) {
+    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix rotA, Matrix rotB) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.rotA = rotA;
         this.rotB = rotB;
@@ -102,8 +103,8 @@ public class ConeJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(rotA, "rotA", new Matrix3f());
-        capsule.write(rotB, "rotB", new Matrix3f());
+        capsule.write(rotA, "rotA", new Matrix(3));
+        capsule.write(rotB, "rotB", new Matrix(3));
 
         capsule.write(angularOnly, "angularOnly", false);
         capsule.write(swingSpan1, "swingSpan1", 1e30f);
@@ -115,8 +116,8 @@ public class ConeJoint extends PhysicsJoint {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        this.rotA = (Matrix3f) capsule.readSavable("rotA", new Matrix3f());
-        this.rotB = (Matrix3f) capsule.readSavable("rotB", new Matrix3f());
+        this.rotA = (Matrix) capsule.readSavable("rotA", new Matrix(3));
+        this.rotB = (Matrix) capsule.readSavable("rotB", new Matrix(3));
 
         this.angularOnly = capsule.readBoolean("angularOnly", false);
         this.swingSpan1 = capsule.readFloat("swingSpan1", 1e30f);
@@ -132,5 +133,5 @@ public class ConeJoint extends PhysicsJoint {
         setAngularOnly(objectId, angularOnly);
     }
 
-    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB);
+    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrixable rotA, Vector3f pivotB, Matrixable rotB);
 }

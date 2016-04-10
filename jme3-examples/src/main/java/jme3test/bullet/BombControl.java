@@ -43,7 +43,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.ParticleTriMesh;
 import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -91,7 +91,7 @@ public class BombControl extends RigidBodyControl implements PhysicsCollisionLis
     private void prepareEffect(AssetManager assetManager) {
         int COUNT_FACTOR = 1;
         float COUNT_FACTOR_F = 1f;
-        effect = new ParticleEmitter("Flame", Type.Triangle, 32 * COUNT_FACTOR);
+        effect = new ParticleEmitter("Flame", new ParticleTriMesh(), 32 * COUNT_FACTOR);
         effect.setSelectRandomImage(true);
         effect.setStartColor(new ColorRGBA(1f, 0.4f, 0.05f, (float) (1f / COUNT_FACTOR_F)));
         effect.setEndColor(new ColorRGBA(.4f, .22f, .12f, 0f));

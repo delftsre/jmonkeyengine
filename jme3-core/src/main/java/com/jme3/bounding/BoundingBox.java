@@ -308,7 +308,7 @@ public class BoundingBox extends BoundingVolume {
 
         TempVars vars = TempVars.get();
 
-        Matrix3f transMatrix = vars.tempMat3;
+        Matrixable transMatrix = vars.tempMat3;
         transMatrix.set(trans.getRotation());
         // Make the rotation matrix all positive to get the maximum x/y/z extent
         transMatrix.absoluteLocal();
@@ -326,7 +326,7 @@ public class BoundingBox extends BoundingVolume {
         return box;
     }
 
-    public BoundingVolume transform(Matrix4f trans, BoundingVolume store) {
+    public BoundingVolume transform(Matrixable trans, BoundingVolume store) {
         BoundingBox box;
         if (store == null || store.getType() != Type.AABB) {
             box = new BoundingBox();
@@ -339,7 +339,7 @@ public class BoundingBox extends BoundingVolume {
         float w = trans.multProj(center, box.center);
         box.center.divideLocal(w);
 
-        Matrix3f transMatrix = vars.tempMat3;
+        Matrixable transMatrix = vars.tempMat3;
         trans.toRotationMatrix(transMatrix);
 
         // Make the rotation matrix all positive to get the maximum x/y/z extent

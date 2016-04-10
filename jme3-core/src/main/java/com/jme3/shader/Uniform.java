@@ -189,7 +189,7 @@ public class Uniform extends ShaderVariable {
 
         switch (type){
             case Matrix3:
-                Matrix3f m3 = (Matrix3f) value;
+                Matrixable m3 = (Matrixable) value;
                 if (multiData == null) {
                     multiData = BufferUtils.createFloatBuffer(9);
                 }
@@ -197,7 +197,7 @@ public class Uniform extends ShaderVariable {
                 multiData.clear();
                 break;
             case Matrix4:
-                Matrix4f m4 = (Matrix4f) value;
+                Matrixable m4 = (Matrixable) value;
                 if (multiData == null) {
                     multiData = BufferUtils.createFloatBuffer(16);
                 }
@@ -260,7 +260,7 @@ public class Uniform extends ShaderVariable {
                 multiData.clear();
                 break;
             case Matrix3Array:
-                Matrix3f[] m3a = (Matrix3f[]) value;
+                Matrixable[] m3a = (Matrixable[]) value;
                 if (multiData == null) {
                     multiData = BufferUtils.createFloatBuffer(m3a.length * 9);
                 } else {
@@ -272,7 +272,7 @@ public class Uniform extends ShaderVariable {
                 multiData.clear();
                 break;
             case Matrix4Array:
-                Matrix4f[] m4a = (Matrix4f[]) value;
+                Matrixable[] m4a = (Matrixable[]) value;
                 if (multiData == null) {
                     multiData = BufferUtils.createFloatBuffer(m4a.length * 16);
                 } else {

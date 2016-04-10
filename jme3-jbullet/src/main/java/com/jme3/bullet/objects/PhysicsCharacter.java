@@ -43,7 +43,7 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     protected boolean locationDirty = false;
     //TEMP VARIABLES
     protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
-    private Transform tempTrans = new Transform(Converter.convert(new Matrix3f()));
+    private Transform tempTrans = new Transform(Converter.convert(new Matrix(3)));
     private com.jme3.math.Transform physicsLocation = new com.jme3.math.Transform();
     private javax.vecmath.Vector3f tempVec = new javax.vecmath.Vector3f();
 

@@ -34,7 +34,8 @@ package com.jme3.shadow;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix4f;
+import com.jme3.math.Matrix;
+import com.jme3.math.Matrixable;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.SceneProcessor;
@@ -146,7 +147,7 @@ public class PssmShadowRenderer implements SceneProcessor {
     protected Material preshadowMat;
     protected Material postshadowMat;
     protected GeometryList splitOccluders = new GeometryList(new OpaqueComparator());
-    protected Matrix4f[] lightViewProjectionsMatrices;
+    protected Matrixable[] lightViewProjectionsMatrices;
     protected ColorRGBA splits;
     protected float[] splitsArray;
     protected boolean noOccluders = false;
@@ -214,7 +215,7 @@ public class PssmShadowRenderer implements SceneProcessor {
         shadowFB = new FrameBuffer[nbSplits];
         shadowMaps = new Texture2D[nbSplits];
         dispPic = new Picture[nbSplits];
-        lightViewProjectionsMatrices = new Matrix4f[nbSplits];
+        lightViewProjectionsMatrices = new Matrixable[nbSplits];
         splits = new ColorRGBA();
         splitsArray = new float[nbSplits + 1];
 
@@ -225,7 +226,7 @@ public class PssmShadowRenderer implements SceneProcessor {
         postshadowMat.setFloat("ShadowMapSize", size);
 
         for (int i = 0; i < nbSplits; i++) {
-            lightViewProjectionsMatrices[i] = new Matrix4f();
+            lightViewProjectionsMatrices[i] = new Matrix(4);
             shadowFB[i] = new FrameBuffer(size, size, 1);
             shadowMaps[i] = new Texture2D(size, size, Format.Depth);
 
