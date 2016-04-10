@@ -151,8 +151,8 @@ public class Texture2D extends Texture {
         if (mode == null) {
             throw new IllegalArgumentException("mode can not be null.");
         }
-        this.wrapS = mode;
-        this.wrapT = mode;
+        setWrap(WrapAxis.S, mode);
+        setWrap(WrapAxis.T, mode);
     }
 
     /**
