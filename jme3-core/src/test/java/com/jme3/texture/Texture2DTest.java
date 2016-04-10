@@ -94,32 +94,45 @@ public class Texture2DTest {
     @Test
     public void testSetWrap(){
         // Invalid setWrap
-        boolean exception = false;
+        Exception exception = new Exception();
         try{
             texture.setWrap(null);
         } catch (Exception e) {
-            exception = true;
+            exception = e;
         }
-        assert exception == true;
+        assert exception instanceof IllegalArgumentException;
 
-        // Give a invalid WrapAxis
-        exception = false;
+        // Invalid setWrap - Use a non existing WrapAxis
         try{
             texture.setWrap(WrapAxis.R, WrapMode.Repeat);
         } catch (Exception e){
-            exception = true;
+            exception = e;
         }
-        assert exception == true;
+        assert exception instanceof IllegalArgumentException;
 
-        // Invalid GetWrap
-        exception = false;
+        // Invalid setWrap - WrapAxis null
         try{
             texture.setWrap(null, WrapMode.Repeat);
         } catch (Exception e){
-            exception = true;
+            exception = e;
         }
-        assert exception == true;
+        assert exception instanceof IllegalArgumentException;
 
+        // Invalid setwrap - WrapMode null
+        try{
+            texture.setWrap(WrapAxis.T, null);
+        } catch (Exception e){
+            exception = e;
+        }
+        assert exception instanceof  IllegalArgumentException;
+
+        // Invalid getWrap - Use a non existing WrapAxis
+        try{
+            texture.getWrap(WrapAxis.R);
+        } catch (Exception e){
+            exception = e;
+        }
+        assert exception instanceof IllegalArgumentException;
 
         texture.setWrap(WrapAxis.S, WrapMode.Repeat);
         assert texture.getWrap(WrapAxis.S).equals(WrapMode.Repeat);
@@ -130,11 +143,6 @@ public class Texture2DTest {
         texture.setWrap(WrapMode.EdgeClamp);
         assert texture.getWrap(WrapAxis.S).equals(WrapMode.EdgeClamp);
         assert texture.getWrap(WrapAxis.T).equals(WrapMode.EdgeClamp);
-    }
-
-    @Test(expected = Exception.class)
-    public void testInvalidGetWrap(){
-        texture.getWrap(null);
     }
 
     @Test
