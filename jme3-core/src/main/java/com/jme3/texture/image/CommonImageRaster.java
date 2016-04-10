@@ -68,8 +68,6 @@ public abstract class CommonImageRaster extends ImageRaster {
         this.buffer = image.getData(slice);
     }
 
-    public abstract void codecWriteComponents(int x, int y);
-
     public ColorRGBA beforeSetPixelStore(ColorRGBA color) {
         return color;
     }
@@ -107,7 +105,7 @@ public abstract class CommonImageRaster extends ImageRaster {
                 components[3] = Math.min((int) (color.b * codec.maxBlue + 0.5f), codec.maxBlue);
                 break;
         }
-        this.codecWriteComponents(x, y);
+        codec.writeComponents(getBuffer(), x, y, getWidth(), getOffset(), components, temp);
         image.setUpdateNeeded();
     }
 
@@ -118,15 +116,13 @@ public abstract class CommonImageRaster extends ImageRaster {
         return buffer;
     }
 
-    public abstract void codecReadComponents(int x, int y);
-
     public void afterGetPixelStore(ColorRGBA store) { }
 
     @Override
     public ColorRGBA getPixel(int x, int y, ColorRGBA store) {
         rangeCheck(x, y);
 
-        this.codecReadComponents(x, y);
+        codec.readComponents(getBuffer(), x, y, getWidth(), getOffset(), components, temp);
         if (store == null) {
             store = new ColorRGBA();
         }
@@ -176,4 +172,6 @@ public abstract class CommonImageRaster extends ImageRaster {
     public abstract int getWidth();
 
     public abstract int getHeight();
+
+    protected abstract int getOffset();
 }

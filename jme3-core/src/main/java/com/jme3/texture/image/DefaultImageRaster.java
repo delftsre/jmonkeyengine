@@ -84,8 +84,8 @@ public class DefaultImageRaster extends CommonImageRaster {
     }
 
     @Override
-    public void codecWriteComponents(int x, int y) {
-         codec.writeComponents(getBuffer(), x, y, width, offset, components, temp);
+    protected int getOffset() {
+        return offset;
     }
 
     @Override
@@ -96,11 +96,6 @@ public class DefaultImageRaster extends CommonImageRaster {
             color = color.getAsSrgb();
         }
         return color;
-    }
-
-    @Override
-    public void codecReadComponents(int x, int y) {
-        codec.readComponents(getBuffer(), x, y, width, offset, components, temp);
     }
 
     @Override

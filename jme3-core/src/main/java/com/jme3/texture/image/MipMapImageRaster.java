@@ -71,16 +71,6 @@ public class MipMapImageRaster extends CommonImageRaster {
     }
 
     @Override
-    public void codecWriteComponents(int x, int y) {
-         codec.writeComponents(getBuffer(), x, y, width[mipLevel], offsets[mipLevel], components, temp);
-    }
-
-    @Override
-    public void codecReadComponents(int x, int y) {
-         codec.readComponents(getBuffer(), x, y, width[mipLevel], offsets[mipLevel], components, temp);
-    }
-
-    @Override
     public int getWidth() {
         return width[mipLevel];
     }
@@ -88,5 +78,10 @@ public class MipMapImageRaster extends CommonImageRaster {
     @Override
     public int getHeight() {
         return height[mipLevel];
+    }
+
+    @Override
+    public int getOffset() {
+        return offsets[mipLevel];
     }
 }
