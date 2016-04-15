@@ -39,6 +39,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -143,12 +144,12 @@ public class TestBatchNodeCluster extends SimpleApplication {
         flyCam.setMoveSpeed(100);
         rootNode.attachChild(terrain);
         Vector3f pos = new Vector3f(-40, 0, -40);
-        batchNode.setLocalTranslation(pos);
+        batchNode.setLocalTranslation(Vector.toVector(pos));
 
 
         Arrow a = new Arrow(new Vector3f(0, 50, 0));
         Geometry g = new Geometry("a", a);
-        g.setLocalTranslation(terrain.getLocalTranslation());
+        g.setLocalTranslation(Vector.toVector(terrain.getLocalTranslation()));
         Material m = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         m.setColor("Color", ColorRGBA.Blue);
         g.setMaterial(m);

@@ -16,6 +16,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -182,13 +183,13 @@ public class TerrainGridAlphaMapTest extends SimpleApplication {
         }
         terrain.addListener(new TerrainGridListener() {
 
-            public void gridMoved(Vector3f newCenter) {
+            public void gridMoved(Vector newCenter) {
             }
 
-            public void tileAttached(Vector3f cell, TerrainQuad quad) {
+            public void tileAttached(Vector cell, TerrainQuad quad) {
                 Texture alpha = null;
                 try {
-                    alpha = assetManager.loadTexture("TerrainAlphaTest/alpha_" + (int)cell.x+ "_" + (int)cell.z + ".png");
+                    alpha = assetManager.loadTexture("TerrainAlphaTest/alpha_" + (int)cell.getX()+ "_" + (int)cell.getZ() + ".png");
                 } catch (Exception e) {
                     alpha = assetManager.loadTexture("TerrainAlphaTest/alpha_default.png");
                 }
@@ -200,7 +201,7 @@ public class TerrainGridAlphaMapTest extends SimpleApplication {
                 updateMarkerElevations();
             }
 
-            public void tileDetached(Vector3f cell, TerrainQuad quad) {
+            public void tileDetached(Vector cell, TerrainQuad quad) {
                 if (usePhysics) {
                     if (quad.getControl(RigidBodyControl.class) != null) {
                         bulletAppState.getPhysicsSpace().remove(quad);
@@ -243,7 +244,7 @@ public class TerrainGridAlphaMapTest extends SimpleApplication {
     
     private void updateMarkerElevations() {
         for (Spatial s : markers.getChildren()) {
-            float h = terrain.getHeight(new Vector2f(s.getLocalTranslation().x, s.getLocalTranslation().z));
+            float h = terrain.getHeight(new Vector(s.getLocalTranslation().x, s.getLocalTranslation().z));
             s.setLocalTranslation(s.getLocalTranslation().x, h+1, s.getLocalTranslation().z);
         }
     }

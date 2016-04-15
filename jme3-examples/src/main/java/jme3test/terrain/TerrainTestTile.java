@@ -40,6 +40,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -283,37 +284,37 @@ public class TerrainTestTile extends SimpleApplication {
             return null;
         }
         
-        public float getHeight(Vector2f xz) {
+        public float getHeight(Vector xz) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public Vector3f getNormal(Vector2f xz) {
+        public Vector getNormal(Vector xz) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public float getHeightmapHeight(Vector2f xz) {
+        public float getHeightmapHeight(Vector xz) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public void setHeight(Vector2f xzCoordinate, float height) {
+        public void setHeight(Vector xzCoordinate, float height) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public void setHeight(List<Vector2f> xz, List<Float> height) {
+        public void setHeight(List<Vector> xz, List<Float> height) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public void adjustHeight(Vector2f xzCoordinate, float delta) {
+        public void adjustHeight(Vector xzCoordinate, float delta) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public void adjustHeight(List<Vector2f> xz, List<Float> height) {
+        public void adjustHeight(List<Vector> xz, List<Float> height) {
             // you will have to offset the coordinate for each terrain, to center on it
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -338,7 +339,7 @@ public class TerrainTestTile extends SimpleApplication {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public Material getMaterial(Vector3f worldLocation) {
+        public Material getMaterial(Vector worldLocation) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -348,9 +349,6 @@ public class TerrainTestTile extends SimpleApplication {
 
         public int getNumMajorSubdivisions() {
             throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        
-        
+        }        
     }
 }

@@ -35,6 +35,7 @@ package jme3test.android;
 import android.media.SoundPool;
 import com.jme3.app.SimpleApplication;
 import com.jme3.audio.AudioNode;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 
 public class TestAmbient extends SimpleApplication {
@@ -79,7 +80,7 @@ public class TestAmbient extends SimpleApplication {
 
         nature = new AudioNode(assetManager, "Sound/Environment/Nature.ogg", true);
         
-        waves.setLocalTranslation(new Vector3f(4, -1, 30));
+        waves.setLocalTranslation(new Vector(4, -1, 30));
         waves.setMaxDistance(5);
         waves.setRefDistance(1);
         

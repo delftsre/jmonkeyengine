@@ -124,7 +124,7 @@ public class PerspectiveLodCalculator implements LodCalculator {
     }
 
     public Vector3f getCenterLocation(TerrainPatch patch) {
-        Vector3f loc = patch.getWorldTranslation().clone();
+        Vector3f loc = patch.getWorldTranslation().toVector3f().clone();
         loc.x += patch.getSize() / 2;
         loc.z += patch.getSize() / 2;
         return loc;

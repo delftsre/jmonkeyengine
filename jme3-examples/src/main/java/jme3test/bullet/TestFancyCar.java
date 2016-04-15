@@ -262,6 +262,6 @@ public class TestFancyCar extends SimpleApplication implements ActionListener {
 
     @Override
     public void simpleUpdate(float tpf) {
-        cam.lookAt(carNode.getWorldTranslation(), Vector3f.UNIT_Y);
+        cam.lookAt(carNode.getWorldTranslation().toVector3f(), Vector3f.UNIT_Y);
     }
 }

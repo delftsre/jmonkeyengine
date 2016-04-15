@@ -54,7 +54,7 @@ public final class Intersection {
 
         TempVars vars = TempVars.get();
         try {
-            Vector3f diff = center.subtract(sphere.center, vars.vect1);
+            Vector3f diff = center.subtract(sphere.center, vars.vect1.toVector3f());
             float rsum = sphere.getRadius() + radius;
             return (diff.dot(diff) <= rsum * rsum);
         } finally {
@@ -136,13 +136,13 @@ public final class Intersection {
         TempVars vars = TempVars.get();
 
 
-        Vector3f tmp0 = vars.vect1,
-                tmp1 = vars.vect2,
-                tmp2 = vars.vect3;
+        Vector3f tmp0 = vars.vect1.toVector3f(),
+                tmp1 = vars.vect2.toVector3f(),
+                tmp2 = vars.vect3.toVector3f();
 
-        Vector3f e0 = vars.vect4,
-                e1 = vars.vect5,
-                e2 = vars.vect6;
+        Vector3f e0 = vars.vect4.toVector3f(),
+                e1 = vars.vect5.toVector3f(),
+                e2 = vars.vect6.toVector3f();
 
         Vector3f center = bbox.getCenter();
         Vector3f extent = bbox.getExtent(null);
@@ -285,7 +285,7 @@ public final class Intersection {
         //  the triangle against the AABB
 
 
-        Vector3f minMax = vars.vect7;
+        Vector3f minMax = vars.vect7.toVector3f();
 
         // test in X-direction
         findMinMax(tmp0.x, tmp1.x, tmp2.x, minMax);

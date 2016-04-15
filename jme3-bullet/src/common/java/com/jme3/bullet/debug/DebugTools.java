@@ -34,6 +34,7 @@ package com.jme3.bullet.debug;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -95,32 +96,32 @@ public class DebugTools {
     }
 
     public void setBlueArrow(Vector3f location, Vector3f extent) {
-        arrowBlueGeom.setLocalTranslation(location);
+        arrowBlueGeom.setLocalTranslation(Vector.toVector(location));
         arrowBlue.setArrowExtent(extent);
     }
 
     public void setGreenArrow(Vector3f location, Vector3f extent) {
-        arrowGreenGeom.setLocalTranslation(location);
+        arrowGreenGeom.setLocalTranslation(Vector.toVector(location));
         arrowGreen.setArrowExtent(extent);
     }
 
     public void setRedArrow(Vector3f location, Vector3f extent) {
-        arrowRedGeom.setLocalTranslation(location);
+        arrowRedGeom.setLocalTranslation(Vector.toVector(location));
         arrowRed.setArrowExtent(extent);
     }
 
     public void setMagentaArrow(Vector3f location, Vector3f extent) {
-        arrowMagentaGeom.setLocalTranslation(location);
+        arrowMagentaGeom.setLocalTranslation(Vector.toVector(location));
         arrowMagenta.setArrowExtent(extent);
     }
 
     public void setYellowArrow(Vector3f location, Vector3f extent) {
-        arrowYellowGeom.setLocalTranslation(location);
+        arrowYellowGeom.setLocalTranslation(Vector.toVector(location));
         arrowYellow.setArrowExtent(extent);
     }
 
     public void setPinkArrow(Vector3f location, Vector3f extent) {
-        arrowPinkGeom.setLocalTranslation(location);
+        arrowPinkGeom.setLocalTranslation(Vector.toVector(location));
         arrowPink.setArrowExtent(extent);
     }
 

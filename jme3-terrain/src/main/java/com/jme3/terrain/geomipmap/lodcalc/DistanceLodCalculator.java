@@ -83,7 +83,7 @@ public class DistanceLodCalculator implements LodCalculator {
         
         // go through each lod level to find the one we are in
         for (int i = 0; i <= terrainPatch.getMaxLod(); i++) {
-            if (distance < getLodDistanceThreshold() * (i + 1)*terrainPatch.getWorldScaleCached().x || i == terrainPatch.getMaxLod()) {
+            if (distance < getLodDistanceThreshold() * (i + 1)*terrainPatch.getWorldScaleCached().getX() || i == terrainPatch.getMaxLod()) {
                 boolean reIndexNeeded = false;
                 if (i != terrainPatch.getLod()) {
                     reIndexNeeded = true;
@@ -108,9 +108,9 @@ public class DistanceLodCalculator implements LodCalculator {
     }
 
     protected Vector3f getCenterLocation(TerrainPatch terrainPatch) {
-        Vector3f loc = terrainPatch.getWorldTranslationCached();
-        loc.x += terrainPatch.getSize()*terrainPatch.getWorldScaleCached().x / 2;
-        loc.z += terrainPatch.getSize()*terrainPatch.getWorldScaleCached().z / 2;
+        Vector3f loc = terrainPatch.getWorldTranslationCached().toVector3f();
+        loc.x += terrainPatch.getSize()*terrainPatch.getWorldScaleCached().getX() / 2;
+        loc.z += terrainPatch.getSize()*terrainPatch.getWorldScaleCached().getZ() / 2;
         return loc;
     }
 

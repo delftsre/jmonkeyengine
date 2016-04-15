@@ -884,8 +884,8 @@ public class ParticleEmitter extends Geometry {
 
         BoundingBox bbox = (BoundingBox) this.getMesh().getBound();
 
-        Vector3f min = vars.vect1;
-        Vector3f max = vars.vect2;
+        Vector3f min = vars.vect1.toVector3f();
+        Vector3f max = vars.vect2.toVector3f();
 
         bbox.getMin(min);
         bbox.getMax(max);
@@ -985,8 +985,8 @@ public class ParticleEmitter extends Geometry {
 
         TempVars vars = TempVars.get();
 
-        Vector3f min = vars.vect1.set(Vector3f.POSITIVE_INFINITY);
-        Vector3f max = vars.vect2.set(Vector3f.NEGATIVE_INFINITY);
+        Vector3f min = vars.vect1.toVector3f().set(Vector3f.POSITIVE_INFINITY);
+        Vector3f max = vars.vect2.toVector3f().set(Vector3f.NEGATIVE_INFINITY);
 
         for (int i = 0; i < particles.length; ++i) {
             Particle p = particles[i];
@@ -1037,7 +1037,7 @@ public class ParticleEmitter extends Geometry {
             lastPos = new Vector3f();
         }
 
-        lastPos.set(getWorldTranslation());
+        lastPos.set(getWorldTranslation().toVector3f());
 
         BoundingBox bbox = (BoundingBox) this.getMesh().getBound();
         bbox.setMinMax(min, max);

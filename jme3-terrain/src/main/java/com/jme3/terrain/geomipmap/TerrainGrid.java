@@ -38,6 +38,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -175,10 +176,10 @@ public class TerrainGrid extends TerrainQuad {
                             // back on the OpenGL thread:
                             public Object call() throws Exception {
                                 if (newQuad.getParent() != null) {
-                                    attachQuadAt(newQuad, quadrant, quadCell, true);
+                                    attachQuadAt(newQuad, quadrant, Vector.toVector(quadCell), true);
                                 }
                                 else {
-                                    attachQuadAt(newQuad, quadrant, quadCell, false);
+                                    attachQuadAt(newQuad, quadrant, Vector.toVector(quadCell), false);
                                 }
                                 return null;
                             }
@@ -228,8 +229,8 @@ public class TerrainGrid extends TerrainQuad {
         return 0; // error
     }
 
-    public TerrainGrid(String name, int patchSize, int maxVisibleSize, Vector3f scale, TerrainGridTileLoader terrainQuadGrid,
-            Vector2f offset, float offsetAmount) {
+    public TerrainGrid(String name, int patchSize, int maxVisibleSize, Vector scale, TerrainGridTileLoader terrainQuadGrid,
+            Vector offset, float offsetAmount) {
         this.name = name;
         this.patchSize = patchSize;
         this.size = maxVisibleSize;
@@ -246,12 +247,12 @@ public class TerrainGrid extends TerrainQuad {
         addControl(new NormalRecalcControl(this));
     }
 
-    public TerrainGrid(String name, int patchSize, int maxVisibleSize, Vector3f scale, TerrainGridTileLoader terrainQuadGrid) {
-        this(name, patchSize, maxVisibleSize, scale, terrainQuadGrid, new Vector2f(), 0);
+    public TerrainGrid(String name, int patchSize, int maxVisibleSize, Vector scale, TerrainGridTileLoader terrainQuadGrid) {
+        this(name, patchSize, maxVisibleSize, scale, terrainQuadGrid, new Vector(2), 0);
     }
 
     public TerrainGrid(String name, int patchSize, int maxVisibleSize, TerrainGridTileLoader terrainQuadGrid) {
-        this(name, patchSize, maxVisibleSize, Vector3f.UNIT_XYZ, terrainQuadGrid);
+        this(name, patchSize, maxVisibleSize, Vector.ONES(3), terrainQuadGrid);
     }
 
     public TerrainGrid() {
@@ -290,11 +291,11 @@ public class TerrainGrid extends TerrainQuad {
      * and then down the -Z direction:
      * (3,0,-1) (3,0,-2) (3,0,-3)
      */
-    public Vector3f getCamCell(Vector3f location) {
-        Vector3f tile = getTileCell(location);
-        Vector3f offsetHalf = new Vector3f(-0.5f, 0, -0.5f);
-        Vector3f shifted = tile.subtract(offsetHalf);
-        return new Vector3f(FastMath.floor(shifted.x), 0, FastMath.floor(shifted.z));
+    public Vector getCamCell(Vector location) {
+        Vector tile = getTileCell(location);
+        Vector offsetHalf = new Vector(-0.5f, 0, -0.5f);
+        Vector shifted = tile.subtract(offsetHalf);
+        return new Vector(FastMath.floor(shifted.getX()), 0, FastMath.floor(shifted.getZ()));
     }
 
     /**
@@ -302,8 +303,8 @@ public class TerrainGrid extends TerrainQuad {
      * Get the tile index location in integer form:
      * @param location world coordinate
      */
-    public Vector3f getTileCell(Vector3f location) {
-        Vector3f tileLoc = location.divide(this.getWorldScale().mult(this.quadSize));
+    public Vector getTileCell(Vector location) {
+        Vector tileLoc = location.divide(this.getWorldScale().mult(this.quadSize));
         return tileLoc;
     }
 
@@ -317,9 +318,9 @@ public class TerrainGrid extends TerrainQuad {
     public Terrain getTerrainAt(Vector3f worldLocation) {
         if (worldLocation == null)
             return null;
-        Vector3f tileCell = getTileCell(worldLocation.setY(0));
-        tileCell = new Vector3f(Math.round(tileCell.x), tileCell.y, Math.round(tileCell.z));
-        return cache.get(tileCell);
+        Vector tileCell = getTileCell(Vector.toVector(worldLocation.setY(0)));
+        tileCell = new Vector(Math.round(tileCell.getX()), tileCell.getY(), Math.round(tileCell.getZ()));
+        return cache.get(tileCell.toVector3f());
     }
     
     /**
@@ -334,9 +335,9 @@ public class TerrainGrid extends TerrainQuad {
     /**
      * Convert the world location into a cell location (integer coordinates)
      */
-    public Vector3f toCellSpace(Vector3f worldLocation) {
-        Vector3f tileCell = getTileCell(worldLocation);
-        tileCell = new Vector3f(Math.round(tileCell.x), tileCell.y, Math.round(tileCell.z));
+    public Vector toCellSpace(Vector worldLocation) {
+        Vector tileCell = getTileCell(worldLocation);
+        tileCell = new Vector(Math.round(tileCell.getX()), tileCell.getY(), Math.round(tileCell.getZ()));
         return tileCell;
     }
     
@@ -362,13 +363,13 @@ public class TerrainGrid extends TerrainQuad {
      * Runs on the rendering thread
      * @param shifted quads are still attached to the parent and don't need to re-load
      */
-    protected void attachQuadAt(TerrainQuad q, int quadrant, Vector3f quadCell, boolean shifted) {
+    protected void attachQuadAt(TerrainQuad q, int quadrant, Vector quadCell, boolean shifted) {
         
         q.setQuadrant((short) quadrant);
         if (!shifted)
             this.attachChild(q);
 
-        Vector3f loc = quadCell.mult(this.quadSize - 1).subtract(quarterSize, 0, quarterSize);// quadrant location handled TerrainQuad automatically now
+        Vector loc = quadCell.mult(this.quadSize - 1).subtract(new Vector(quarterSize, 0f, quarterSize));// quadrant location handled TerrainQuad automatically now
         q.setLocalTranslation(loc);
 
         if (!shifted) {
@@ -393,13 +394,13 @@ public class TerrainGrid extends TerrainQuad {
      * if the camera has moved into a new cell, we load in new quads
      * @param camCell the cell the camera is in
      */
-    protected void updateChildren(Vector3f camCell) {
+    protected void updateChildren(Vector camCell) {
 
         int dx = 0;
         int dy = 0;
         if (currentCamCell != null) {
-            dx = (int) (camCell.x - currentCamCell.x);
-            dy = (int) (camCell.z - currentCamCell.z);
+            dx = (int) (camCell.getX() - currentCamCell.x);
+            dy = (int) (camCell.getZ() - currentCamCell.z);
         }
 
         int xMin = 0;
@@ -423,7 +424,7 @@ public class TerrainGrid extends TerrainQuad {
         // either way in one of the axes (say X or Y axis) then they are all touched.
         for (int i = yMin; i < yMax; i++) {
             for (int j = xMin; j < xMax; j++) {
-                cache.get(camCell.add(quadIndex[i * 4 + j]));
+                cache.get(camCell.add(Vector.toVector(quadIndex[i * 4 + j])).toVector3f());
             }
         }
         
@@ -435,17 +436,17 @@ public class TerrainGrid extends TerrainQuad {
             cacheExecutor = createExecutorService();
         }
 
-        cacheExecutor.submit(new UpdateQuadCache(camCell));
+        cacheExecutor.submit(new UpdateQuadCache(camCell.toVector3f()));
 
-        this.currentCamCell = camCell;
+        this.currentCamCell = camCell.toVector3f();
     }
 
     public void addListener(TerrainGridListener listener) {
         this.listeners.add(listener);
     }
 
-    public Vector3f getCurrentCell() {
-        return this.currentCamCell;
+    public Vector getCurrentCell() {
+        return Vector.toVector(this.currentCamCell);
     }
 
     public void removeListener(TerrainGridListener listener) {
@@ -463,11 +464,11 @@ public class TerrainGrid extends TerrainQuad {
     }
 
     @Override
-    public void adjustHeight(List<Vector2f> xz, List<Float> height) {
-        Vector3f currentGridLocation = getCurrentCell().mult(getLocalScale()).multLocal(quadSize - 1);
-        for (Vector2f vect : xz) {
-            vect.x -= currentGridLocation.x;
-            vect.y -= currentGridLocation.z;
+    public void adjustHeight(List<Vector> xz, List<Float> height) {
+        Vector currentGridLocation = getCurrentCell().mult(Vector.toVector(getLocalScale())).multLocal(quadSize - 1);
+        for (Vector vect : xz) {
+            vect.setX(vect.getX() - currentGridLocation.getX());
+            vect.setY(vect.getY() - currentGridLocation.getZ());
         }
         super.adjustHeight(xz, height);
     }
@@ -483,11 +484,11 @@ public class TerrainGrid extends TerrainQuad {
     }
     
     @Override
-    public Material getMaterial(Vector3f worldLocation) {
+    public Material getMaterial(Vector worldLocation) {
         if (worldLocation == null)
             return null;
-        Vector3f tileCell = getTileCell(worldLocation);
-        Terrain terrain = cache.get(tileCell);
+        Vector tileCell = getTileCell(worldLocation);
+        Terrain terrain = cache.get(tileCell.toVector3f());
         if (terrain == null)
             return null; // terrain not loaded for that cell yet!
         return terrain.getMaterial(worldLocation);
@@ -538,8 +539,8 @@ public class TerrainGrid extends TerrainQuad {
         name = c.readString("name", null);
         size = c.readInt("size", 0);
         patchSize = c.readInt("patchSize", 0);
-        stepScale = (Vector3f) c.readSavable("stepScale", null);
-        offset = (Vector2f) c.readSavable("offset", null);
+        stepScale = (Vector) c.readSavable("stepScale", null);
+        offset = (Vector) c.readSavable("offset", null);
         offsetAmount = c.readFloat("offsetAmount", 0);
         gridTileLoader = (TerrainGridTileLoader) c.readSavable("terrainQuadGrid", null);
         material = (Material) c.readSavable("material", null);

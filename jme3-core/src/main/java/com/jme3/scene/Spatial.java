@@ -40,6 +40,7 @@ import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.material.Material;
 import com.jme3.math.*;
+import com.jme3.math.Vector;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -438,9 +439,9 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @return the Spatial's world translation vector.
      */
-    public Vector3f getWorldTranslation() {
+    public Vector getWorldTranslation() {
         checkDoTransformUpdate();
-        return worldTransform.getTranslation();
+        return Vector.toVector(worldTransform.getTranslation());
     }
 
     /**
@@ -449,9 +450,9 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @return the Spatial's world scale factor.
      */
-    public Vector3f getWorldScale() {
+    public Vector getWorldScale() {
         checkDoTransformUpdate();
-        return worldTransform.getScale();
+        return Vector.toVector(worldTransform.getScale());
     }
 
     /**
@@ -475,7 +476,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
     public void rotateUpTo(Vector3f newUp) {
         TempVars vars = TempVars.get();
 
-        Vector3f compVecA = vars.vect1;
+        Vector3f compVecA = vars.vect1.toVector3f();
         Quaternion q = vars.quat1;
 
         // First figure out the current up vector.
@@ -517,11 +518,11 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *            1, 0} in jME.)
      */
     public void lookAt(Vector3f position, Vector3f upVector) {
-        Vector3f worldTranslation = getWorldTranslation();
+        Vector3f worldTranslation = getWorldTranslation().toVector3f();
 
         TempVars vars = TempVars.get();
 
-        Vector3f compVecA = vars.vect4;
+        Vector3f compVecA = vars.vect4.toVector3f();
       
         compVecA.set(position).subtractLocal(worldTranslation);
         getLocalRotation().lookAt(compVecA, upVector);        
@@ -1011,9 +1012,12 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * @param localTranslation
      *            the local translation of this spatial.
      */
-    public void setLocalTranslation(Vector3f localTranslation) {
-        this.localTransform.setTranslation(localTranslation);
+    public void setLocalTranslation(Vector localTranslation) {
+        this.localTransform.setTranslation(localTranslation.toVector3f());
         setTransformRefresh();
+    }
+    public void setLocalTranslation(Vector3f localTranslation) {
+    	this.setLocalTranslation(Vector.toVector(localTranslation));
     }
 
     /**
@@ -1154,11 +1158,11 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * @return The spatial on which this method is called, e.g <code>this</code>.
      */
     public Spatial center() {
-        Vector3f worldTrans = getWorldTranslation();
+        Vector3f worldTrans = getWorldTranslation().toVector3f();
         Vector3f worldCenter = getWorldBound().getCenter();
 
         Vector3f absTrans = worldTrans.subtract(worldCenter);
-        setLocalTranslation(absTrans);
+        setLocalTranslation(Vector.toVector(absTrans));
 
         return this;
     }
@@ -1605,9 +1609,9 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         }
         // multiply with scale first, then rotate, finally translate (cf.
         // Eberly)
-        store.scale(getWorldScale());
+        store.scale(getWorldScale().toVector3f());
         store.multLocal(getWorldRotation());
-        store.setTranslation(getWorldTranslation());
+        store.setTranslation(getWorldTranslation().toVector3f());
         return store;
     }
 

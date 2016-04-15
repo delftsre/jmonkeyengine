@@ -32,8 +32,8 @@
 package com.jme3.terrain;
 
 import com.jme3.material.Material;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.Vector;
+
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ public interface Terrain {
      * @param xz the X-Z world coordinate
      * @return the height at the given point
      */
-    public float getHeight(Vector2f xz);
+    public float getHeight(Vector xz);
     
     /**
      * Get the normal vector for the surface of the terrain at the specified
@@ -62,7 +62,7 @@ public interface Terrain {
      * @param xz the X-Z world coordinate
      * @return the normal vector at the given point
      */
-    public Vector3f getNormal(Vector2f xz);
+    public Vector getNormal(Vector xz);
 
     /**
      * Get the heightmap height at the specified X-Z coordinate. This does not
@@ -70,7 +70,7 @@ public interface Terrain {
      * @param xz world coordinate
      * @return the height, unscaled and uninterpolated
      */
-    public float getHeightmapHeight(Vector2f xz);
+    public float getHeightmapHeight(Vector xz);
 
     /**
      * Set the height at the specified X-Z coordinate.
@@ -80,7 +80,7 @@ public interface Terrain {
      * @param xzCoordinate coordinate to set the height
      * @param height that will be set at the coordinate
      */
-    public void setHeight(Vector2f xzCoordinate, float height);
+    public void setHeight(Vector xzCoordinate, float height);
 
     /**
      * Set the height at many points. The two lists must be the same size.
@@ -90,14 +90,14 @@ public interface Terrain {
      * @param xz a list of coordinates where the hight will be set
      * @param height the heights that match the xz coordinates
      */
-    public void setHeight(List<Vector2f> xz, List<Float> height);
+    public void setHeight(List<Vector> xz, List<Float> height);
 
     /**
      * Raise/lower the height in one call (instead of getHeight then setHeight).
      * @param xzCoordinate world coordinate to adjust the terrain height
      * @param delta +- value to adjust the height by
      */
-    public void adjustHeight(Vector2f xzCoordinate, float delta);
+    public void adjustHeight(Vector xzCoordinate, float delta);
 
     /**
      * Raise/lower the height at many points. The two lists must be the same size.
@@ -107,7 +107,7 @@ public interface Terrain {
      * @param xz a list of coordinates where the hight will be adjusted
      * @param height +- value to adjust the height by, that matches the xz coordinates
      */
-    public void adjustHeight(List<Vector2f> xz, List<Float> height);
+    public void adjustHeight(List<Vector> xz, List<Float> height);
 
     /**
      * Get the heightmap of the entire terrain.
@@ -144,7 +144,7 @@ public interface Terrain {
      * Returns the material that this terrain uses.
      * If it uses many materials, just return the one you think is best.
      * For TerrainQuads this is sufficient. For TerrainGrid you want to call
-     * getMaterial(Vector3f) instead.
+     * getMaterial(Vector) instead.
      */
     public Material getMaterial();
     
@@ -161,7 +161,7 @@ public interface Terrain {
      * @param worldLocation the location, in world coordinates, of where 
      * we are interested in the underlying texture.
      */
-    public Material getMaterial(Vector3f worldLocation);
+    public Material getMaterial(Vector worldLocation);
 
     /**
      * Used for painting to get the number of vertices along the edge of the

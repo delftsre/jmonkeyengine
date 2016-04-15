@@ -32,6 +32,7 @@
 package com.jme3.scene.debug;
 
 import com.jme3.bounding.BoundingBox;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -124,7 +125,7 @@ public class WireBox extends Mesh {
         Geometry result = new Geometry("bounding box", mesh);
 
         Vector3f center = bbox.getCenter();
-        result.setLocalTranslation(center);
+        result.setLocalTranslation(Vector.toVector(center));
 
         return result;
     }

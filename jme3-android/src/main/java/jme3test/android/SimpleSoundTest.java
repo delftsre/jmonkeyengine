@@ -5,6 +5,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 
 public class SimpleSoundTest extends SimpleApplication implements InputListener {
@@ -16,7 +17,7 @@ public class SimpleSoundTest extends SimpleApplication implements InputListener 
     public void simpleInitApp() {
         gun = new AudioNode(assetManager, "Sound/Effects/Gun.wav");
         gun.setPositional(true);
-        gun.setLocalTranslation(new Vector3f(0, 0, 0));
+        gun.setLocalTranslation(Vector.ONES(3));
         gun.setMaxDistance(100);
         gun.setRefDistance(5);
 

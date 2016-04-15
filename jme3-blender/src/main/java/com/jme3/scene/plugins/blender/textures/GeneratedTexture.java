@@ -200,28 +200,28 @@ import com.jme3.util.TempVars;
             forwardV = 1;
             upS = 0;
             for (int y = 0; y < size; ++y) {
-                castFunction.cast(tempVars.vect1.set(1, sideV, sideS), castRadius);
-                textureGenerator.getPixel(pixel, tempVars.vect1.x, tempVars.vect1.y, tempVars.vect1.z);
+                castFunction.cast(tempVars.vect1.toVector3f().set(1, sideV, sideS), castRadius);
+                textureGenerator.getPixel(pixel, tempVars.vect1.toVector3f().x, tempVars.vect1.toVector3f().y, tempVars.vect1.toVector3f().z);
                 pixelIO.write(image, NEGATIVE_X, ImageUtils.color(pixel, horizontalColor, zenithColor), x, y);// right
 
-                castFunction.cast(tempVars.vect1.set(0, sideV, 1 - sideS), castRadius);
-                textureGenerator.getPixel(pixel, tempVars.vect1.x, tempVars.vect1.y, tempVars.vect1.z);
+                castFunction.cast(tempVars.vect1.toVector3f().set(0, sideV, 1 - sideS), castRadius);
+                textureGenerator.getPixel(pixel, tempVars.vect1.toVector3f().x, tempVars.vect1.toVector3f().y, tempVars.vect1.toVector3f().z);
                 pixelIO.write(image, POSITIVE_X, ImageUtils.color(pixel, horizontalColor, zenithColor), x, y);// left
 
-                castFunction.cast(tempVars.vect1.set(forwardU, forwardV, 0), castRadius);
-                textureGenerator.getPixel(pixel, tempVars.vect1.x, tempVars.vect1.y, tempVars.vect1.z);
+                castFunction.cast(tempVars.vect1.toVector3f().set(forwardU, forwardV, 0), castRadius);
+                textureGenerator.getPixel(pixel, tempVars.vect1.toVector3f().x, tempVars.vect1.toVector3f().y, tempVars.vect1.toVector3f().z);
                 pixelIO.write(image, POSITIVE_Z, ImageUtils.color(pixel, horizontalColor, zenithColor), x, y);// front
 
-                castFunction.cast(tempVars.vect1.set(1 - forwardU, forwardV, 1), castRadius);
-                textureGenerator.getPixel(pixel, tempVars.vect1.x, tempVars.vect1.y, tempVars.vect1.z);
+                castFunction.cast(tempVars.vect1.toVector3f().set(1 - forwardU, forwardV, 1), castRadius);
+                textureGenerator.getPixel(pixel, tempVars.vect1.toVector3f().x, tempVars.vect1.toVector3f().y, tempVars.vect1.toVector3f().z);
                 pixelIO.write(image, NEGATIVE_Z, ImageUtils.color(pixel, horizontalColor, zenithColor), x, y);// back
 
-                castFunction.cast(tempVars.vect1.set(forwardU, 0, upS), castRadius);
-                textureGenerator.getPixel(pixel, tempVars.vect1.x, tempVars.vect1.y, tempVars.vect1.z);
+                castFunction.cast(tempVars.vect1.toVector3f().set(forwardU, 0, upS), castRadius);
+                textureGenerator.getPixel(pixel, tempVars.vect1.toVector3f().x, tempVars.vect1.toVector3f().y, tempVars.vect1.toVector3f().z);
                 pixelIO.write(image, NEGATIVE_Y, ImageUtils.color(pixel, horizontalColor, zenithColor), x, y);// top
 
-                castFunction.cast(tempVars.vect1.set(forwardU, 1, 1 - upS), castRadius);
-                textureGenerator.getPixel(pixel, tempVars.vect1.x, tempVars.vect1.y, tempVars.vect1.z);
+                castFunction.cast(tempVars.vect1.toVector3f().set(forwardU, 1, 1 - upS), castRadius);
+                textureGenerator.getPixel(pixel, tempVars.vect1.toVector3f().x, tempVars.vect1.toVector3f().y, tempVars.vect1.toVector3f().z);
                 pixelIO.write(image, POSITIVE_Y, ImageUtils.color(pixel, horizontalColor, zenithColor), x, y);// bottom
 
                 sideV = FastMath.clamp(sideV - delta, 0, 1);

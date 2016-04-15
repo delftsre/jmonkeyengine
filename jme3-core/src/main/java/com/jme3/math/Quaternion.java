@@ -463,7 +463,7 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      */
     public Matrix4f toRotationMatrix(Matrix4f result) {
         TempVars tempv = TempVars.get();
-        Vector3f originalScale = tempv.vect1;
+        Vector3f originalScale = tempv.vect1.toVector3f();
         
         result.toScaleVector(originalScale);
         result.setScale(1, 1, 1);
@@ -1307,10 +1307,10 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      */
     public void lookAt(Vector3f direction, Vector3f up) {
         TempVars vars = TempVars.get();
-        vars.vect3.set(direction).normalizeLocal();
-        vars.vect1.set(up).crossLocal(direction).normalizeLocal();
-        vars.vect2.set(direction).crossLocal(vars.vect1).normalizeLocal();
-        fromAxes(vars.vect1, vars.vect2, vars.vect3);
+        vars.vect3.toVector3f().set(direction).normalizeLocal();
+        vars.vect1.toVector3f().set(up).crossLocal(direction).normalizeLocal();
+        vars.vect2.toVector3f().set(direction).crossLocal(vars.vect1.toVector3f()).normalizeLocal();
+        fromAxes(vars.vect1.toVector3f(), vars.vect2.toVector3f(), vars.vect3.toVector3f());
         vars.release();
     }
 

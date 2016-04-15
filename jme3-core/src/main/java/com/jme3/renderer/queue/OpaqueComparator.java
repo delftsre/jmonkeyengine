@@ -60,7 +60,7 @@ public class OpaqueComparator implements GeometryComparator {
         if (spat.getWorldBound() != null){
             spatPosition = spat.getWorldBound().getCenter();
         }else{
-            spatPosition = spat.getWorldTranslation();
+            spatPosition = spat.getWorldTranslation().toVector3f();
         }
  
         spatPosition.subtract(camPosition, tempVec);

@@ -150,12 +150,12 @@ public class BIHTree implements CollisionData {
     private BoundingBox createBox(int l, int r) {
         TempVars vars = TempVars.get();
 
-        Vector3f min = vars.vect1.set(new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY));
-        Vector3f max = vars.vect2.set(new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY));
+        Vector3f min = vars.vect1.toVector3f().set(new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY));
+        Vector3f max = vars.vect2.toVector3f().set(new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY));
 
-        Vector3f v1 = vars.vect3,
-                v2 = vars.vect4,
-                v3 = vars.vect5;
+        Vector3f v1 = vars.vect3.toVector3f(),
+                v2 = vars.vect4.toVector3f(),
+                v3 = vars.vect5.toVector3f();
 
         for (int i = l; i <= r; i++) {
             getTriangle(i, v1, v2, v3);
@@ -179,9 +179,9 @@ public class BIHTree implements CollisionData {
 
         TempVars vars = TempVars.get();
 
-        Vector3f v1 = vars.vect1,
-                v2 = vars.vect2,
-                v3 = vars.vect3;
+        Vector3f v1 = vars.vect1.toVector3f(),
+                v2 = vars.vect2.toVector3f(),
+                v3 = vars.vect3.toVector3f();
 
         while (pivot <= j) {
             getTriangle(pivot, v1, v2, v3);

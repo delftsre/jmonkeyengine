@@ -7,12 +7,12 @@
 
 package jme3test.android;
 
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.TextureKey;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -121,7 +121,7 @@ public class SimpleTexturedTest extends SimpleApplication {
 			}
 		}
 
-		spheresContainer.setLocalTranslation(new Vector3f(0, 0, -4f));
+		spheresContainer.setLocalTranslation(new Vector(0, 0, -4f));
 		spheresContainer.setLocalScale(2.0f);
 
 		rootNode.attachChild(spheresContainer);

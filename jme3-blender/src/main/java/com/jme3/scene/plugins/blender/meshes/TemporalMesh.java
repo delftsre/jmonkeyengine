@@ -346,7 +346,7 @@ public class TemporalMesh extends Geometry {
         Node parent = this.getParent();
         if (parent != null) {
             BoundingVolume bv = boundingBox.clone();
-            bv.setCenter(parent.getWorldTranslation());
+            bv.setCenter(parent.getWorldTranslation().toVector3f());
             return bv;
         } else {
             return boundingBox;

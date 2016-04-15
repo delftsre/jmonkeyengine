@@ -220,9 +220,9 @@ public class Dome extends Mesh {
         }
 
         TempVars vars = TempVars.get();
-        Vector3f tempVc = vars.vect3;
-        Vector3f tempVb = vars.vect2;
-        Vector3f tempVa = vars.vect1;
+        Vector3f tempVc = vars.vect3.toVector3f();
+        Vector3f tempVb = vars.vect2.toVector3f();
+        Vector3f tempVa = vars.vect1.toVector3f();
 
         // generate the dome itself
         int i = 0;

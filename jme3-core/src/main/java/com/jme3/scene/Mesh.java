@@ -875,7 +875,7 @@ public class Mesh implements Savable, Cloneable {
      * @param tri The triangle to store the positions in
      */
     public void getTriangle(int index, Triangle tri){
-        getTriangle(index, tri.get1(), tri.get2(), tri.get3());
+        getTriangle(index, tri.get1().toVector3f(), tri.get2().toVector3f(), tri.get3().toVector3f());
         tri.setIndex(index);
         tri.setNormal(null);
     }

@@ -49,6 +49,7 @@ import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -261,7 +262,7 @@ public class TerrainTestCollision extends SimpleApplication {
                     if (collisionMarker == null) {
                         createCollisionMarker();
                     }
-                    Vector2f loc = new Vector2f(hit.getContactPoint().x, hit.getContactPoint().z);
+                    Vector loc = new Vector(hit.getContactPoint().x, hit.getContactPoint().z);
                     float height = terrain.getHeight(loc);
                     System.out.println("collide " + hit.getContactPoint() + ", height: " + height + ", distance: " + hit.getDistance());
                     collisionMarker.setLocalTranslation(new Vector3f(hit.getContactPoint().x, height, hit.getContactPoint().z));

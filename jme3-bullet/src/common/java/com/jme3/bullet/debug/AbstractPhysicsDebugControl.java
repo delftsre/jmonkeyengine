@@ -32,6 +32,7 @@
 package com.jme3.bullet.debug;
 
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
@@ -64,15 +65,15 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
             Vector3f localLocation = spatial.getLocalTranslation();
             Quaternion localRotationQuat = spatial.getLocalRotation();
             if (spatial.getParent() != null) {
-                localLocation.set(worldLocation).subtractLocal(spatial.getParent().getWorldTranslation());
-                localLocation.divideLocal(spatial.getParent().getWorldScale());
+                localLocation.set(worldLocation).subtractLocal(spatial.getParent().getWorldTranslation().toVector3f());
+                localLocation.divideLocal(spatial.getParent().getWorldScale().toVector3f());
                 tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().multLocal(localLocation);
                 localRotationQuat.set(worldRotation);
                 tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().mult(localRotationQuat, localRotationQuat);
-                spatial.setLocalTranslation(localLocation);
+                spatial.setLocalTranslation(Vector.toVector(localLocation));
                 spatial.setLocalRotation(localRotationQuat);
             } else {
-                spatial.setLocalTranslation(worldLocation);
+                spatial.setLocalTranslation(Vector.toVector(worldLocation));
                 spatial.setLocalRotation(worldRotation);
             }
         }

@@ -47,6 +47,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
@@ -182,7 +183,7 @@ public class TestCinematic extends SimpleApplication {
     private void createCameraMotion() {
 
         CameraNode camNode = cinematic.bindCamera("topView", cam);
-        camNode.setLocalTranslation(new Vector3f(0, 50, 0));
+        camNode.setLocalTranslation(new Vector(0, 50, 0));
         camNode.lookAt(teapot.getLocalTranslation(), Vector3f.UNIT_Y);
 
         CameraNode camNode2 = cinematic.bindCamera("aroundCam", cam);
@@ -195,7 +196,7 @@ public class TestCinematic extends SimpleApplication {
         path.setCurveTension(0.83f);
         cameraMotionEvent = new MotionEvent(camNode2, path);
         cameraMotionEvent.setLoopMode(LoopMode.Loop);
-        cameraMotionEvent.setLookAt(model.getWorldTranslation(), Vector3f.UNIT_Y);
+        cameraMotionEvent.setLookAt(model.getWorldTranslation().toVector3f(), Vector3f.UNIT_Y);
         cameraMotionEvent.setDirectionType(MotionEvent.Direction.LookAt);
 
     }

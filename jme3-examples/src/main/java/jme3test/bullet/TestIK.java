@@ -71,14 +71,14 @@ public class TestIK extends TestBoneRagdoll implements RagdollCollisionListener,
 
                 if (name.equals("one") && isPressed) {
                     //ragdoll.setKinematicMode();
-                    targetPoint = model.getWorldTranslation().add(new Vector3f(0,2,4));
+                    targetPoint = model.getWorldTranslation().toVector3f().add(new Vector3f(0,2,4));
                     targetNode.setLocalTranslation(targetPoint);
                     ikControl.setIKTarget(ikControl.getBone("Hand.L"), targetPoint, 2);
                     ikControl.setIKMode();
                 }
                 if (name.equals("two") && isPressed) {
                     //ragdoll.setKinematicMode();
-                    targetPoint = model.getWorldTranslation().add(new Vector3f(-3,3,0));
+                    targetPoint = model.getWorldTranslation().toVector3f().add(new Vector3f(-3,3,0));
                     targetNode.setLocalTranslation(targetPoint);
                     ikControl.setIKTarget(ikControl.getBone("Hand.R"), targetPoint, 3);
                     ikControl.setIKMode();

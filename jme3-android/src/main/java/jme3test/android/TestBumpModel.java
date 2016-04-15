@@ -39,6 +39,7 @@ import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
@@ -89,7 +90,7 @@ public class TestBumpModel extends SimpleApplication {
         angle %= FastMath.TWO_PI;
 
         pl.setPosition(new Vector3f(FastMath.cos(angle) * 6f, 3f, FastMath.sin(angle) * 6f));
-        lightMdl.setLocalTranslation(pl.getPosition());
+        lightMdl.setLocalTranslation(Vector.toVector(pl.getPosition()));
     }
 
 }

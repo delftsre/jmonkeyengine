@@ -98,7 +98,7 @@ public class TestTempVars {
                 recursiveMethod(recurse + 1);
             }
 
-            sumCompute.addLocal(vars.vect1);
+            sumCompute.addLocal(vars.vect1.toVector3f());
         }
         vars.release();
     }
@@ -107,7 +107,7 @@ public class TestTempVars {
         TempVars vars = TempVars.get();
         {
             vars.vect1.set(0.1f, 0.2f, 0.3f);
-            sumCompute.addLocal(vars.vect1);
+            sumCompute.addLocal(vars.vect1.toVector3f());
         }
         vars.release();
     }

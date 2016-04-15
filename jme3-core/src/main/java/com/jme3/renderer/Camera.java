@@ -394,12 +394,12 @@ public class Camera implements Savable, Cloneable {
 
             Matrix4f ivm = viewMatrix;
 
-            Vector3f point = clipPlane.getNormal().mult(clipPlane.getConstant(), vars.vect1);
-            Vector3f pp = ivm.mult(point, vars.vect2);
-            Vector3f pn = ivm.multNormal(clipPlane.getNormal(), vars.vect3);
-            Vector4f clipPlaneV = vars.vect4f1.set(pn.x * sideFactor, pn.y * sideFactor, pn.z * sideFactor, -(pp.dot(pn)) * sideFactor);
+            Vector3f point = clipPlane.getNormal().mult(clipPlane.getConstant(), vars.vect1.toVector3f());
+            Vector3f pp = ivm.mult(point, vars.vect2.toVector3f());
+            Vector3f pn = ivm.multNormal(clipPlane.getNormal(), vars.vect3.toVector3f());
+            Vector4f clipPlaneV = vars.vect4f1.toVector4f().set(pn.x * sideFactor, pn.y * sideFactor, pn.z * sideFactor, -(pp.dot(pn)) * sideFactor);
     
-            Vector4f v = vars.vect4f2.set(0, 0, 0, 0);
+            Vector4f v = vars.vect4f2.toVector4f().set(0, 0, 0, 0);
     
             v.x = (Math.signum(clipPlaneV.x) + p.m02) / p.m00;
             v.y = (Math.signum(clipPlaneV.y) + p.m12) / p.m11;
@@ -817,9 +817,9 @@ public class Camera implements Savable, Cloneable {
      */
     public void lookAt(Vector3f pos, Vector3f worldUpVector) {
         TempVars vars = TempVars.get();
-        Vector3f newDirection = vars.vect1;
-        Vector3f newUp = vars.vect2;
-        Vector3f newLeft = vars.vect3;
+        Vector3f newDirection = vars.vect1.toVector3f();
+        Vector3f newUp = vars.vect2.toVector3f();
+        Vector3f newLeft = vars.vect3.toVector3f();
 
         newDirection.set(pos).subtractLocal(location).normalizeLocal();
 
@@ -1230,9 +1230,9 @@ public class Camera implements Savable, Cloneable {
     public void onFrameChange() {
         TempVars vars = TempVars.get();
         
-        Vector3f left = getLeft(vars.vect1);
-        Vector3f direction = getDirection(vars.vect2);
-        Vector3f up = getUp(vars.vect3);
+        Vector3f left = getLeft(vars.vect1.toVector3f());
+        Vector3f direction = getDirection(vars.vect2.toVector3f());
+        Vector3f up = getUp(vars.vect3.toVector3f());
 
         float dirDotLocation = direction.dot(location);
 

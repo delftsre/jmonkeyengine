@@ -246,14 +246,14 @@ public class TestConeVSFrustum extends SimpleApplication {
         } else {
             geom.getMaterial().setColor("Diffuse", ColorRGBA.White);
         }
-        Vector3f farPoint = vars.vect1.set(spotLight.getPosition()).addLocal(vars.vect2.set(spotLight.getDirection()).multLocal(spotLight.getSpotRange()));
+        Vector3f farPoint = vars.vect1.toVector3f().set(spotLight.getPosition()).addLocal(vars.vect2.toVector3f().set(spotLight.getDirection()).multLocal(spotLight.getSpotRange()));
 
         //computing the radius of the base disc
         float farRadius = (spotLight.getSpotRange() / FastMath.cos(spotLight.getSpotOuterAngle())) * FastMath.sin(spotLight.getSpotOuterAngle());
         //computing the projection direction : perpendicular to the light direction and coplanar with the direction vector and the normal vector
-        Vector3f perpDirection = vars.vect2.set(spotLight.getDirection()).crossLocal(frustumCam.getWorldPlane(3).getNormal()).normalizeLocal().crossLocal(spotLight.getDirection());
+        Vector3f perpDirection = vars.vect2.toVector3f().set(spotLight.getDirection()).crossLocal(frustumCam.getWorldPlane(3).getNormal()).normalizeLocal().crossLocal(spotLight.getDirection());
         //projecting the far point on the base disc perimeter
-        Vector3f projectedPoint = vars.vect3.set(farPoint).addLocal(perpDirection.multLocal(farRadius));
+        Vector3f projectedPoint = vars.vect3.toVector3f().set(farPoint).addLocal(perpDirection.multLocal(farRadius));
 
 
         vars.release();

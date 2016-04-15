@@ -34,6 +34,7 @@ package com.jme3.bullet.objects.infos;
 import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.logging.Level;
@@ -73,17 +74,17 @@ public class RigidBodyMotionState {
             return false;
         }
         if (!applyPhysicsLocal && spatial.getParent() != null) {
-            localLocation.subtractLocal(spatial.getParent().getWorldTranslation());
-            localLocation.divideLocal(spatial.getParent().getWorldScale());
+            localLocation.subtractLocal(spatial.getParent().getWorldTranslation().toVector3f());
+            localLocation.divideLocal(spatial.getParent().getWorldScale().toVector3f());
             tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().multLocal(localLocation);
 
 //            localRotationQuat.set(worldRotationQuat);
             tmp_inverseWorldRotation.mult(localRotationQuat, localRotationQuat);
 
-            spatial.setLocalTranslation(localLocation);
+            spatial.setLocalTranslation(Vector.toVector(localLocation));
             spatial.setLocalRotation(localRotationQuat);
         } else {
-            spatial.setLocalTranslation(localLocation);
+            spatial.setLocalTranslation(Vector.toVector(localLocation));
             spatial.setLocalRotation(localRotationQuat);
 //            spatial.setLocalTranslation(worldLocation);
 //            spatial.setLocalRotation(worldRotationQuat);

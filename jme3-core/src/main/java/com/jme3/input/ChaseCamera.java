@@ -305,7 +305,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
 
         float hDistance = (distance) * FastMath.sin((FastMath.PI / 2) - vRotation);
         pos.set(hDistance * FastMath.cos(rotation), (distance) * FastMath.sin(vRotation), hDistance * FastMath.sin(rotation));
-        pos.addLocal(target.getWorldTranslation());
+        pos.addLocal(target.getWorldTranslation().toVector3f());
     }
 
     //rotate the camera around the target on the horizontal plane
@@ -369,7 +369,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
      */
     protected void updateCamera(float tpf) {
         if (enabled) {
-            targetLocation.set(target.getWorldTranslation()).addLocal(lookAtOffset);
+            targetLocation.set(target.getWorldTranslation().toVector3f()).addLocal(lookAtOffset);
             if (smoothMotion) {
 
                 //computation of target direction
@@ -584,7 +584,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control {
             return;
         }
         computePosition();
-        prevPos = new Vector3f(target.getWorldTranslation());
+        prevPos = new Vector3f(target.getWorldTranslation().toVector3f());
         cam.setLocation(pos);
     }
 

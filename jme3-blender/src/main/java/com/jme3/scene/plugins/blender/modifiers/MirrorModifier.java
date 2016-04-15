@@ -96,7 +96,7 @@ import com.jme3.scene.plugins.blender.objects.ObjectHelper;
                         Node object = (Node) objectHelper.toObject(objectStructure, blenderContext);
                         if (object != null) {
                             // compute the mirror object coordinates in node's local space
-                            mirrorPlaneCenter = this.getWorldMatrix(node).invertLocal().mult(object.getWorldTranslation());
+                            mirrorPlaneCenter = this.getWorldMatrix(node).invertLocal().mult(object.getWorldTranslation().toVector3f());
                         }
                     } catch (BlenderFileException e) {
                         LOGGER.log(Level.SEVERE, "Cannot load mirror''s reference object. Cause: {0}", e.getLocalizedMessage());
@@ -174,9 +174,9 @@ import com.jme3.scene.plugins.blender.objects.ObjectHelper;
      */
     private Matrix4f getWorldMatrix(Node node) {
         Matrix4f result = new Matrix4f();
-        result.setTranslation(node.getWorldTranslation());
+        result.setTranslation(node.getWorldTranslation().toVector3f());
         result.setRotationQuaternion(node.getWorldRotation());
-        result.setScale(node.getWorldScale());
+        result.setScale(node.getWorldScale().toVector3f());
         return result;
     }
 

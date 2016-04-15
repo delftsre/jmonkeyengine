@@ -209,8 +209,8 @@ public class ParticleTriMesh extends ParticleMesh {
                 left.multLocal(p.size);
                 if (p.angle != 0) {
                     TempVars vars = TempVars.get();
-                    vars.vect1.set(faceNormal).normalizeLocal();
-                    vars.quat1.fromAngleNormalAxis(p.angle, vars.vect1);
+                    vars.vect1.toVector3f().set(faceNormal).normalizeLocal();
+                    vars.quat1.fromAngleNormalAxis(p.angle, vars.vect1.toVector3f());
                     vars.quat1.multLocal(left);
                     vars.quat1.multLocal(up);
                     vars.release();

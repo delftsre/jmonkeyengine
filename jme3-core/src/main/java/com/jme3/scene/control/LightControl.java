@@ -39,6 +39,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -124,17 +125,17 @@ public class LightControl extends AbstractControl {
 
     private void spatialTolight(Light light) {
         if (light instanceof PointLight) {
-            ((PointLight) light).setPosition(spatial.getWorldTranslation());
+            ((PointLight) light).setPosition(spatial.getWorldTranslation().toVector3f());
         }
         TempVars vars = TempVars.get();
 
         if (light instanceof DirectionalLight) {
-            ((DirectionalLight) light).setDirection(vars.vect1.set(spatial.getWorldTranslation()).multLocal(-1.0f));
+            ((DirectionalLight) light).setDirection(vars.vect1.toVector3f().set(spatial.getWorldTranslation().toVector3f()).multLocal(-1.0f));
         }
 
         if (light instanceof SpotLight) {
-            ((SpotLight) light).setPosition(spatial.getWorldTranslation());            
-            ((SpotLight) light).setDirection(spatial.getWorldRotation().multLocal(vars.vect1.set(Vector3f.UNIT_Y).multLocal(-1)));
+            ((SpotLight) light).setPosition(spatial.getWorldTranslation().toVector3f());            
+            ((SpotLight) light).setDirection(spatial.getWorldRotation().multLocal(vars.vect1.toVector3f().set(Vector3f.UNIT_Y).multLocal(-1)));
         }
         vars.release();
 
@@ -146,15 +147,15 @@ public class LightControl extends AbstractControl {
 
             PointLight pLight = (PointLight) light;
 
-            Vector3f vecDiff = vars.vect1.set(pLight.getPosition()).subtractLocal(spatial.getWorldTranslation());
-            spatial.setLocalTranslation(vecDiff.addLocal(spatial.getLocalTranslation()));
+            Vector3f vecDiff = vars.vect1.toVector3f().set(pLight.getPosition()).subtractLocal(spatial.getWorldTranslation().toVector3f());
+            spatial.setLocalTranslation(Vector.toVector(vecDiff.addLocal(spatial.getLocalTranslation())));
         }
 
         if (light instanceof DirectionalLight) {
             DirectionalLight dLight = (DirectionalLight) light;
-            vars.vect1.set(dLight.getDirection()).multLocal(-1.0f);
-            Vector3f vecDiff = vars.vect1.subtractLocal(spatial.getWorldTranslation());
-            spatial.setLocalTranslation(vecDiff.addLocal(spatial.getLocalTranslation()));
+            vars.vect1.toVector3f().set(dLight.getDirection()).multLocal(-1.0f);
+            Vector3f vecDiff = vars.vect1.toVector3f().subtractLocal(spatial.getWorldTranslation().toVector3f());
+            spatial.setLocalTranslation(Vector.toVector(vecDiff.addLocal(spatial.getLocalTranslation())));
         }
         vars.release();
         //TODO add code for Spot light here when it's done

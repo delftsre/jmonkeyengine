@@ -67,11 +67,13 @@ public class Triangle extends AbstractTriangle implements Savable, java.io.Seria
      * @param p1 the first point of the triangle.
      * @param p2 the second point of the triangle.
      * @param p3 the third point of the triangle.
+     * 
+     * TODO: Refactor to use native Vector instead of converted ones
      */
-    public Triangle(Vector3f p1, Vector3f p2, Vector3f p3) {
-        pointa.set(p1);
-        pointb.set(p2);
-        pointc.set(p3);
+    public Triangle(Vector p1, Vector p2, Vector p3) {
+        pointa.set(new Vector3f(p1.getX(), p1.getY(), p1.getZ()));
+        pointb.set(new Vector3f(p2.getX(), p2.getY(), p2.getZ()));
+        pointc.set(new Vector3f(p3.getX(), p3.getY(), p3.getZ()));
     }
 
     /**
@@ -94,16 +96,19 @@ public class Triangle extends AbstractTriangle implements Savable, java.io.Seria
         }
     }
 
-    public Vector3f get1() {
-        return pointa;
+    public Vector get1() {
+    	return new Vector(pointa.x, pointa.y, pointa.z);
+//        return pointa;
     }
 
-    public Vector3f get2() {
-        return pointb;
+    public Vector get2() {
+    	return new Vector(pointb.x, pointb.y, pointb.z);
+//        return pointb;
     }
 
-    public Vector3f get3() {
-        return pointc;
+    public Vector get3() {
+    	return new Vector(pointc.x, pointc.y, pointc.z);
+//        return pointc;
     }
 
     /**
@@ -159,10 +164,10 @@ public class Triangle extends AbstractTriangle implements Savable, java.io.Seria
         pointc.set(v);
     }
 
-    public void set(Vector3f v1, Vector3f v2, Vector3f v3) {
-        pointa.set(v1);
-        pointb.set(v2);
-        pointc.set(v3);
+    public void set(Vector v1, Vector v2, Vector v3) {
+        pointa.set(new Vector3f(v1.getX(), v1.getY(), v1.getZ()));
+        pointb.set(new Vector3f(v2.getX(), v2.getY(), v2.getZ()));
+        pointc.set(new Vector3f(v3.getX(), v3.getY(), v3.getZ()));
     }
 
     /**

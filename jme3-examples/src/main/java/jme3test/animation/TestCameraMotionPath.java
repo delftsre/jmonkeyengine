@@ -87,7 +87,7 @@ public class TestCameraMotionPath extends SimpleApplication {
         cameraMotionControl = new MotionEvent(camNode, path);
         cameraMotionControl.setLoopMode(LoopMode.Loop);
         //cameraMotionControl.setDuration(15f);
-        cameraMotionControl.setLookAt(teapot.getWorldTranslation(), Vector3f.UNIT_Y);
+        cameraMotionControl.setLookAt(teapot.getWorldTranslation().toVector3f(), Vector3f.UNIT_Y);
         cameraMotionControl.setDirectionType(MotionEvent.Direction.LookAt);
 
         rootNode.attachChild(camNode);

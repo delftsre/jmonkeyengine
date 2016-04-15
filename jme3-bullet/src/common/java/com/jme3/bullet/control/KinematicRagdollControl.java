@@ -54,6 +54,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -213,7 +214,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
         for (PhysicsBoneLink link : boneLinks.values()) {
 
-            Vector3f position = vars.vect1;
+            Vector3f position = vars.vect1.toVector3f();
 
             //retrieving bone position in physic world space
             Vector3f p = link.rigidBody.getMotionState().getWorldLocation();
@@ -239,7 +240,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
 
                 //applying transforms to the model
-                targetModel.setLocalTranslation(modelPosition);
+                targetModel.setLocalTranslation(Vector.toVector(modelPosition));
 
                 targetModel.setLocalRotation(modelRotation);
 
@@ -266,7 +267,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         TempVars vars = TempVars.get();
         Quaternion tmpRot1 = vars.quat1;
         Quaternion tmpRot2 = vars.quat2;
-        Vector3f position = vars.vect1;
+        Vector3f position = vars.vect1.toVector3f();
         for (PhysicsBoneLink link : boneLinks.values()) {
 //            if(link.usedbyIK){
 //                continue;
@@ -274,7 +275,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             //if blended control this means, keyframed animation is updating the skeleton, 
             //but to allow smooth transition, we blend this transformation with the saved position of the ragdoll
             if (blendedControl) {
-                Vector3f position2 = vars.vect2;
+                Vector3f position2 = vars.vect2.toVector3f();
                 //initializing tmp vars with the start position/rotation of the ragdoll
                 position.set(link.startBlendingPos);
                 tmpRot1.set(link.startBlendingRot);
@@ -338,7 +339,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             int maxDepth = ikChainDepth.get(bone.getName());
             updateBone(boneLinks.get(bone.getName()), tpf * (float) FastMath.sqrt(distance), vars, tmpRot1, tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
-            Vector3f position = vars.vect1;
+            Vector3f position = vars.vect1.toVector3f();
             
             for (PhysicsBoneLink link : boneLinks.values()) {
                 matchPhysicObjectToBone(link, position, tmpRot1);
@@ -447,7 +448,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         initScale = model.getLocalScale().clone();
 
         model.removeFromParent();
-        model.setLocalTranslation(Vector3f.ZERO);
+        model.setLocalTranslation(Vector.ZERO(3));
         model.setLocalRotation(Quaternion.IDENTITY);
         model.setLocalScale(1);
         //HACK ALERT change this
@@ -469,7 +470,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             parent.attachChild(model);
 
         }
-        model.setLocalTranslation(initPosition);
+        model.setLocalTranslation(Vector.toVector(initPosition));
         model.setLocalRotation(initRotation);
         model.setLocalScale(initScale);
 
@@ -724,7 +725,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 				link.rigidBody.setKinematic(mode == Mode.Kinematic);
 				if (mode == Mode.Ragdoll) {
 					Quaternion tmpRot1 = vars.quat1;
-					Vector3f position = vars.vect1;
+					Vector3f position = vars.vect1.toVector3f();
 					//making sure that the ragdoll is at the correct place.
 					matchPhysicObjectToBone(link, position, tmpRot1);
 				}
@@ -762,7 +763,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         for (PhysicsBoneLink link : boneLinks.values()) {
 
             Vector3f p = link.rigidBody.getMotionState().getWorldLocation();
-            Vector3f position = vars.vect1;
+            Vector3f position = vars.vect1.toVector3f();
 
             targetModel.getWorldTransform().transformInverseVector(p, position);
 
@@ -920,7 +921,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
    
     public Vector3f setIKTarget(Bone bone, Vector3f worldPos, int chainLength) {
-        Vector3f target = worldPos.subtract(targetModel.getWorldTranslation());
+        Vector3f target = worldPos.subtract(targetModel.getWorldTranslation().toVector3f());
         ikTargets.put(bone.getName(), target);
         ikChainDepth.put(bone.getName(), chainLength);
         int i = 0;
@@ -972,7 +973,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
                 while (bone.getParent() != null) {
 
                     Quaternion tmpRot1 = vars.quat1;
-                    Vector3f position = vars.vect1;
+                    Vector3f position = vars.vect1.toVector3f();
                     matchPhysicObjectToBone(boneLinks.get(bone.getName()), position, tmpRot1);
                     bone.setUserControl(true);
                     bone = bone.getParent();

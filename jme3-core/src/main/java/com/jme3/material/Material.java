@@ -762,7 +762,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
 
         int lightDataIndex = 0;
         TempVars vars = TempVars.get();
-        Vector4f tmpVec = vars.vect4f1;
+        Vector4f tmpVec = vars.vect4f1.toVector4f();
         int curIndex;
         int endIndex = numLights + startIndex;
         for (curIndex = startIndex; curIndex < endIndex && curIndex < lightList.size(); curIndex++) {
@@ -876,7 +876,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
             Quaternion tmpLightDirection = vars.quat1;
             Quaternion tmpLightPosition = vars.quat2;
             ColorRGBA tmpLightColor = vars.color;
-            Vector4f tmpVec = vars.vect4f1;
+            Vector4f tmpVec = vars.vect4f1.toVector4f();
 
             ColorRGBA color = l.getColor();
             tmpLightColor.set(color);

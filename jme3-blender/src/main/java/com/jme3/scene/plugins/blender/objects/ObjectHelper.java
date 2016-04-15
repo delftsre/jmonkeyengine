@@ -251,7 +251,7 @@ public class ObjectHelper extends AbstractBlenderHelper {
                     LOGGER.fine("Applying proper scale to the geometries.");
                     for (Spatial child : result.getChildren()) {
                         if (child instanceof Geometry) {
-                            this.flipMeshIfRequired((Geometry) child, child.getWorldScale());
+                            this.flipMeshIfRequired((Geometry) child, child.getWorldScale().toVector3f());
                         }
                     }
                 }
@@ -378,13 +378,13 @@ public class ObjectHelper extends AbstractBlenderHelper {
         Matrix4f globalMatrix = this.getMatrix(objectStructure, "obmat", fixUpAxis, tempVars.tempMat42);
         Matrix4f localMatrix = parentInv.multLocal(globalMatrix);
 
-        this.getSizeSignums(objectStructure, tempVars.vect1);
+        this.getSizeSignums(objectStructure, tempVars.vect1.toVector3f());
 
-        localMatrix.toTranslationVector(tempVars.vect2);
+        localMatrix.toTranslationVector(tempVars.vect2.toVector3f());
         localMatrix.toRotationQuat(tempVars.quat1);
-        localMatrix.toScaleVector(tempVars.vect3);
+        localMatrix.toScaleVector(tempVars.vect3.toVector3f());
 
-        Transform t = new Transform(tempVars.vect2, tempVars.quat1.normalizeLocal(), tempVars.vect3.multLocal(tempVars.vect1));
+        Transform t = new Transform(tempVars.vect2.toVector3f(), tempVars.quat1.normalizeLocal(), tempVars.vect3.toVector3f().multLocal(tempVars.vect1.toVector3f()));
         tempVars.release();
         return t;
     }

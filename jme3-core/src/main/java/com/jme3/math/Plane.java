@@ -212,7 +212,7 @@ public class Plane implements Savable, Cloneable, java.io.Serializable {
      *            the triangle
      */
     public void setPlanePoints(AbstractTriangle t) {
-        setPlanePoints(t.get1(), t.get2(), t.get3());
+        setPlanePoints(t.get1().toVector3f(), t.get2().toVector3f(), t.get3().toVector3f());
     }
 
     /**

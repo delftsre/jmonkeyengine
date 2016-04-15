@@ -106,9 +106,9 @@ class SweepSphere implements Collidable {
     }
 
     private boolean isPointInTriangle(Vector3f point, AbstractTriangle tri) {
-            if (pointsOnSameSide(point, tri.get1(), tri.get2(), tri.get3())
-             && pointsOnSameSide(point, tri.get2(), tri.get1(), tri.get3())
-             && pointsOnSameSide(point, tri.get3(), tri.get1(), tri.get2()))
+            if (pointsOnSameSide(point, tri.get1().toVector3f(), tri.get2().toVector3f(), tri.get3().toVector3f())
+             && pointsOnSameSide(point, tri.get2().toVector3f(), tri.get1().toVector3f(), tri.get3().toVector3f())
+             && pointsOnSameSide(point, tri.get3().toVector3f(), tri.get1().toVector3f(), tri.get2().toVector3f()))
                     return true;
             return false;
     }
@@ -196,9 +196,9 @@ class SweepSphere implements Collidable {
 
     private CollisionResult collideWithTriangle(AbstractTriangle tri){
         // scale scaledTriangle based on dimension
-        scaledTri.get1().set(tri.get1()).multLocal(invDim);
-        scaledTri.get2().set(tri.get2()).multLocal(invDim);
-        scaledTri.get3().set(tri.get3()).multLocal(invDim);
+        scaledTri.get1().toVector3f().set(tri.get1().toVector3f()).multLocal(invDim);
+        scaledTri.get2().toVector3f().set(tri.get2().toVector3f()).multLocal(invDim);
+        scaledTri.get3().toVector3f().set(tri.get3().toVector3f()).multLocal(invDim);
 //        Vector3f sVelocity = velocity.mult(invDim);
 //        Vector3f sCenter = center.mult(invDim);
         velocity.mult(invDim, sVelocity);
@@ -287,9 +287,9 @@ class SweepSphere implements Collidable {
 
         float velocitySquared = sVelocity.lengthSquared();
 
-        Vector3f v1 = scaledTri.get1();
-        Vector3f v2 = scaledTri.get2();
-        Vector3f v3 = scaledTri.get3();
+        Vector3f v1 = scaledTri.get1().toVector3f();
+        Vector3f v2 = scaledTri.get2().toVector3f();
+        Vector3f v3 = scaledTri.get3().toVector3f();
 
         // vertex 1
         float newT;

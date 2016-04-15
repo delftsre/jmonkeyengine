@@ -33,6 +33,7 @@ package com.jme3.light;
 
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
@@ -228,7 +229,7 @@ public class LightFilterTest {
         // Tests for bounding sphere, with a radius of 1f (in the box geom)
         sl.setPosition(Vector3f.ZERO);
         sl.setDirection(Vector3f.UNIT_Z);
-        geom.setLocalTranslation(Vector3f.ZERO);
+        geom.setLocalTranslation(Vector.ZERO(3));
         geom.setModelBound(new BoundingSphere(1f, Vector3f.ZERO));
        
         // Infinit spot lights are only filtered

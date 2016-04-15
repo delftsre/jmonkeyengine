@@ -256,7 +256,7 @@ public class ShadowUtil {
         Vector3f min = new Vector3f(Vector3f.POSITIVE_INFINITY);
         Vector3f max = new Vector3f(Vector3f.NEGATIVE_INFINITY);
         TempVars vars = TempVars.get();
-        Vector3f temp = vars.vect1;
+        Vector3f temp = vars.vect1.toVector3f();
 
         for (int i = 0; i < pts.length; i++) {
             float w = mat.multProj(pts[i], temp);
@@ -300,8 +300,8 @@ public class ShadowUtil {
 
         TempVars vars = TempVars.get();
 
-        Vector3f splitMin = splitBB.getMin(vars.vect1);
-        Vector3f splitMax = splitBB.getMax(vars.vect2);
+        Vector3f splitMin = splitBB.getMin(vars.vect1.toVector3f());
+        Vector3f splitMax = splitBB.getMax(vars.vect2.toVector3f());
 
 //        splitMin.z = 0;
 
@@ -509,14 +509,14 @@ public class ShadowUtil {
             casterBB.setZExtent(casterBB.getZExtent() + 2.0f);
         }
 
-        Vector3f casterMin = casterBB.getMin(vars.vect1);
-        Vector3f casterMax = casterBB.getMax(vars.vect2);
+        Vector3f casterMin = casterBB.getMin(vars.vect1.toVector3f());
+        Vector3f casterMax = casterBB.getMax(vars.vect2.toVector3f());
 
-        Vector3f receiverMin = receiverBB.getMin(vars.vect3);
-        Vector3f receiverMax = receiverBB.getMax(vars.vect4);
+        Vector3f receiverMin = receiverBB.getMin(vars.vect3.toVector3f());
+        Vector3f receiverMax = receiverBB.getMax(vars.vect4.toVector3f());
 
-        Vector3f splitMin = splitBB.getMin(vars.vect5);
-        Vector3f splitMax = splitBB.getMax(vars.vect6);
+        Vector3f splitMin = splitBB.getMin(vars.vect5.toVector3f());
+        Vector3f splitMax = splitBB.getMax(vars.vect6.toVector3f());
 
         splitMin.z = 0;
 
@@ -526,8 +526,8 @@ public class ShadowUtil {
 
         Matrix4f projMatrix = shadowCam.getProjectionMatrix();
 
-        Vector3f cropMin = vars.vect7;
-        Vector3f cropMax = vars.vect8;
+        Vector3f cropMin = vars.vect7.toVector3f();
+        Vector3f cropMax = vars.vect8.toVector3f();
 
         // IMPORTANT: Special handling for Z values
         cropMin.x = max(max(casterMin.x, receiverMin.x), splitMin.x);

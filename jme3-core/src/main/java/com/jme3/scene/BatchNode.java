@@ -527,8 +527,8 @@ public class BatchNode extends GeometryGroupNode {
 
     private void doTransforms(FloatBuffer bindBufPos, FloatBuffer bindBufNorm, FloatBuffer bufPos, FloatBuffer bufNorm, int start, int end, Matrix4f transform) {
         TempVars vars = TempVars.get();
-        Vector3f pos = vars.vect1;
-        Vector3f norm = vars.vect2;
+        Vector3f pos = vars.vect1.toVector3f();
+        Vector3f norm = vars.vect2.toVector3f();
 
         int length = (end - start) * 3;
 
@@ -573,9 +573,9 @@ public class BatchNode extends GeometryGroupNode {
 
     private void doTransformsTangents(FloatBuffer bindBufPos, FloatBuffer bindBufNorm, FloatBuffer bindBufTangents,FloatBuffer bufPos, FloatBuffer bufNorm, FloatBuffer bufTangents, int start, int end, Matrix4f transform) {
         TempVars vars = TempVars.get();
-        Vector3f pos = vars.vect1;
-        Vector3f norm = vars.vect2;
-        Vector3f tan = vars.vect3;
+        Vector3f pos = vars.vect1.toVector3f();
+        Vector3f norm = vars.vect2.toVector3f();
+        Vector3f tan = vars.vect3.toVector3f();
 
         int length = (end - start) * 3;
         int tanLength = (end - start) * 4;
@@ -643,7 +643,7 @@ public class BatchNode extends GeometryGroupNode {
 
     private void doCopyBuffer(FloatBuffer inBuf, int offset, FloatBuffer outBuf, int componentSize) {
         TempVars vars = TempVars.get();
-        Vector3f pos = vars.vect1;
+        Vector3f pos = vars.vect1.toVector3f();
 
         // offset is given in element units
         // convert to be in component units

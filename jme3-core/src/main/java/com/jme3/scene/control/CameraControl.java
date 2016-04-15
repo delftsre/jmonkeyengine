@@ -36,6 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -111,7 +112,7 @@ public class CameraControl extends AbstractControl {
         if (spatial != null && camera != null) {
             switch (controlDir) {
                 case SpatialToCamera:
-                    camera.setLocation(spatial.getWorldTranslation());
+                    camera.setLocation(spatial.getWorldTranslation().toVector3f());
                     camera.setRotation(spatial.getWorldRotation());
                     break;
                 case CameraToSpatial:
@@ -119,8 +120,8 @@ public class CameraControl extends AbstractControl {
                     // Location:
                     TempVars vars = TempVars.get();
 
-                    Vector3f vecDiff = vars.vect1.set(camera.getLocation()).subtractLocal(spatial.getWorldTranslation());
-                    spatial.setLocalTranslation(vecDiff.addLocal(spatial.getLocalTranslation()));
+                    Vector3f vecDiff = vars.vect1.toVector3f().set(camera.getLocation()).subtractLocal(spatial.getWorldTranslation().toVector3f());
+                    spatial.setLocalTranslation(Vector.toVector(vecDiff.addLocal(spatial.getLocalTranslation())));
 
                     // Rotation:
                     Quaternion worldDiff = vars.quat1.set(camera.getRotation()).subtractLocal(spatial.getWorldRotation());

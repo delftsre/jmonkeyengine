@@ -16,6 +16,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.terrain.Terrain;
 import com.jme3.terrain.geomipmap.TerrainGrid;
@@ -139,7 +140,7 @@ public class TerrainGridTileLoaderTest extends SimpleApplication {
                 public void gridMoved(Vector3f newCenter) {
                 }
 
-                public void tileAttached(Vector3f cell, TerrainQuad quad) {
+                public void tileAttached(Vector cell, TerrainQuad quad) {
                     while(quad.getControl(RigidBodyControl.class)!=null){
                         quad.removeControl(RigidBodyControl.class);
                     }
@@ -147,12 +148,18 @@ public class TerrainGridTileLoaderTest extends SimpleApplication {
                     bulletAppState.getPhysicsSpace().add(quad);
                 }
 
-                public void tileDetached(Vector3f cell, TerrainQuad quad) {
+                public void tileDetached(Vector cell, TerrainQuad quad) {
                     if (quad.getControl(RigidBodyControl.class) != null) {
                         bulletAppState.getPhysicsSpace().remove(quad);
                         quad.removeControl(RigidBodyControl.class);
                     }
                 }
+
+				@Override
+				public void gridMoved(Vector newCenter) {
+					// TODO Auto-generated method stub
+					// Method was missing?
+				}
 
             });
         }
@@ -211,7 +218,7 @@ public class TerrainGridTileLoaderTest extends SimpleApplication {
                 TerrainGridTileLoaderTest.this.player3.jump();
             } else if (name.equals("pick") && keyPressed) {
                 //Terrain picked = terrain.getTerrainAt(player3.getPhysicsLocation());
-                Terrain picked = terrain.getTerrainAtCell(terrain.getCurrentCell());
+                Terrain picked = terrain.getTerrainAtCell(terrain.getCurrentCell().toVector3f());
                 System.out.println("** cell "+player3.getPhysicsLocation()+" picked terrain: "+picked);
             }
         }

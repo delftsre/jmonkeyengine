@@ -20,6 +20,7 @@ import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -166,7 +167,7 @@ public class SimulationNode {
                     VirtualTrack vTrack = new VirtualTrack(spatial.getName(), maxFrame, maxTime);
                     for (Track track : animation.getTracks()) {
                         for (int frame = 0; frame < maxFrame; ++frame) {
-                            spatial.setLocalTranslation(((SpatialTrack) track).getTranslations()[frame]);
+                            spatial.setLocalTranslation(Vector.toVector(((SpatialTrack) track).getTranslations()[frame]));
                             spatial.setLocalRotation(((SpatialTrack) track).getRotations()[frame]);
                             spatial.setLocalScale(((SpatialTrack) track).getScales()[frame]);
 

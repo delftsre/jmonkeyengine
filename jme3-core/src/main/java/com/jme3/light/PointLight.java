@@ -115,7 +115,7 @@ public class PointLight extends Light {
             BoundingVolume bv = owner.getWorldBound();
             lastDistance = bv.distanceSquaredTo(position);
         } else {
-            lastDistance = owner.getWorldTranslation().distanceSquared(position);
+            lastDistance = owner.getWorldTranslation().toVector3f().distanceSquared(position);
         }
     }
 

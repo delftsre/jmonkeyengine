@@ -207,11 +207,11 @@ public final class BIHNode implements Savable {
             }
 
             for (int i = node.leftIndex; i <= node.rightIndex; i++) {
-                tree.getTriangle(i, t.get1(), t.get2(), t.get3());
+                tree.getTriangle(i, t.get1().toVector3f(), t.get2().toVector3f(), t.get3().toVector3f());
                 if (worldMatrix != null) {
-                    worldMatrix.mult(t.get1(), t.get1());
-                    worldMatrix.mult(t.get2(), t.get2());
-                    worldMatrix.mult(t.get3(), t.get3());
+                    worldMatrix.mult(t.get1().toVector3f(), t.get1().toVector3f());
+                    worldMatrix.mult(t.get2().toVector3f(), t.get2().toVector3f());
+                    worldMatrix.mult(t.get3().toVector3f(), t.get3().toVector3f());
                 }
 
                 int added = col.collideWith(t, results);
@@ -243,9 +243,9 @@ public final class BIHNode implements Savable {
         
         TempVars vars = TempVars.get();
 
-        Vector3f v1 = vars.vect1,
-                v2 = vars.vect2,
-                v3 = vars.vect3;
+        Vector3f v1 = vars.vect1.toVector3f(),
+                v2 = vars.vect2.toVector3f(),
+                v3 = vars.vect3.toVector3f();
 
         int cols = 0;
 
@@ -306,8 +306,8 @@ public final class BIHNode implements Savable {
 
 //        float tHit = Float.POSITIVE_INFINITY;
 
-        Vector3f o = vars.vect1.set(r.getOrigin());
-        Vector3f d =  vars.vect2.set(r.getDirection());
+        Vector3f o = vars.vect1.toVector3f().set(r.getOrigin());
+        Vector3f d =  vars.vect2.toVector3f().set(r.getDirection());
 
         Matrix4f inv =vars.tempMat4.set(worldMatrix).invertLocal();
 
@@ -327,9 +327,9 @@ public final class BIHNode implements Savable {
 
         r.getDirection().normalizeLocal();
 
-        Vector3f v1 = vars.vect3,
-                v2 = vars.vect4,
-                v3 = vars.vect5;
+        Vector3f v1 = vars.vect3.toVector3f(),
+                v2 = vars.vect4.toVector3f(),
+                v3 = vars.vect5.toVector3f();
         int cols = 0;
 
         stack.add(new BIHStackData(this, sceneMin, sceneMax));

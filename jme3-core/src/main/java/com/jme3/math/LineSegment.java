@@ -109,7 +109,7 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
 
     public float distanceSquared(Vector3f point) {
         TempVars vars = TempVars.get();
-        Vector3f compVec1 = vars.vect1;
+        Vector3f compVec1 = vars.vect1.toVector3f();
 
         point.subtract(origin, compVec1);
         float segmentParameter = direction.dot(compVec1);
@@ -133,7 +133,7 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
 
     public float distanceSquared(LineSegment test) {
         TempVars vars = TempVars.get();
-        Vector3f compVec1 = vars.vect1;
+        Vector3f compVec1 = vars.vect1.toVector3f();
 
         origin.subtract(test.getOrigin(), compVec1);
         float negativeDirectionDot = -(direction.dot(test.getDirection()));

@@ -35,6 +35,7 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 import com.jme3.math.Triangle;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.terrain.geomipmap.TerrainPatch;
@@ -57,8 +58,8 @@ import java.util.List;
  */
 public class BresenhamTerrainPicker implements TerrainPicker {
 
-    private final Triangle gridTriA = new Triangle(new Vector3f(), new Vector3f(), new Vector3f());
-    private final Triangle gridTriB = new Triangle(new Vector3f(), new Vector3f(), new Vector3f());
+    private final Triangle gridTriA = new Triangle(new Vector(3), new Vector(3), new Vector(3));
+    private final Triangle gridTriB = new Triangle(new Vector(3), new Vector(3), new Vector(3));
 
     private final Vector3f calcVec1 = new Vector3f();
     private final Ray workRay = new Ray();
@@ -88,8 +89,8 @@ public class BresenhamTerrainPicker implements TerrainPicker {
             TerrainPatch patch = pd.targetPatch;
 
 
-            tracer.getGridSpacing().set(patch.getWorldScale());
-            tracer.setGridOrigin(patch.getWorldTranslation());
+            tracer.getGridSpacing().set(patch.getWorldScale().toVector3f());
+            tracer.setGridOrigin(patch.getWorldTranslation().toVector3f());
 
             workRay.getOrigin().set(worldPick.getDirection()).multLocal(pd.cr.getDistance()-.1f).addLocal(worldPick.getOrigin());
 
@@ -204,13 +205,13 @@ public class BresenhamTerrainPicker implements TerrainPicker {
         if (t == null || t.length == 0)
             return false;
         
-        gridTriA.set1(t[0].get1());
-        gridTriA.set2(t[0].get2());
-        gridTriA.set3(t[0].get3());
+        gridTriA.set1(t[0].get1().toVector3f());
+        gridTriA.set2(t[0].get2().toVector3f());
+        gridTriA.set3(t[0].get3().toVector3f());
 
-        gridTriB.set1(t[1].get1());
-        gridTriB.set2(t[1].get2());
-        gridTriB.set3(t[1].get3());
+        gridTriB.set1(t[1].get1().toVector3f());
+        gridTriB.set2(t[1].get2().toVector3f());
+        gridTriB.set3(t[1].get3().toVector3f());
 
         return true;
     }

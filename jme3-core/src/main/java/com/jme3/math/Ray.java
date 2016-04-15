@@ -201,10 +201,10 @@ public final class Ray implements Savable, Cloneable, Collidable, java.io.Serial
             Vector3f store, boolean doPlanar, boolean quad) {
         TempVars vars = TempVars.get();
 
-        Vector3f tempVa = vars.vect1,
-                tempVb = vars.vect2,
-                tempVc = vars.vect3,
-                tempVd = vars.vect4;
+        Vector3f tempVa = vars.vect1.toVector3f(),
+                tempVb = vars.vect2.toVector3f(),
+                tempVc = vars.vect3.toVector3f(),
+                tempVd = vars.vect4.toVector3f();
 
         Vector3f diff = origin.subtract(v0, tempVa);
         Vector3f edge1 = v1.subtract(v0, tempVb);
@@ -388,7 +388,7 @@ public final class Ray implements Savable, Cloneable, Collidable, java.io.Serial
             return bv.collideWith(this, results);
         } else if (other instanceof AbstractTriangle) {
             AbstractTriangle tri = (AbstractTriangle) other;
-            float d = intersects(tri.get1(), tri.get2(), tri.get3());
+            float d = intersects(tri.get1().toVector3f(), tri.get2().toVector3f(), tri.get3().toVector3f());
             if (Float.isInfinite(d) || Float.isNaN(d)) {
                 return 0;
             }
@@ -404,8 +404,8 @@ public final class Ray implements Savable, Cloneable, Collidable, java.io.Serial
     public float distanceSquared(Vector3f point) {
         TempVars vars = TempVars.get();
 
-        Vector3f tempVa = vars.vect1,
-                tempVb = vars.vect2;
+        Vector3f tempVa = vars.vect1.toVector3f(),
+                tempVb = vars.vect2.toVector3f();
 
         point.subtract(origin, tempVa);
         float rayParam = direction.dot(tempVa);

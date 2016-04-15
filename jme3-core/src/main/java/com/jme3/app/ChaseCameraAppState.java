@@ -43,6 +43,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
@@ -196,7 +197,7 @@ public class ChaseCameraAppState extends AbstractAppState implements ActionListe
      */
     protected void zoomCamera(float value) {
         distance = FastMath.clamp(distance + value, minDistance, maxDistance);
-        camNode.setLocalTranslation(new Vector3f(0, 0, distance));
+        camNode.setLocalTranslation(new Vector(0, 0, distance));
     }
 
     public void setTarget(Spatial targetSpatial) {
@@ -209,7 +210,7 @@ public class ChaseCameraAppState extends AbstractAppState implements ActionListe
             throw new IllegalArgumentException("The spatial to follow is null, please use the setTarget method");
         }
         target.setLocalTranslation(spatial.getWorldTranslation());
-        camNode.lookAt(target.getWorldTranslation(), upVector);
+        camNode.lookAt(target.getWorldTranslation().toVector3f(), upVector);
 
         target.updateLogicalState(tpf);
         target.updateGeometricState();

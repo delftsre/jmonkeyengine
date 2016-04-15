@@ -96,7 +96,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl {
         if(motionState.isApplyPhysicsLocal()){
             return spatial.getLocalTranslation();
         }
-        return spatial.getWorldTranslation();
+        return spatial.getWorldTranslation().toVector3f();
     }
 
     private Quaternion getSpatialRotation(){

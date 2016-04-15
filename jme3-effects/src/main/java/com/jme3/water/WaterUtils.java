@@ -19,11 +19,11 @@ public class WaterUtils {
         
         TempVars vars = TempVars.get();
          //Temp vects for reflection cam orientation calculation
-        Vector3f sceneTarget =  vars.vect1;
-        Vector3f  reflectDirection =  vars.vect2;
-        Vector3f  reflectUp =  vars.vect3;
-        Vector3f  reflectLeft = vars.vect4;
-        Vector3f  camLoc = vars.vect5;
+        Vector3f sceneTarget =  vars.vect1.toVector3f();
+        Vector3f  reflectDirection =  vars.vect2.toVector3f();
+        Vector3f  reflectUp =  vars.vect3.toVector3f();
+        Vector3f  reflectLeft = vars.vect4.toVector3f();
+        Vector3f  camLoc = vars.vect5.toVector3f();
         camLoc = plane.reflect(sceneCam.getLocation(), camLoc);
         reflectionCam.setLocation(camLoc);
         reflectionCam.setFrustum(sceneCam.getFrustumNear(),
@@ -34,15 +34,15 @@ public class WaterUtils {
                 sceneCam.getFrustumBottom());
         reflectionCam.setParallelProjection(sceneCam.isParallelProjection());
 
-        sceneTarget.set(sceneCam.getLocation()).addLocal(sceneCam.getDirection(vars.vect6));
+        sceneTarget.set(sceneCam.getLocation()).addLocal(sceneCam.getDirection(vars.vect6.toVector3f()));
         reflectDirection = plane.reflect(sceneTarget, reflectDirection);
         reflectDirection.subtractLocal(camLoc);
 
-        sceneTarget.set(sceneCam.getLocation()).subtractLocal(sceneCam.getUp(vars.vect6));
+        sceneTarget.set(sceneCam.getLocation()).subtractLocal(sceneCam.getUp(vars.vect6.toVector3f()));
         reflectUp = plane.reflect(sceneTarget, reflectUp);
         reflectUp.subtractLocal(camLoc);
 
-        sceneTarget.set(sceneCam.getLocation()).addLocal(sceneCam.getLeft(vars.vect6));
+        sceneTarget.set(sceneCam.getLocation()).addLocal(sceneCam.getLeft(vars.vect6.toVector3f()));
         reflectLeft = plane.reflect(sceneTarget, reflectLeft);
         reflectLeft.subtractLocal(camLoc);
 

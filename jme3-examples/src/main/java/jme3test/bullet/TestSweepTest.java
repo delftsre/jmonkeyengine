@@ -61,7 +61,7 @@ public class TestSweepTest extends SimpleApplication {
         float move = tpf * 1;
         boolean colliding = false;
 
-        List<PhysicsSweepTestResult> sweepTest = bulletAppState.getPhysicsSpace().sweepTest(capsuleCollisionShape, new Transform(capsule.getWorldTranslation()), new Transform(capsule.getWorldTranslation().add(dist, 0, 0)));
+        List<PhysicsSweepTestResult> sweepTest = bulletAppState.getPhysicsSpace().sweepTest(capsuleCollisionShape, new Transform(capsule.getWorldTranslation().toVector3f()), new Transform(capsule.getWorldTranslation().toVector3f().add(dist, 0, 0)));
 
         for (PhysicsSweepTestResult result : sweepTest) {
             if (result.getCollisionObject().getCollisionShape() != capsuleCollisionShape) {

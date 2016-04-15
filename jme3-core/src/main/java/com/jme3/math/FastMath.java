@@ -717,6 +717,15 @@ final public class FastMath {
         }
         return val3;
     }
+    
+    public static int pointInsideTriangle(Vector t0, Vector t1, Vector t2, Vector p) {
+    	return FastMath.pointInsideTriangle(
+    			new Vector2f(t0.getX(), t0.getY()), 
+    			new Vector2f(t1.getX(), t1.getY()), 
+    			new Vector2f(t2.getX(), t2.getY()), 
+    			new Vector2f(p.getX(), p.getY())
+		);
+    }
 
     /**
      * A method that computes normal for a triangle defined by three vertices.

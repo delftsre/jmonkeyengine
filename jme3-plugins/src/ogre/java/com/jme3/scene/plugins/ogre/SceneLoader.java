@@ -41,6 +41,7 @@ import com.jme3.material.MaterialList;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
@@ -396,9 +397,9 @@ public class SceneLoader extends DefaultHandler implements AssetLoader {
             parseCameraClipping(attribs);
         } else if (qName.equals("position")) {
             if (elementStack.peek().equals("node")) {
-                node.setLocalTranslation(SAXUtil.parseVector3(attribs));
+                node.setLocalTranslation(Vector.toVector(SAXUtil.parseVector3(attribs)));
             } else if (elementStack.peek().equals("camera")) {
-                cameraNode.setLocalTranslation(SAXUtil.parseVector3(attribs));
+                cameraNode.setLocalTranslation(Vector.toVector(SAXUtil.parseVector3(attribs)));
             }
         } else if (qName.equals("quaternion") || qName.equals("rotation")) {
             node.setLocalRotation(parseQuat(attribs));
@@ -460,12 +461,12 @@ public class SceneLoader extends DefaultHandler implements AssetLoader {
                     dl.setDirection(dir);
                 } else if (light instanceof PointLight) {
                     PointLight pl = (PointLight) light;
-                    Vector3f pos = node.getWorldTranslation();
+                    Vector3f pos = node.getWorldTranslation().toVector3f();
                     pl.setPosition(pos);
                 } else if (light instanceof SpotLight) {
                     SpotLight sl = (SpotLight) light;
 
-                    Vector3f pos = node.getWorldTranslation();
+                    Vector3f pos = node.getWorldTranslation().toVector3f();
                     sl.setPosition(pos);
 
                     Quaternion q = node.getWorldRotation();

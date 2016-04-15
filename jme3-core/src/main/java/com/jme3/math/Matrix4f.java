@@ -156,9 +156,9 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
     public void fromFrame(Vector3f location, Vector3f direction, Vector3f up, Vector3f left) {
         TempVars vars = TempVars.get();
         try {
-            Vector3f fwdVector = vars.vect1.set(direction);
-            Vector3f leftVector = vars.vect2.set(fwdVector).crossLocal(up);
-            Vector3f upVector = vars.vect3.set(leftVector).crossLocal(fwdVector);
+            Vector3f fwdVector = vars.vect1.toVector3f().set(direction);
+            Vector3f leftVector = vars.vect2.toVector3f().set(fwdVector).crossLocal(up);
+            Vector3f upVector = vars.vect3.toVector3f().set(leftVector).crossLocal(fwdVector);
 
             m00 = leftVector.x;
             m01 = leftVector.y;
@@ -1778,21 +1778,21 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
         TempVars vars = TempVars.get();
         vars.vect1.set(m00, m10, m20);
         vars.vect1.normalizeLocal().multLocal(x);
-        m00 = vars.vect1.x;
-        m10 = vars.vect1.y;
-        m20 = vars.vect1.z;
+        m00 = vars.vect1.toVector3f().x;
+        m10 = vars.vect1.toVector3f().y;
+        m20 = vars.vect1.toVector3f().z;
 
         vars.vect1.set(m01, m11, m21);
         vars.vect1.normalizeLocal().multLocal(y);
-        m01 = vars.vect1.x;
-        m11 = vars.vect1.y;
-        m21 = vars.vect1.z;
+        m01 = vars.vect1.toVector3f().x;
+        m11 = vars.vect1.toVector3f().y;
+        m21 = vars.vect1.toVector3f().z;
 
         vars.vect1.set(m02, m12, m22);
         vars.vect1.normalizeLocal().multLocal(z);
-        m02 = vars.vect1.x;
-        m12 = vars.vect1.y;
-        m22 = vars.vect1.z;
+        m02 = vars.vect1.toVector3f().x;
+        m12 = vars.vect1.toVector3f().y;
+        m22 = vars.vect1.toVector3f().z;
         vars.release();
     }
 

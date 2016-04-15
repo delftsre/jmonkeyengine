@@ -126,7 +126,7 @@ public class ParticlePointMesh extends ParticleMesh {
         VertexBuffer tvb = getBuffer(VertexBuffer.Type.TexCoord);
         FloatBuffer texcoords = (FloatBuffer) tvb.getData();
 
-        float sizeScale = emitter.getWorldScale().x;
+        float sizeScale = emitter.getWorldScale().getX();
 
         // update data in vertex buffers
         positions.rewind();

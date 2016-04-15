@@ -14,6 +14,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.terrain.geomipmap.TerrainGrid;
 import com.jme3.terrain.geomipmap.TerrainGridListener;
@@ -75,10 +76,10 @@ public class TerrainGridSerializationTest extends SimpleApplication {
 
             terrain.addListener(new TerrainGridListener() {
 
-                public void gridMoved(Vector3f newCenter) {
+                public void gridMoved(Vector newCenter) {
                 }
 
-                public void tileAttached(Vector3f cell, TerrainQuad quad) {
+                public void tileAttached(Vector cell, TerrainQuad quad) {
                     //workaround for bugged test j3o's
                     while(quad.getControl(RigidBodyControl.class)!=null){
                         quad.removeControl(RigidBodyControl.class);
@@ -87,7 +88,7 @@ public class TerrainGridSerializationTest extends SimpleApplication {
                     bulletAppState.getPhysicsSpace().add(quad);
                 }
 
-                public void tileDetached(Vector3f cell, TerrainQuad quad) {
+                public void tileDetached(Vector cell, TerrainQuad quad) {
                     if (quad.getControl(RigidBodyControl.class) != null) {
                         bulletAppState.getPhysicsSpace().remove(quad);
                         quad.removeControl(RigidBodyControl.class);

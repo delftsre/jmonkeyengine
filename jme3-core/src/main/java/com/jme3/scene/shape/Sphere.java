@@ -176,9 +176,9 @@ public class Sphere extends Mesh {
         afCos[radialSamples] = afCos[0];
 
         TempVars vars = TempVars.get();
-        Vector3f tempVa = vars.vect1;
-        Vector3f tempVb = vars.vect2;
-        Vector3f tempVc = vars.vect3;
+        Vector3f tempVa = vars.vect1.toVector3f();
+        Vector3f tempVb = vars.vect2.toVector3f();
+        Vector3f tempVc = vars.vect3.toVector3f();
 
         // generate the sphere itself
         int i = 0;

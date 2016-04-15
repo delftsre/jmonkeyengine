@@ -39,6 +39,7 @@ import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
@@ -93,7 +94,7 @@ public class TestNormalMapping extends SimpleApplication {
         angle %= FastMath.TWO_PI;
 
         pl.setPosition(new Vector3f(FastMath.cos(angle) * 4f, 0.5f, FastMath.sin(angle) * 4f));
-        lightMdl.setLocalTranslation(pl.getPosition());
+        lightMdl.setLocalTranslation(Vector.toVector(pl.getPosition()));
     }
 
 }

@@ -33,6 +33,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.Environment;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
@@ -57,7 +58,7 @@ public class TestAmbient extends SimpleApplication {
 
     waves = new AudioNode(assetManager, "Sound/Environment/Ocean Waves.ogg", false);
     waves.setPositional(true);
-    waves.setLocalTranslation(new Vector3f(0, 0,0));
+    waves.setLocalTranslation(new Vector(0, 0,0));
     waves.setMaxDistance(100);
     waves.setRefDistance(5);
 

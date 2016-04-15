@@ -32,8 +32,7 @@
 package com.jme3.terrain;
 
 import com.jme3.export.*;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.Vector;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
@@ -157,7 +156,7 @@ public class GeoMap implements Savable {
      *
      * @throws NullPointerException If isLoaded() or hasNormalmap() is false
      */
-    public FloatBuffer writeNormalArray(FloatBuffer store, Vector3f scale) {
+    public FloatBuffer writeNormalArray(FloatBuffer store, Vector scale) {
         
         if (store!=null){
             if (store.remaining() < getWidth()*getHeight()*3)
@@ -167,10 +166,10 @@ public class GeoMap implements Savable {
         }
         store.rewind();
 
-        Vector3f oppositePoint = new Vector3f();
-        Vector3f adjacentPoint = new Vector3f();
-        Vector3f rootPoint = new Vector3f();
-        Vector3f tempNorm = new Vector3f();
+        Vector oppositePoint = new Vector();
+        Vector adjacentPoint = new Vector();
+        Vector rootPoint = new Vector();
+        Vector tempNorm = new Vector();
         int normalIndex = 0;
 
         for (int y = 0; y < getHeight(); y++) {
@@ -235,7 +234,7 @@ public class GeoMap implements Savable {
      *
      * @throws NullPointerException If isLoaded() is false
      */
-    public FloatBuffer writeVertexArray(FloatBuffer store, Vector3f scale, boolean center) {
+    public FloatBuffer writeVertexArray(FloatBuffer store, Vector scale, boolean center) {
 
         if (store!=null){
             if (store.remaining() < width*height*3)
@@ -246,35 +245,36 @@ public class GeoMap implements Savable {
 
         assert hdata.length == height*width;
 
-        Vector3f offset = new Vector3f(-getWidth() * scale.x * 0.5f,
+        Vector offset = new Vector(-getWidth() * scale.getX() * 0.5f,
                                        0,
-                                       -getWidth() * scale.z * 0.5f);
+                                       -getWidth() * scale.getZ() * 0.5f);
         if (!center)
-            offset.zero();
+            offset.makeZERO();
 
         int i = 0;
         for (int z = 0; z < height; z++){
             for (int x = 0; x < width; x++){
-                store.put( (float)x*scale.x + offset.x );
-                store.put( (float)hdata[i++]*scale.y );
-                store.put( (float)z*scale.z + offset.z );
+                store.put( (float)x*scale.getX() + offset.getX() );
+                store.put( (float)hdata[i++]*scale.getY() );
+                store.put( (float)z*scale.getZ() + offset.getZ() );
             }
         }
 
         return store;
     }
     
-    public Vector2f getUV(int x, int y, Vector2f store){
+    public Vector getUV(int x, int y, Vector store){
         store.set( (float)x / (float)getWidth(),
                    (float)y / (float)getHeight() );
         return store;
     }
 
-    public Vector2f getUV(int i, Vector2f store){
+    public Vector getUV(int i, Vector store){
         return store;
     }
     
-    public FloatBuffer writeTexCoordArray(FloatBuffer store, Vector2f offset, Vector2f scale){
+    // TODO: To be refactored
+    public FloatBuffer writeTexCoordArray(FloatBuffer store, Vector offset, Vector scale){
         if (store!=null){
             if (store.remaining() < getWidth()*getHeight()*2)
                 throw new BufferUnderflowException();
@@ -283,14 +283,14 @@ public class GeoMap implements Savable {
         }
 
         if (offset == null)
-            offset = new Vector2f();
+            offset = new Vector(2);
 
-        Vector2f tcStore = new Vector2f();
+        Vector tcStore = new Vector(2);
         for (int y = 0; y < getHeight(); y++){
             for (int x = 0; x < getWidth(); x++){
                 getUV(x,y,tcStore);
-                store.put( offset.x + tcStore.x * scale.x );
-                store.put( offset.y + tcStore.y * scale.y );
+                store.put( offset.getX() + tcStore.getX() * scale.getX() );
+                store.put( offset.getY() + tcStore.getY() * scale.getY() );
             }
 
         }
@@ -324,9 +324,9 @@ public class GeoMap implements Savable {
         return store;
     }
     
-    public Mesh createMesh(Vector3f scale, Vector2f tcScale, boolean center){
+    public Mesh createMesh(Vector scale, Vector tcScale, boolean center){
         FloatBuffer pb = writeVertexArray(null, scale, center);
-        FloatBuffer tb = writeTexCoordArray(null, Vector2f.ZERO, tcScale);
+        FloatBuffer tb = writeTexCoordArray(null, Vector.ZERO(2), tcScale);
         FloatBuffer nb = writeNormalArray(null, scale);
         IntBuffer ib = writeIndexArray(null);
         Mesh m = new Mesh();

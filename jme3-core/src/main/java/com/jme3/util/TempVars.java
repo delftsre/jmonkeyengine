@@ -168,22 +168,22 @@ public class TempVars {
     /**
      * General vectors.
      */
-    public final Vector3f vect1 = new Vector3f();
-    public final Vector3f vect2 = new Vector3f();
-    public final Vector3f vect3 = new Vector3f();
-    public final Vector3f vect4 = new Vector3f();
-    public final Vector3f vect5 = new Vector3f();
-    public final Vector3f vect6 = new Vector3f();
-    public final Vector3f vect7 = new Vector3f();
+    public final Vector vect1 = new Vector(3);
+    public final Vector vect2 = new Vector(3);
+    public final Vector vect3 = new Vector(3);
+    public final Vector vect4 = new Vector(3);
+    public final Vector vect5 = new Vector(3);
+    public final Vector vect6 = new Vector(3);
+    public final Vector vect7 = new Vector(3);
     //seems the maximum number of vector used is 7 in com.jme3.bounding.java
-    public final Vector3f vect8 = new Vector3f();
-    public final Vector3f vect9 = new Vector3f();
-    public final Vector3f vect10 = new Vector3f();
-    public final Vector4f vect4f1 = new Vector4f();
-    public final Vector4f vect4f2 = new Vector4f();
-    public final Vector3f[] tri = {new Vector3f(),
-        new Vector3f(),
-        new Vector3f()};
+    public final Vector vect8 = new Vector(3);
+    public final Vector vect9 = new Vector(3);
+    public final Vector vect10 = new Vector(3);
+    public final Vector vect4f1 = new Vector(4);
+    public final Vector vect4f2 = new Vector(4);
+    public final Vector[] tri = {new Vector(3),
+        new Vector(3),
+        new Vector(3)};
     /**
      * 2D vector
      */

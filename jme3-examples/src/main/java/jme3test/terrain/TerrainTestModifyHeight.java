@@ -46,6 +46,7 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -117,12 +118,12 @@ public class TerrainTestModifyHeight extends SimpleApplication {
         }
         
         if (terrain != null && intersection != null) {
-            float h = terrain.getHeight(new Vector2f(intersection.x, intersection.z));
-            Vector3f tl = terrain.getWorldTranslation();
+            float h = terrain.getHeight(new Vector(intersection.x, intersection.z));
+            Vector3f tl = terrain.getWorldTranslation().toVector3f();
             marker.setLocalTranslation(tl.add(new Vector3f(intersection.x, h, intersection.z)) );
             markerNormal.setLocalTranslation(tl.add(new Vector3f(intersection.x, h, intersection.z)) );
             
-            Vector3f normal = terrain.getNormal(new Vector2f(intersection.x, intersection.z));
+            Vector3f normal = terrain.getNormal(new Vector(intersection.x, intersection.z)).toVector3f();
             ((Arrow)markerNormal.getMesh()).setArrowExtent(normal);
         }
     }
@@ -218,7 +219,7 @@ public class TerrainTestModifyHeight extends SimpleApplication {
         float xStepAmount = terrain.getLocalScale().x;
         float zStepAmount = terrain.getLocalScale().z;
         long start = System.currentTimeMillis();
-        List<Vector2f> locs = new ArrayList<Vector2f>();
+        List<Vector> locs = new ArrayList<Vector>();
         List<Float> heights = new ArrayList<Float>();
         
         for (int z = -radiusStepsZ; z < radiusStepsZ; z++) {
@@ -230,7 +231,7 @@ public class TerrainTestModifyHeight extends SimpleApplication {
                 if (isInRadius(locX - loc.x, locZ - loc.z, radius)) {
                     // see if it is in the radius of the tool
                     float h = calculateHeight(radius, height, locX - loc.x, locZ - loc.z);
-                    locs.add(new Vector2f(locX, locZ));
+                    locs.add(new Vector(locX, locZ));
                     heights.add(h);
                 }
             }

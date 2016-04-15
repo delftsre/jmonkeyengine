@@ -171,12 +171,12 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         }
         TempVars vars = TempVars.get();
 
-        Vector3f currentVelocity = vars.vect2.set(velocity);
+        Vector3f currentVelocity = vars.vect2.toVector3f().set(velocity);
         
         // dampen existing x/z forces
         float existingLeftVelocity = velocity.dot(localLeft);
         float existingForwardVelocity = velocity.dot(localForward);
-        Vector3f counter = vars.vect1;
+        Vector3f counter = vars.vect1.toVector3f();
         existingLeftVelocity = existingLeftVelocity * physicsDamping;
         existingForwardVelocity = existingForwardVelocity * physicsDamping;
         counter.set(-existingLeftVelocity, 0, -existingForwardVelocity);
@@ -185,7 +185,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
 
         float designatedVelocity = walkDirection.length();
         if (designatedVelocity > 0) {
-            Vector3f localWalkDirection = vars.vect1;
+            Vector3f localWalkDirection = vars.vect1.toVector3f();
             //normalize walkdirection
             localWalkDirection.set(walkDirection).normalizeLocal();
             //check for the existing velocity in the desired direction
@@ -199,7 +199,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         if(currentVelocity.distance(velocity) > FastMath.ZERO_TOLERANCE) rigidBody.setLinearVelocity(velocity);
         if (jump) {
             //TODO: precalculate jump force
-            Vector3f rotatedJumpForce = vars.vect1;
+            Vector3f rotatedJumpForce = vars.vect1.toVector3f();
             rotatedJumpForce.set(jumpForce);
             rigidBody.applyImpulse(localForwardRotation.multLocal(rotatedJumpForce), Vector3f.ZERO);
             jump = false;
@@ -462,8 +462,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      */
     protected void checkOnGround() {
         TempVars vars = TempVars.get();
-        Vector3f location = vars.vect1;
-        Vector3f rayVector = vars.vect2;
+        Vector3f location = vars.vect1.toVector3f();
+        Vector3f rayVector = vars.vect2.toVector3f();
         float height = getFinalHeight();
         location.set(localUp).multLocal(height).addLocal(this.location);
         rayVector.set(localUp).multLocal(-height - 0.1f).addLocal(location);
@@ -484,8 +484,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      */
     protected boolean checkCanUnDuck() {
         TempVars vars = TempVars.get();
-        Vector3f location = vars.vect1;
-        Vector3f rayVector = vars.vect2;
+        Vector3f location = vars.vect1.toVector3f();
+        Vector3f rayVector = vars.vect2.toVector3f();
         location.set(localUp).multLocal(FastMath.ZERO_TOLERANCE).addLocal(this.location);
         rayVector.set(localUp).multLocal(height + FastMath.ZERO_TOLERANCE).addLocal(location);
         List<PhysicsRayTestResult> results = space.rayTest(location, rayVector);
@@ -575,8 +575,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
             return;
         }
         TempVars vars = TempVars.get();
-        Vector3f newLeft = vars.vect1;
-        Vector3f newLeftNegate = vars.vect2;
+        Vector3f newLeft = vars.vect1.toVector3f();
+        Vector3f newLeftNegate = vars.vect2.toVector3f();
 
         newLeft.set(worldUpVector).crossLocal(direction).normalizeLocal();
         if (newLeft.equals(Vector3f.ZERO)) {

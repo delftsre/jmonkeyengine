@@ -83,7 +83,7 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl {
         if (applyLocal) {
             return spatial.getLocalTranslation();
         }
-        return spatial.getWorldTranslation();
+        return spatial.getWorldTranslation().toVector3f();
     }
 
     private Quaternion getSpatialRotation() {

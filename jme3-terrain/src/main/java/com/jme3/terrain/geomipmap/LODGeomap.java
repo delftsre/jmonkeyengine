@@ -35,7 +35,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.math.FastMath;
 import com.jme3.math.Triangle;
-import com.jme3.math.Vector2f;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Mesh.Mode;
@@ -79,11 +79,11 @@ public class LODGeomap extends GeoMap {
         super(heightMap, size, size, 1);
     }
 
-    public Mesh createMesh(Vector3f scale, Vector2f tcScale, Vector2f tcOffset, float offsetAmount, int totalSize, boolean center) {
+    public Mesh createMesh(Vector scale, Vector tcScale, Vector tcOffset, float offsetAmount, int totalSize, boolean center) {
         return this.createMesh(scale, tcScale, tcOffset, offsetAmount, totalSize, center, 1, false, false, false, false);
     }
 
-    public Mesh createMesh(Vector3f scale, Vector2f tcScale, Vector2f tcOffset, float offsetAmount, int totalSize, boolean center, int lod, boolean rightLod, boolean topLod, boolean leftLod, boolean bottomLod) {
+    public Mesh createMesh(Vector scale, Vector tcScale, Vector tcOffset, float offsetAmount, int totalSize, boolean center, int lod, boolean rightLod, boolean topLod, boolean leftLod, boolean bottomLod) {
         FloatBuffer pb = writeVertexArray(null, scale, center);
         FloatBuffer texb = writeTexCoordArray(null, tcOffset, tcScale, offsetAmount, totalSize);
         FloatBuffer nb = writeNormalArray(null, scale);
@@ -112,7 +112,7 @@ public class LODGeomap extends GeoMap {
         return m;
     }
 
-    public FloatBuffer writeTexCoordArray(FloatBuffer store, Vector2f offset, Vector2f scale, float offsetAmount, int totalSize) {
+    public FloatBuffer writeTexCoordArray(FloatBuffer store, Vector offset, Vector scale, float offsetAmount, int totalSize) {
         if (store != null) {
             if (store.remaining() < getWidth() * getHeight() * 2) {
                 throw new BufferUnderflowException();
@@ -122,17 +122,17 @@ public class LODGeomap extends GeoMap {
         }
 
         if (offset == null) {
-            offset = new Vector2f();
+            offset = new Vector();
         }
 
-        Vector2f tcStore = new Vector2f();
+        Vector tcStore = new Vector();
 
         // work from bottom of heightmap up, so we don't flip the coords
         for (int y = getHeight() - 1; y >= 0; y--) {
             for (int x = 0; x < getWidth(); x++) {
                 getUV(x, y, tcStore, offset, offsetAmount, totalSize);
-                float tx = tcStore.x * scale.x;
-                float ty = tcStore.y * scale.y;
+                float tx = tcStore.getX() * scale.getX();
+                float ty = tcStore.getY() * scale.getY();
                 store.put(tx);
                 store.put(ty);
             }
@@ -141,9 +141,9 @@ public class LODGeomap extends GeoMap {
         return store;
     }
 
-    public Vector2f getUV(int x, int y, Vector2f store, Vector2f offset, float offsetAmount, int totalSize) {
-        float offsetX = offset.x + (offsetAmount * 1.0f);
-        float offsetY = -offset.y + (offsetAmount * 1.0f);//note the -, we flip the tex coords
+    public Vector getUV(int x, int y, Vector store, Vector offset, float offsetAmount, int totalSize) {
+        float offsetX = offset.getX() + (offsetAmount * 1.0f);
+        float offsetY = -offset.getY() + (offsetAmount * 1.0f);//note the -, we flip the tex coords
 
         store.set((((float) x) + offsetX) / (float) (totalSize - 1), // calculates percentage of texture here
                 (((float) y) + offsetY) / (float) (totalSize - 1));
@@ -634,6 +634,10 @@ public class LODGeomap extends GeoMap {
         //System.out.println("Index buffer size: "+num);
         return num;
     }
+    
+    public FloatBuffer[] writeTangentArray(FloatBuffer n, FloatBuffer t, FloatBuffer b, FloatBuffer t2, Vector s) {
+    	return this.writeTangentArray(n, t, b, t2, new Vector3f(s.getX(), s.getY(), s.getZ()));
+    }
 
     public FloatBuffer[] writeTangentArray(FloatBuffer normalBuffer, FloatBuffer tangentStore, FloatBuffer binormalStore, FloatBuffer textureBuffer, Vector3f scale) {
         if (!isLoaded()) {
@@ -661,12 +665,6 @@ public class LODGeomap extends GeoMap {
         Vector3f normal = new Vector3f();
         Vector3f tangent = new Vector3f();
         Vector3f binormal = new Vector3f();
-        /*Vector3f v1 = new Vector3f();
-        Vector3f v2 = new Vector3f();
-        Vector3f v3 = new Vector3f();
-        Vector2f t1 = new Vector2f();
-        Vector2f t2 = new Vector2f();
-        Vector2f t3 = new Vector2f();*/
 
         for (int r = 0; r < getHeight(); r++) {
             for (int c = 0; c < getWidth(); c++) {
@@ -681,48 +679,6 @@ public class LODGeomap extends GeoMap {
             }
         }
 
-/*        for (int r = 0; r < getHeight(); r++) {
-            for (int c = 0; c < getWidth(); c++) {
-
-                int texIdx = ((getHeight() - 1 - r) * getWidth() + c) * 2; // pull from the end
-                int texIdxAbove = ((getHeight() - 1 - (r - 1)) * getWidth() + c) * 2; // pull from the end
-                int texIdxNext = ((getHeight() - 1 - (r + 1)) * getWidth() + c) * 2; // pull from the end
-
-                v1.set(c, getValue(c, r), r);
-                t1.set(textureBuffer.get(texIdx), textureBuffer.get(texIdx + 1));
-
-                // below
-                if (r == getHeight()-1) { // last row
-                    v3.set(c, getValue(c, r), r + 1);
-                    float u = textureBuffer.get(texIdx) - textureBuffer.get(texIdxAbove);
-                    u += textureBuffer.get(texIdx);
-                    float v = textureBuffer.get(texIdx + 1) - textureBuffer.get(texIdxAbove + 1);
-                    v += textureBuffer.get(texIdx + 1);
-                    t3.set(u, v);
-                } else {
-                    v3.set(c, getValue(c, r + 1), r + 1);
-                    t3.set(textureBuffer.get(texIdxNext), textureBuffer.get(texIdxNext + 1));
-                }
-                
-                //right
-                if (c == getWidth()-1) { // last column
-                    v2.set(c + 1, getValue(c, r), r);
-                    float u = textureBuffer.get(texIdx) - textureBuffer.get(texIdx - 2);
-                    u += textureBuffer.get(texIdx);
-                    float v = textureBuffer.get(texIdx + 1) - textureBuffer.get(texIdx - 1);
-                    v += textureBuffer.get(texIdx - 1);
-                    t2.set(u, v);
-                } else {
-                    v2.set(c + 1, getValue(c + 1, r), r); // one to the right
-                    t2.set(textureBuffer.get(texIdx + 2), textureBuffer.get(texIdx + 3));
-                }
-
-                calculateTangent(new Vector3f[]{v1.mult(scale), v2.mult(scale), v3.mult(scale)}, new Vector2f[]{t1, t2, t3}, tangent, binormal);
-                BufferUtils.setInBuffer(tangent, tangentStore, (r * getWidth() + c)); // save the tangent
-                BufferUtils.setInBuffer(binormal, binormalStore, (r * getWidth() + c)); // save the binormal
-            }
-        }
-        */
         return new FloatBuffer[]{tangentStore, binormalStore};
     }
 
@@ -733,16 +689,16 @@ public class LODGeomap extends GeoMap {
      * @param tangent that will store the result
      * @return the tangent store
      */
-    public static Vector3f calculateTangent(Vector3f[] v, Vector2f[] t, Vector3f tangent, Vector3f binormal) {
-        Vector3f edge1 = new Vector3f(); // y=0
-        Vector3f edge2 = new Vector3f(); // x=0
-        Vector2f edge1uv = new Vector2f(); // y=0
-        Vector2f edge2uv = new Vector2f(); // x=0
+    public static Vector calculateTangent(Vector[] v, Vector[] t, Vector tangent, Vector binormal) {
+        Vector edge1 = new Vector(3); // y=0
+        Vector edge2 = new Vector(3); // x=0
+        Vector edge1uv = new Vector(2); // y=0
+        Vector edge2uv = new Vector(2); // x=0
 
         t[2].subtract(t[0], edge2uv);
         t[1].subtract(t[0], edge1uv);
 
-        float det = edge1uv.x * edge2uv.y;// - edge1uv.y*edge2uv.x;  = 0
+        float det = edge1uv.getX() * edge2uv.getY();// - edge1uv.y*edge2uv.x;  = 0
 
         boolean normalize = true;
         if (Math.abs(det) < 0.0000001f) {
@@ -759,16 +715,16 @@ public class LODGeomap extends GeoMap {
         binormal.normalizeLocal();
 
         float factor = 1 / det;
-        tangent.x = (edge2uv.y * edge1.x) * factor;
-        tangent.y = 0;
-        tangent.z = (edge2uv.y * edge1.z) * factor;
+        tangent.setX((edge2uv.getY() * edge1.getX()) * factor);
+        tangent.setY(0);
+        tangent.setZ((edge2uv.getY() * edge1.getZ()) * factor);
         if (normalize) {
             tangent.normalizeLocal();
         }
 
-        binormal.x = 0;
-        binormal.y = (edge1uv.x * edge2.y) * factor;
-        binormal.z = (edge1uv.x * edge2.z) * factor;
+        binormal.setX(0);
+        binormal.setY((edge1uv.getX() * edge2.getY()) * factor);
+        binormal.setZ((edge1uv.getX() * edge2.getZ()) * factor);
         if (normalize) {
             binormal.normalizeLocal();
         }
@@ -777,7 +733,7 @@ public class LODGeomap extends GeoMap {
     }
 
     @Override
-    public FloatBuffer writeNormalArray(FloatBuffer store, Vector3f scale) {
+    public FloatBuffer writeNormalArray(FloatBuffer store, Vector scale) {
         if (!isLoaded()) {
             throw new NullPointerException();
         }
@@ -793,20 +749,20 @@ public class LODGeomap extends GeoMap {
 
         TempVars vars = TempVars.get();
         
-        Vector3f rootPoint = vars.vect1;
-        Vector3f rightPoint = vars.vect2;
-        Vector3f leftPoint = vars.vect3;
-        Vector3f topPoint = vars.vect4;
-        Vector3f bottomPoint = vars.vect5;
+        Vector rootPoint = vars.vect1;
+        Vector rightPoint = vars.vect2;
+        Vector leftPoint = vars.vect3;
+        Vector topPoint = vars.vect4;
+        Vector bottomPoint = vars.vect5;
         
-        Vector3f tmp1 = vars.vect6;
+        Vector tmp1 = vars.vect6;
 
         // calculate normals for each polygon
         for (int r = 0; r < getHeight(); r++) {
             for (int c = 0; c < getWidth(); c++) {
 
                 rootPoint.set(0, getValue(c, r), 0);
-                Vector3f normal = vars.vect8;
+                Vector normal = vars.vect8;
 
                 if (r == 0) { // first row
                     if (c == 0) { // first column
@@ -878,27 +834,27 @@ public class LODGeomap extends GeoMap {
         return store;
     }
 
-    private Vector3f getNormal(Vector3f firstPoint, Vector3f rootPoint, Vector3f secondPoint, Vector3f scale, Vector3f store) {
-        float x1 = firstPoint.x - rootPoint.x;
-        float y1 = firstPoint.y - rootPoint.y;
-        float z1 = firstPoint.z - rootPoint.z;
-        x1 *= scale.x;
-        y1 *= scale.y;
-        z1 *= scale.z;
-        float x2 = secondPoint.x - rootPoint.x;
-        float y2 = secondPoint.y - rootPoint.y;
-        float z2 = secondPoint.z - rootPoint.z;
-        x2 *= scale.x;
-        y2 *= scale.y;
-        z2 *= scale.z;
+    private Vector getNormal(Vector firstPoint, Vector rootPoint, Vector secondPoint, Vector scale, Vector store) {
+        float x1 = firstPoint.getX() - rootPoint.getX();
+        float y1 = firstPoint.getY() - rootPoint.getY();
+        float z1 = firstPoint.getZ() - rootPoint.getZ();
+        x1 *= scale.getX();
+        y1 *= scale.getY();
+        z1 *= scale.getZ();
+        float x2 = secondPoint.getX() - rootPoint.getX();
+        float y2 = secondPoint.getY() - rootPoint.getY();
+        float z2 = secondPoint.getZ() - rootPoint.getZ();
+        x2 *= scale.getX();
+        y2 *= scale.getY();
+        z2 *= scale.getZ();
         float x3 = (y1 * z2) - (z1 * y2);
         float y3 = (z1 * x2) - (x1 * z2);
         float z3 = (x1 * y2) - (y1 * x2);
         
         float inv = 1.0f / FastMath.sqrt(x3 * x3 + y3 * y3 + z3 * z3);
-        store.x = x3 * inv;
-        store.y = y3 * inv;
-        store.z = z3 * inv;
+        store.setX(x3 * inv);
+        store.setY(y3 * inv);
+        store.setZ(z3 * inv);
         
         
         /*firstPoint.multLocal(scale);
@@ -1023,7 +979,7 @@ public class LODGeomap extends GeoMap {
      * @param z local z coordinate
      * @return a triangle in world space not local space
      */
-    protected Triangle getTriangleAtPoint(float x, float z, Vector3f scale, Vector3f translation) {
+    protected Triangle getTriangleAtPoint(float x, float z, Vector scale, Vector translation) {
         Triangle tri = getTriangleAtPoint(x, z);
         if (tri != null) {
             tri.get1().multLocal(scale).addLocal(translation);
@@ -1043,7 +999,7 @@ public class LODGeomap extends GeoMap {
      * @param translation
      * @return two triangles in world space not local space
      */
-    protected Triangle[] getGridTrianglesAtPoint(float x, float z, Vector3f scale, Vector3f translation) {
+    protected Triangle[] getGridTrianglesAtPoint(float x, float z, Vector scale, Vector translation) {
         Triangle[] tris = getGridTrianglesAtPoint(x, z);
         if (tris != null) {
             tris[0].get1().multLocal(scale).addLocal(translation);
@@ -1085,8 +1041,8 @@ public class LODGeomap extends GeoMap {
             return null;
         }
 
-        Triangle t = new Triangle(new Vector3f(), new Vector3f(), new Vector3f());
-        Triangle t2 = new Triangle(new Vector3f(), new Vector3f(), new Vector3f());
+        Triangle t = new Triangle(new Vector(3), new Vector(3), new Vector(3));
+        Triangle t2 = new Triangle(new Vector(3), new Vector(3), new Vector(3));
 
         float h1 = hdata[index];                // top left
         float h2 = hdata[index + 1];            // top right
@@ -1162,18 +1118,18 @@ public class LODGeomap extends GeoMap {
             //System.out.println("x,z: " + x + "," + z);
             return null;
         }
-        Vector2f point = new Vector2f(x, z);
-        Vector2f t1 = new Vector2f(triangles[0].get1().x, triangles[0].get1().z);
-        Vector2f t2 = new Vector2f(triangles[0].get2().x, triangles[0].get2().z);
-        Vector2f t3 = new Vector2f(triangles[0].get3().x, triangles[0].get3().z);
+        Vector point = new Vector(x, z);
+        Vector t1 = new Vector(triangles[0].get1().getX(), triangles[0].get1().getZ());
+        Vector t2 = new Vector(triangles[0].get2().getX(), triangles[0].get2().getZ());
+        Vector t3 = new Vector(triangles[0].get3().getX(), triangles[0].get3().getZ());
 
         if (0 != FastMath.pointInsideTriangle(t1, t2, t3, point)) {
             return triangles[0];
         }
 
-        t1.set(triangles[1].get1().x, triangles[1].get1().z);
-        t1.set(triangles[1].get2().x, triangles[1].get2().z);
-        t1.set(triangles[1].get3().x, triangles[1].get3().z);
+        t1.set(triangles[1].get1().getX(), triangles[1].get1().getZ());
+        t1.set(triangles[1].get2().getX(), triangles[1].get2().getZ());
+        t1.set(triangles[1].get3().getX(), triangles[1].get3().getZ());
 
         if (0 != FastMath.pointInsideTriangle(t1, t2, t3, point)) {
             return triangles[1];

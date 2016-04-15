@@ -37,6 +37,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -124,7 +125,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl {
         if (applyLocal) {
             return spatial.getLocalTranslation();
         }
-        return spatial.getWorldTranslation();
+        return spatial.getWorldTranslation().toVector3f();
     }
 
     protected Quaternion getSpatialRotation() {
@@ -145,16 +146,16 @@ public abstract class AbstractPhysicsControl implements PhysicsControl {
             Vector3f localLocation = spatial.getLocalTranslation();
             Quaternion localRotationQuat = spatial.getLocalRotation();
             if (!applyLocal && spatial.getParent() != null) {
-                localLocation.set(worldLocation).subtractLocal(spatial.getParent().getWorldTranslation());
-                localLocation.divideLocal(spatial.getParent().getWorldScale());
+                localLocation.set(worldLocation).subtractLocal(spatial.getParent().getWorldTranslation().toVector3f());
+                localLocation.divideLocal(spatial.getParent().getWorldScale().toVector3f());
                 tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().multLocal(localLocation);
                 localRotationQuat.set(worldRotation);
                 tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().mult(localRotationQuat, localRotationQuat);
 
-                spatial.setLocalTranslation(localLocation);
+                spatial.setLocalTranslation(Vector.toVector(localLocation));
                 spatial.setLocalRotation(localRotationQuat);
             } else {
-                spatial.setLocalTranslation(worldLocation);
+                spatial.setLocalTranslation(Vector.toVector(worldLocation));
                 spatial.setLocalRotation(worldRotation);
             }
         }

@@ -63,6 +63,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -811,7 +812,7 @@ public class SceneLoader implements AssetLoader {
 	
 	private Node createNode(ModelData data) {
 		Node model = new Node(data.name);
-		model.setLocalTranslation(data.localTranslation);
+		model.setLocalTranslation(Vector.toVector(data.localTranslation));
 		model.setLocalRotation(data.localRotation);
 		model.setLocalScale(data.localScale);
 		return model;

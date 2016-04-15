@@ -196,22 +196,22 @@ public class SpotLight extends Light {
         }
         
         Vector3f otherCenter = box.getCenter();
-        Vector3f radVect = vars.vect4;
+        Vector3f radVect = vars.vect4.toVector3f();
         radVect.set(box.getXExtent(), box.getYExtent(), box.getZExtent());
         float otherRadiusSquared = radVect.lengthSquared();
         float otherRadius = FastMath.sqrt(otherRadiusSquared);
         
         // Check if sphere is within spot angle.
         // Cone v. sphere collision.
-        Vector3f E = direction.mult(otherRadius * outerAngleSinRcp, vars.vect1);
-        Vector3f U = position.subtract(E, vars.vect2);
-        Vector3f D = otherCenter.subtract(U, vars.vect3);
+        Vector3f E = direction.mult(otherRadius * outerAngleSinRcp, vars.vect1.toVector3f());
+        Vector3f U = position.subtract(E, vars.vect2.toVector3f());
+        Vector3f D = otherCenter.subtract(U, vars.vect3.toVector3f());
 
         float dsqr = D.dot(D);
         float e = direction.dot(D);
 
         if (e > 0f && e * e >= dsqr * outerAngleCosSqr) {
-            D = otherCenter.subtract(position, vars.vect3);
+            D = otherCenter.subtract(position, vars.vect3.toVector3f());
             dsqr = D.dot(D);
             e = -direction.dot(D);
 
@@ -240,15 +240,15 @@ public class SpotLight extends Light {
 
         // Check if sphere is within spot angle.
         // Cone v. sphere collision.
-        Vector3f E = direction.mult(otherRadius * outerAngleSinRcp, vars.vect1);
-        Vector3f U = position.subtract(E, vars.vect2);
-        Vector3f D = sphere.getCenter().subtract(U, vars.vect3);
+        Vector3f E = direction.mult(otherRadius * outerAngleSinRcp, vars.vect1.toVector3f());
+        Vector3f U = position.subtract(E, vars.vect2.toVector3f());
+        Vector3f D = sphere.getCenter().subtract(U, vars.vect3.toVector3f());
 
         float dsqr = D.dot(D);
         float e = direction.dot(D);
 
         if (e > 0f && e * e >= dsqr * outerAngleCosSqr) {
-            D = sphere.getCenter().subtract(position, vars.vect3);
+            D = sphere.getCenter().subtract(position, vars.vect3.toVector3f());
             dsqr = D.dot(D);
             e = -direction.dot(D);
 
@@ -268,7 +268,7 @@ public class SpotLight extends Light {
             // The algorithm below does not support infinite spot range.
             return true;
         }
-        Vector3f farPoint = vars.vect1.set(position).addLocal(vars.vect2.set(direction).multLocal(spotRange));
+        Vector3f farPoint = vars.vect1.toVector3f().set(position).addLocal(vars.vect2.toVector3f().set(direction).multLocal(spotRange));
         for (int i = 5; i >= 0; i--) {
             //check origin against the plane
             Plane plane = cam.getWorldPlane(i);
@@ -281,9 +281,9 @@ public class SpotLight extends Light {
                     //computing the radius of the base disc
                     float farRadius = (spotRange / outerAngleCos) * outerAngleSin;                    
                     //computing the projection direction : perpendicular to the light direction and coplanar with the direction vector and the normal vector
-                    Vector3f perpDirection = vars.vect2.set(direction).crossLocal(plane.getNormal()).normalizeLocal().crossLocal(direction);
+                    Vector3f perpDirection = vars.vect2.toVector3f().set(direction).crossLocal(plane.getNormal()).normalizeLocal().crossLocal(direction);
                     //projecting the far point on the base disc perimeter
-                    Vector3f projectedPoint = vars.vect3.set(farPoint).addLocal(perpDirection.multLocal(farRadius));
+                    Vector3f projectedPoint = vars.vect3.toVector3f().set(farPoint).addLocal(perpDirection.multLocal(farRadius));
                     //checking against the plane
                     dot = plane.pseudoDistance(projectedPoint);
                     if(dot < 0){                        
@@ -302,7 +302,7 @@ public class SpotLight extends Light {
             BoundingVolume bv = owner.getWorldBound();
             lastDistance = bv.distanceSquaredTo(position);
         } else {
-            lastDistance = owner.getWorldTranslation().distanceSquared(position);
+            lastDistance = owner.getWorldTranslation().toVector3f().distanceSquared(position);
         }
     }
 

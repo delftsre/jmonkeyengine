@@ -111,8 +111,8 @@ public class Line implements Savable, Cloneable, java.io.Serializable {
     public float distanceSquared(Vector3f point) {
         TempVars vars = TempVars.get();
 
-        Vector3f compVec1 = vars.vect1;
-        Vector3f compVec2 = vars.vect2;
+        Vector3f compVec1 = vars.vect1.toVector3f();
+        Vector3f compVec2 = vars.vect2.toVector3f();
 
         point.subtract(origin, compVec1);
         float lineParameter = direction.dot(compVec1);
@@ -134,8 +134,8 @@ public class Line implements Savable, Cloneable, java.io.Serializable {
 
         TempVars vars = TempVars.get();
 
-        Vector3f compVec1 = vars.vect1;
-        Vector3f compVec2 = vars.vect2;
+        Vector3f compVec1 = vars.vect1.toVector3f();
+        Vector3f compVec2 = vars.vect2.toVector3f();
         Matrix3f compMat1 = vars.tempMat3;
         Eigen3f compEigen1 = vars.eigen;
 

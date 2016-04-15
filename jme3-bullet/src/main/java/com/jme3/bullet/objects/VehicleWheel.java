@@ -35,6 +35,7 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.export.*;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
@@ -103,17 +104,17 @@ public class VehicleWheel implements Savable {
         Quaternion localRotationQuat = wheelSpatial.getLocalRotation();
         Vector3f localLocation = wheelSpatial.getLocalTranslation();
         if (!applyLocal && wheelSpatial.getParent() != null) {
-            localLocation.set(wheelWorldLocation).subtractLocal(wheelSpatial.getParent().getWorldTranslation());
-            localLocation.divideLocal(wheelSpatial.getParent().getWorldScale());
+            localLocation.set(wheelWorldLocation).subtractLocal(wheelSpatial.getParent().getWorldTranslation().toVector3f());
+            localLocation.divideLocal(wheelSpatial.getParent().getWorldScale().toVector3f());
             tmp_inverseWorldRotation.set(wheelSpatial.getParent().getWorldRotation()).inverseLocal().multLocal(localLocation);
 
             localRotationQuat.set(wheelWorldRotation);
             tmp_inverseWorldRotation.set(wheelSpatial.getParent().getWorldRotation()).inverseLocal().mult(localRotationQuat, localRotationQuat);
 
-            wheelSpatial.setLocalTranslation(localLocation);
+            wheelSpatial.setLocalTranslation(Vector.toVector(localLocation));
             wheelSpatial.setLocalRotation(localRotationQuat);
         } else {
-            wheelSpatial.setLocalTranslation(wheelWorldLocation);
+            wheelSpatial.setLocalTranslation(Vector.toVector(wheelWorldLocation));
             wheelSpatial.setLocalRotation(wheelWorldRotation);
         }
     }

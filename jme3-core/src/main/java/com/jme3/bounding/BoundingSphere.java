@@ -523,7 +523,7 @@ public class BoundingSphere extends BoundingVolume {
             case AABB: {
                 BoundingBox box = (BoundingBox) volume;
                 TempVars vars = TempVars.get();
-                Vector3f radVect = vars.vect1;
+                Vector3f radVect = vars.vect1.toVector3f();
                 radVect.set(box.xExtent, box.yExtent, box.zExtent);
                 Vector3f temp_center = box.center;
                 float len = radVect.length();
@@ -580,7 +580,7 @@ public class BoundingSphere extends BoundingVolume {
             BoundingSphere rVal) {
         TempVars vars = TempVars.get();
 
-        Vector3f diff = temp_center.subtract(center, vars.vect1);
+        Vector3f diff = temp_center.subtract(center, vars.vect1.toVector3f());
         float lengthSquared = diff.lengthSquared();
         float radiusDiff = temp_radius - radius;
 
@@ -702,7 +702,7 @@ public class BoundingSphere extends BoundingVolume {
 
         TempVars vars = TempVars.get();
 
-        Vector3f diff = vars.vect1.set(ray.getOrigin()).subtractLocal(center);
+        Vector3f diff = vars.vect1.toVector3f().set(ray.getOrigin()).subtractLocal(center);
         float radiusSquared = getRadius() * getRadius();
         float a = diff.dot(diff) - radiusSquared;
         if (a <= 0.0) {
@@ -728,7 +728,7 @@ public class BoundingSphere extends BoundingVolume {
     private int collideWithRay(Ray ray, CollisionResults results) {
         TempVars vars = TempVars.get();
 
-        Vector3f diff = vars.vect1.set(ray.getOrigin()).subtractLocal(
+        Vector3f diff = vars.vect1.toVector3f().set(ray.getOrigin()).subtractLocal(
                 center);
         float a = diff.dot(diff) - (getRadius() * getRadius());
         float a1, discr, root;
@@ -777,7 +777,7 @@ public class BoundingSphere extends BoundingVolume {
     private int collideWithRay(Ray ray) {
         TempVars vars = TempVars.get();
 
-        Vector3f diff = vars.vect1.set(ray.getOrigin()).subtractLocal(
+        Vector3f diff = vars.vect1.toVector3f().set(ray.getOrigin()).subtractLocal(
                 center);
         float a = diff.dot(diff) - (getRadius() * getRadius());
         float a1, discr;
@@ -812,16 +812,16 @@ public class BoundingSphere extends BoundingVolume {
             // possible.
     
             // Math is done in center-relative space.
-            Vector3f a = tri.get1().subtract(center, tvars.vect1);
-            Vector3f b = tri.get2().subtract(center, tvars.vect2);
-            Vector3f c = tri.get3().subtract(center, tvars.vect3);
+            Vector3f a = tri.get1().toVector3f().subtract(center, tvars.vect1.toVector3f());
+            Vector3f b = tri.get2().toVector3f().subtract(center, tvars.vect2.toVector3f());
+            Vector3f c = tri.get3().toVector3f().subtract(center, tvars.vect3.toVector3f());
             
-            Vector3f ab = b.subtract(a, tvars.vect4);
-            Vector3f ac = c.subtract(a, tvars.vect5);
+            Vector3f ab = b.subtract(a, tvars.vect4.toVector3f());
+            Vector3f ac = c.subtract(a, tvars.vect5.toVector3f());
             
             // Check the plane... if it doesn't intersect the plane
             // then it doesn't intersect the triangle.
-            Vector3f n = ab.cross(ac, tvars.vect6);
+            Vector3f n = ab.cross(ac, tvars.vect6.toVector3f());
             float d = a.dot(n);
             float e = n.dot(n);                        
             if( d * d > radius * radius * e ) {
@@ -887,7 +887,7 @@ public class BoundingSphere extends BoundingVolume {
     
             t = -edge.dot(base) / edge.dot(edge);
             if( t >= 0 && t <= 1 ) {
-                Vector3f Q = base.add(edge.mult(t, tvars.vect7), tvars.vect8);
+                Vector3f Q = base.add(edge.mult(t, tvars.vect7.toVector3f()), tvars.vect8.toVector3f());
                 float distSq = Q.dot(Q); // distance squared to origin
                 if( distSq < nearestDist ) {
                     nearestPt = Q;
@@ -901,7 +901,7 @@ public class BoundingSphere extends BoundingVolume {
     
             t = -edge.dot(base) / edge.dot(edge);
             if( t >= 0 && t <= 1 ) {
-                Vector3f Q = base.add(edge.mult(t, tvars.vect7), tvars.vect9);
+                Vector3f Q = base.add(edge.mult(t, tvars.vect7.toVector3f()), tvars.vect9.toVector3f());
                 float distSq = Q.dot(Q); // distance squared to origin
                 if( distSq < nearestDist ) {
                     nearestPt = Q;
@@ -916,7 +916,7 @@ public class BoundingSphere extends BoundingVolume {
     
             t = -edge.dot(base) / edge.dot(edge);
             if( t >= 0 && t <= 1 ) {
-                Vector3f Q = base.add(edge.mult(t, tvars.vect7), tvars.vect10);
+                Vector3f Q = base.add(edge.mult(t, tvars.vect7.toVector3f()), tvars.vect10.toVector3f());
                 float distSq = Q.dot(Q); // distance squared to origin
                 if( distSq < nearestDist ) {
                     nearestPt = Q;

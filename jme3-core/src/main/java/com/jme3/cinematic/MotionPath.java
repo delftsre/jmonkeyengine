@@ -37,6 +37,7 @@ import com.jme3.export.*;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Spline;
+import com.jme3.math.Vector;
 import com.jme3.math.Spline.SplineType;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -78,8 +79,8 @@ public class MotionPath implements Savable {
 
         float traveledDistance = 0;
         TempVars vars = TempVars.get();
-        Vector3f temp = vars.vect1;
-        Vector3f tmpVector = vars.vect2;
+        Vector3f temp = vars.vect1.toVector3f();
+        Vector3f tmpVector = vars.vect2.toVector3f();
         Vector2f v = vars.vect2d;
         //computing traveled distance according to new time
         traveledDistance = time * (getLength() / control.getInitialDuration());
@@ -99,7 +100,7 @@ public class MotionPath implements Savable {
         }
         checkWayPoint(control, tpf);
 
-        control.getSpatial().setLocalTranslation(temp);
+        control.getSpatial().setLocalTranslation(Vector.toVector(temp));
         vars.release();
         return traveledDistance;
     }

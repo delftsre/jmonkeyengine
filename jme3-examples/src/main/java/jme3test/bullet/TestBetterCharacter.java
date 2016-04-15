@@ -159,7 +159,7 @@ public class TestBetterCharacter extends SimpleApplication implements ActionList
         physicsCharacter.setViewDirection(viewDirection);
         fpsText.setText("Touch da ground = " + physicsCharacter.isOnGround());
         if (!lockView) {
-            cam.lookAt(characterNode.getWorldTranslation().add(new Vector3f(0, 2, 0)), Vector3f.UNIT_Y);
+            cam.lookAt(characterNode.getWorldTranslation().toVector3f().add(new Vector3f(0, 2, 0)), Vector3f.UNIT_Y);
         }
     }
 
@@ -177,7 +177,7 @@ public class TestBetterCharacter extends SimpleApplication implements ActionList
     }
 
     private void checkPlanetGravity() {
-        Vector3f planetDist = planet.getWorldTranslation().subtract(characterNode.getWorldTranslation());
+        Vector3f planetDist = planet.getWorldTranslation().toVector3f().subtract(characterNode.getWorldTranslation().toVector3f());
         if (planetDist.length() < 24) {
             physicsCharacter.setGravity(planetDist.normalizeLocal().multLocal(9.81f));
         } else {

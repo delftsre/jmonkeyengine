@@ -34,6 +34,7 @@ package com.jme3.bullet.debug;
 import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.bullet.objects.VehicleWheel;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -90,9 +91,9 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
             Geometry dirGeom = new Geometry("WheelDirectionDebugShape" + i, dirArrow);
             Geometry axleGeom = new Geometry("WheelAxleDebugShape" + i, axleArrow);
             Geometry wheelGeom = new Geometry("WheelRadiusDebugShape" + i, wheelArrow);
-            dirGeom.setLocalTranslation(location);
-            axleGeom.setLocalTranslation(location.add(direction));
-            wheelGeom.setLocalTranslation(location.add(direction));
+            dirGeom.setLocalTranslation(Vector.toVector(location));
+            axleGeom.setLocalTranslation(Vector.toVector(location.add(direction)));
+            wheelGeom.setLocalTranslation(Vector.toVector(location.add(direction)));
             locGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
             dirGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
             axleGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
@@ -128,9 +129,9 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
             Arrow dirArrow = (Arrow) dirGeom.getMesh();
             dirArrow.setArrowExtent(direction.normalizeLocal().multLocal(restLength));
 
-            dirGeom.setLocalTranslation(location);
-            axleGeom.setLocalTranslation(location.addLocal(direction));
-            wheelGeom.setLocalTranslation(location);
+            dirGeom.setLocalTranslation(Vector.toVector(location));
+            axleGeom.setLocalTranslation(Vector.toVector(location.addLocal(direction)));
+            wheelGeom.setLocalTranslation(Vector.toVector(location));
             i++;
         }
         applyPhysicsTransform(body.getPhysicsLocation(location), body.getPhysicsRotation(rotation));

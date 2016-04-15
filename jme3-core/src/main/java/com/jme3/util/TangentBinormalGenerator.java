@@ -554,14 +554,14 @@ public class TangentBinormalGenerator {
             Vector3f[] v, Vector2f[] t) {
         TempVars tmp = TempVars.get();
         try {
-            Vector3f edge1 = tmp.vect1;
-            Vector3f edge2 = tmp.vect2;
+            Vector3f edge1 = tmp.vect1.toVector3f();
+            Vector3f edge2 = tmp.vect2.toVector3f();
             Vector2f edge1uv = tmp.vect2d;
             Vector2f edge2uv = tmp.vect2d2;
             
-            Vector3f tangent = tmp.vect3;
-            Vector3f binormal = tmp.vect4;
-            Vector3f normal = tmp.vect5;
+            Vector3f tangent = tmp.vect3.toVector3f();
+            Vector3f binormal = tmp.vect4.toVector3f();
+            Vector3f normal = tmp.vect5.toVector3f();
             
             t[1].subtract(t[0], edge1uv);
             t[2].subtract(t[0], edge2uv);

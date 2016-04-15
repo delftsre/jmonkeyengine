@@ -449,7 +449,7 @@ public class AudioNode extends Node implements AudioSource {
     }
 
     public Vector3f getPosition() {
-        return getWorldTranslation();
+        return getWorldTranslation().toVector3f();
     }
     
     /**

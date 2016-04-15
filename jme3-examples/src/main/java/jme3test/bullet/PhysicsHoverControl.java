@@ -104,7 +104,7 @@ public class PhysicsHoverControl extends PhysicsVehicle implements PhysicsContro
         if (spatial == null) {
             return;
         }
-        setPhysicsLocation(spatial.getWorldTranslation());
+        setPhysicsLocation(spatial.getWorldTranslation().toVector3f());
         setPhysicsRotation(spatial.getWorldRotation().toRotationMatrix());
     }
 

@@ -31,6 +31,7 @@
  */
 package com.jme3.light;
 
+import com.jme3.math.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -91,7 +92,7 @@ public class LightSortTest {
         assert list.get(3) instanceof PointLight;
         
         // move the geometry closer to the point light
-        g.setLocalTranslation(Vector3f.UNIT_X);
+        g.setLocalTranslation(Vector.UNIT(3,0));
         n.updateGeometricState();
         
         assert list.get(0) instanceof AmbientLight;

@@ -136,8 +136,8 @@ public class BoundingBox extends BoundingVolume {
 
         TempVars vars = TempVars.get();
 
-        Vector3f min = vars.vect1.set(new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY));
-        Vector3f max = vars.vect2.set(new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY));
+        Vector3f min = vars.vect1.toVector3f().set(new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY));
+        Vector3f max = vars.vect2.toVector3f().set(new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY));
 
         Vector3f point;
         for (int i = start; i < end; i++) {
@@ -166,8 +166,8 @@ public class BoundingBox extends BoundingVolume {
 
         TempVars vars = TempVars.get();
 
-        Vector3f vect1 = vars.vect1;
-        Vector3f vect2 = vars.vect2;
+        Vector3f vect1 = vars.vect1.toVector3f();
+        Vector3f vect2 = vars.vect2.toVector3f();
         Triangle triangle = vars.triangle;
 
         Vector3f min = vect1.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
@@ -247,29 +247,29 @@ public class BoundingBox extends BoundingVolume {
             points.get(tmpArray, 0, bufLength);
 
             for (int j = 0; j < bufLength; j += 3) {
-                vars.vect1.x = tmpArray[j];
-                vars.vect1.y = tmpArray[j+1];
-                vars.vect1.z = tmpArray[j+2];
+                vars.vect1.toVector3f().x = tmpArray[j];
+                vars.vect1.toVector3f().y = tmpArray[j+1];
+                vars.vect1.toVector3f().z = tmpArray[j+2];
                 
-                if (vars.vect1.x < minX) {
-                    minX = vars.vect1.x;
+                if (vars.vect1.toVector3f().x < minX) {
+                    minX = vars.vect1.toVector3f().x;
                 }
-                if (vars.vect1.x > maxX) {
-                    maxX = vars.vect1.x;
-                }
-
-                if (vars.vect1.y < minY) {
-                    minY = vars.vect1.y;
-                }
-                if (vars.vect1.y > maxY) {
-                    maxY = vars.vect1.y;
+                if (vars.vect1.toVector3f().x > maxX) {
+                    maxX = vars.vect1.toVector3f().x;
                 }
 
-                if (vars.vect1.z < minZ) {
-                    minZ = vars.vect1.z;
+                if (vars.vect1.toVector3f().y < minY) {
+                    minY = vars.vect1.toVector3f().y;
                 }
-                if (vars.vect1.z > maxZ) {
-                    maxZ = vars.vect1.z;
+                if (vars.vect1.toVector3f().y > maxY) {
+                    maxY = vars.vect1.toVector3f().y;
+                }
+
+                if (vars.vect1.toVector3f().z < minZ) {
+                    minZ = vars.vect1.toVector3f().z;
+                }
+                if (vars.vect1.toVector3f().z > maxZ) {
+                    maxZ = vars.vect1.toVector3f().z;
                 }
             }
         }
@@ -315,7 +315,7 @@ public class BoundingBox extends BoundingVolume {
 
         Vector3f scale = trans.getScale();
         vars.vect1.set(xExtent * FastMath.abs(scale.x), yExtent * FastMath.abs(scale.y), zExtent * FastMath.abs(scale.z));
-        transMatrix.mult(vars.vect1, vars.vect2);
+        transMatrix.mult(vars.vect1.toVector3f(), vars.vect2.toVector3f());
         // Assign the biggest rotations after scales.
         box.xExtent = FastMath.abs(vars.vect2.getX());
         box.yExtent = FastMath.abs(vars.vect2.getY());
@@ -346,7 +346,7 @@ public class BoundingBox extends BoundingVolume {
         transMatrix.absoluteLocal();
 
         vars.vect1.set(xExtent, yExtent, zExtent);
-        transMatrix.mult(vars.vect1, vars.vect1);
+        transMatrix.mult(vars.vect1.toVector3f(), vars.vect1.toVector3f());
 
         // Assign the biggest rotations after scales.
         box.xExtent = FastMath.abs(vars.vect1.getX());
@@ -643,7 +643,7 @@ public class BoundingBox extends BoundingVolume {
 
         TempVars vars = TempVars.get();
 
-        Vector3f diff = ray.origin.subtract(getCenter(vars.vect2), vars.vect1);
+        Vector3f diff = ray.origin.subtract(getCenter(vars.vect2.toVector3f()), vars.vect1.toVector3f());
 
         final float[] fWdU = vars.fWdU;
         final float[] fAWdU = vars.fAWdU;
@@ -678,7 +678,7 @@ public class BoundingBox extends BoundingVolume {
             return false;
         }
 
-        Vector3f wCrossD = ray.getDirection().cross(diff, vars.vect2);
+        Vector3f wCrossD = ray.getDirection().cross(diff, vars.vect2.toVector3f());
 
         fAWxDdU[0] = FastMath.abs(wCrossD.dot(Vector3f.UNIT_X));
         rhs = yExtent * fAWdU[2] + zExtent * fAWdU[1];
@@ -711,8 +711,8 @@ public class BoundingBox extends BoundingVolume {
     private int collideWithRay(Ray ray, CollisionResults results) {
         TempVars vars = TempVars.get();
         try {    
-            Vector3f diff = vars.vect1.set(ray.origin).subtractLocal(center);
-            Vector3f direction = vars.vect2.set(ray.direction);
+            Vector3f diff = vars.vect1.toVector3f().set(ray.origin).subtractLocal(center);
+            Vector3f direction = vars.vect2.toVector3f().set(ray.direction);
 
             //float[] t = {0f, Float.POSITIVE_INFINITY};
             float[] t = vars.fWdU; // use one of the tempvars arrays
@@ -754,8 +754,8 @@ public class BoundingBox extends BoundingVolume {
     private int collideWithRay(Ray ray) {
         TempVars vars = TempVars.get();
         try {    
-            Vector3f diff = vars.vect1.set(ray.origin).subtractLocal(center);
-            Vector3f direction = vars.vect2.set(ray.direction);
+            Vector3f diff = vars.vect1.toVector3f().set(ray.origin).subtractLocal(center);
+            Vector3f direction = vars.vect2.toVector3f().set(ray.direction);
 
             //float[] t = {0f, Float.POSITIVE_INFINITY};
             float[] t = vars.fWdU; // use one of the tempvars arrays
@@ -787,7 +787,7 @@ public class BoundingBox extends BoundingVolume {
             return collideWithRay(ray, results);
         } else if (other instanceof Triangle) {
             Triangle t = (Triangle) other;
-            if (intersects(t.get1(), t.get2(), t.get3())) {
+            if (intersects(t.get1().toVector3f(), t.get2().toVector3f(), t.get3().toVector3f())) {
                 CollisionResult r = new CollisionResult();
                 results.addCollision(r);
                 return 1;
@@ -814,7 +814,7 @@ public class BoundingBox extends BoundingVolume {
             return collideWithRay(ray);
         } else if (other instanceof Triangle) {
             Triangle t = (Triangle) other;
-            if (intersects(t.get1(), t.get2(), t.get3())) {
+            if (intersects(t.get1().toVector3f(), t.get2().toVector3f(), t.get3().toVector3f())) {
                 return 1;
             }
             return 0;
@@ -856,7 +856,7 @@ public class BoundingBox extends BoundingVolume {
     public float distanceToEdge(Vector3f point) {
         // compute coordinates of point in box coordinate system
         TempVars vars= TempVars.get();
-        Vector3f closest = vars.vect1;
+        Vector3f closest = vars.vect1.toVector3f();
         
         point.subtract(center,closest);
 

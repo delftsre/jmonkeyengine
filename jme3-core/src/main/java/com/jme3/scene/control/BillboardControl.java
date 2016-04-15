@@ -146,7 +146,7 @@ public class BillboardControl extends AbstractControl {
      */
     private void rotateCameraAligned(Camera camera) {
         look.set(camera.getLocation()).subtractLocal(
-                spatial.getWorldTranslation());
+                spatial.getWorldTranslation().toVector3f());
         // coopt left for our own purposes.
         Vector3f xzp = left;
         // The xzp vector is the projection of the look vector on the xz plane
@@ -212,12 +212,12 @@ public class BillboardControl extends AbstractControl {
         // the camera. To do this, the camera must be inverse-transformed into
         // the model space of the billboard.
         look.set(camera.getLocation()).subtractLocal(
-                spatial.getWorldTranslation());   
+                spatial.getWorldTranslation().toVector3f());   
         spatial.getParent().getWorldRotation().mult(look, left); // coopt left for our own
         // purposes.
-        left.x *= 1.0f / spatial.getWorldScale().x;
-        left.y *= 1.0f / spatial.getWorldScale().y;
-        left.z *= 1.0f / spatial.getWorldScale().z;
+        left.x *= 1.0f / spatial.getWorldScale().getX();
+        left.y *= 1.0f / spatial.getWorldScale().getY();
+        left.z *= 1.0f / spatial.getWorldScale().getZ();
 
         // squared length of the camera projection in the xz-plane
         float lengthSquared = left.x * left.x + left.z * left.z;

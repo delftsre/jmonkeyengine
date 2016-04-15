@@ -466,7 +466,7 @@ public final class Bone implements Savable {
         }
 
         if (attachNode != null) {
-            attachNode.setLocalTranslation(modelPos);
+            attachNode.setLocalTranslation(Vector.toVector(modelPos));
             attachNode.setLocalRotation(modelRot);
             attachNode.setLocalScale(modelScale);
         }
@@ -602,7 +602,7 @@ public final class Bone implements Savable {
         
         //if there is an attached Node we need to set it's local transforms too.
         if(attachNode != null){
-            attachNode.setLocalTranslation(translation);
+            attachNode.setLocalTranslation(Vector.toVector(translation));
             attachNode.setLocalRotation(rotation);
         }
     }
@@ -707,8 +707,8 @@ public final class Bone implements Savable {
             // Blend in the new transform.
             TempVars vars = TempVars.get();
 
-            Vector3f tmpV = vars.vect1;
-            Vector3f tmpV2 = vars.vect2;
+            Vector3f tmpV = vars.vect1.toVector3f();
+            Vector3f tmpV2 = vars.vect2.toVector3f();
             Quaternion tmpQ = vars.quat1;
             
             tmpV.set(bindPos).addLocal(translation);

@@ -162,7 +162,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
     }
 
     public void makeMissile() {
-        Vector3f pos = spaceCraft.getWorldTranslation().clone();
+        Vector3f pos = spaceCraft.getWorldTranslation().toVector3f().clone();
         Quaternion rot = spaceCraft.getWorldRotation();
         Vector3f dir = rot.getRotationColumn(2);
 
@@ -219,7 +219,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
     public void updateCamera() {
         rootNode.updateGeometricState();
 
-        Vector3f pos = spaceCraft.getWorldTranslation().clone();
+        Vector3f pos = spaceCraft.getWorldTranslation().toVector3f().clone();
         Quaternion rot = spaceCraft.getWorldRotation();
         Vector3f dir = rot.getRotationColumn(2);
 

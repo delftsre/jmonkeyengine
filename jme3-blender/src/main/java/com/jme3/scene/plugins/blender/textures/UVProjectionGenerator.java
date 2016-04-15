@@ -86,35 +86,35 @@ import com.jme3.scene.plugins.blender.textures.UVCoordinatesGenerator.BoundingTu
             float dotNZ = Math.abs(n.dot(z));
             if (dotNX > borderAngle) {
                 if (dotNZ < borderAngle) {// discard X-coordinate
-                    uvCoordinates[pointIndex++] = (triangle.get1().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get1().z - min.z) / ext[2];
-                    uvCoordinates[pointIndex++] = (triangle.get2().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get2().z - min.z) / ext[2];
-                    uvCoordinates[pointIndex++] = (triangle.get3().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get3().z - min.z) / ext[2];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().z - min.z) / ext[2];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().z - min.z) / ext[2];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().z - min.z) / ext[2];
                 } else {// discard Z-coordinate
-                    uvCoordinates[pointIndex++] = (triangle.get1().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get1().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get2().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get2().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get3().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get3().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().y - min.y) / ext[1];
                 }
             } else {
                 if (dorNY > borderAngle) {// discard Y-coordinate
-                    uvCoordinates[pointIndex++] = (triangle.get1().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get1().z - min.z) / ext[2];
-                    uvCoordinates[pointIndex++] = (triangle.get2().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get2().z - min.z) / ext[2];
-                    uvCoordinates[pointIndex++] = (triangle.get3().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get3().z - min.z) / ext[2];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().z - min.z) / ext[2];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().z - min.z) / ext[2];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().z - min.z) / ext[2];
                 } else {// discard Z-coordinate
-                    uvCoordinates[pointIndex++] = (triangle.get1().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get1().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get2().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get2().y - min.y) / ext[1];
-                    uvCoordinates[pointIndex++] = (triangle.get3().x - min.x) / ext[0];
-                    uvCoordinates[pointIndex++] = (triangle.get3().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get1().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get2().toVector3f().y - min.y) / ext[1];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().x - min.x) / ext[0];
+                    uvCoordinates[pointIndex++] = (triangle.get3().toVector3f().y - min.y) / ext[1];
                 }
             }
             triangle.setNormal(null);// clear the previous normal vector
@@ -159,11 +159,11 @@ import com.jme3.scene.plugins.blender.textures.UVCoordinatesGenerator.BoundingTu
             triangle.set(0, positions[i], positions[i + 1], positions[i + 2]);
             triangle.set(1, positions[i + 3], positions[i + 4], positions[i + 5]);
             triangle.set(2, positions[i + 6], positions[i + 7], positions[i + 8]);
-            float sgn1 = Math.signum(triangle.get1().x - cx);
-            float sgn2 = Math.signum(triangle.get2().x - cx);
-            float sgn3 = Math.signum(triangle.get3().x - cx);
+            float sgn1 = Math.signum(triangle.get1().toVector3f().x - cx);
+            float sgn2 = Math.signum(triangle.get2().toVector3f().x - cx);
+            float sgn3 = Math.signum(triangle.get3().toVector3f().x - cx);
             float xSideFactor = sgn1 + sgn2 + sgn3;
-            float ySideFactor = Math.signum(triangle.get1().z - cz) + Math.signum(triangle.get2().z - cz) + Math.signum(triangle.get3().z - cz);
+            float ySideFactor = Math.signum(triangle.get1().toVector3f().z - cz) + Math.signum(triangle.get2().toVector3f().z - cz) + Math.signum(triangle.get3().toVector3f().z - cz);
             if ((xSideFactor > -3 || xSideFactor < 3) && ySideFactor < 0) {// the triangle is on the splitting plane
                 if (sgn1 == 1.0f) {
                     uvCoordinates[i / 3 * 2] += 1.0f;
@@ -218,11 +218,11 @@ import com.jme3.scene.plugins.blender.textures.UVCoordinatesGenerator.BoundingTu
             triangle.set(0, positions[i], positions[i + 1], positions[i + 2]);
             triangle.set(1, positions[i + 3], positions[i + 4], positions[i + 5]);
             triangle.set(2, positions[i + 6], positions[i + 7], positions[i + 8]);
-            float sgn1 = Math.signum(triangle.get1().x - cx);
-            float sgn2 = Math.signum(triangle.get2().x - cx);
-            float sgn3 = Math.signum(triangle.get3().x - cx);
+            float sgn1 = Math.signum(triangle.get1().toVector3f().x - cx);
+            float sgn2 = Math.signum(triangle.get2().toVector3f().x - cx);
+            float sgn3 = Math.signum(triangle.get3().toVector3f().x - cx);
             float xSideFactor = sgn1 + sgn2 + sgn3;
-            float ySideFactor = Math.signum(triangle.get1().y - cy) + Math.signum(triangle.get2().y - cy) + Math.signum(triangle.get3().y - cy);
+            float ySideFactor = Math.signum(triangle.get1().toVector3f().y - cy) + Math.signum(triangle.get2().toVector3f().y - cy) + Math.signum(triangle.get3().toVector3f().y - cy);
             if ((xSideFactor > -3 || xSideFactor < 3) && ySideFactor < 0) {// the triangle is on the splitting plane
                 if (sgn1 == 1.0f) {
                     uvCoordinates[i / 3 * 2] += 1.0f;
