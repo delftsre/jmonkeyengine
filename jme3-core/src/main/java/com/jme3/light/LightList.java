@@ -43,23 +43,23 @@ import java.util.*;
  * 
  * @author Kirill Vainer
  */
-public final class LightList implements Iterable<Light>, Savable, Cloneable {
+public final class LightList implements Iterable<ILight>, Savable, Cloneable {
 
-    private Light[] list, tlist;
+    private ILight[] list, tlist;
     private float[] distToOwner;
     private int listSize;
     private Spatial owner;
 
     private static final int DEFAULT_SIZE = 1;
 
-    private static final Comparator<Light> c = new Comparator<Light>() {
+    private static final Comparator<ILight> c = new Comparator<ILight>() {
         /**
          * This assumes lastDistance have been computed in a previous step.
          */
-        public int compare(Light l1, Light l2) {
-            if (l1.lastDistance < l2.lastDistance)
+        public int compare(ILight l1, ILight l2) {
+            if (l1.getLastDistance() < l2.getLastDistance())
                 return -1;
-            else if (l1.lastDistance > l2.lastDistance)
+            else if (l1.getLastDistance() > l2.getLastDistance())
                 return 1;
             else
                 return 0;
@@ -79,7 +79,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
      */
     public LightList(Spatial owner) {
         listSize = 0;
-        list = new Light[DEFAULT_SIZE];
+        list = new ILight[DEFAULT_SIZE];
         distToOwner = new float[DEFAULT_SIZE];
         Arrays.fill(distToOwner, Float.NEGATIVE_INFINITY);
         this.owner = owner;
@@ -94,7 +94,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
     }
 
     private void doubleSize(){
-        Light[] temp = new Light[list.length * 2];
+        ILight[] temp = new ILight[list.length * 2];
         float[] temp2 = new float[list.length * 2];
         System.arraycopy(list, 0, temp, 0, list.length);
         System.arraycopy(distToOwner, 0, temp2, 0, list.length);
@@ -108,7 +108,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
      * @param l
      *            The light to add.
      */
-    public void add(Light l) {
+    public void add(ILight l) {
         if (listSize == list.length) {
             doubleSize();
         }
@@ -142,7 +142,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
      * 
      * @param l the light to remove
      */
-    public void remove(Light l){
+    public void remove(ILight l){
         for (int i = 0; i < listSize; i++){
             if (list[i] == l){
                 remove(i);
@@ -162,7 +162,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
      * @return the light at the given index.
      * @throws IndexOutOfBoundsException If the given index is outside bounds.
      */
-    public Light get(int num){
+    public ILight get(int num){
         if (num >= listSize || num < 0)
             throw new IndexOutOfBoundsException();
 
@@ -264,8 +264,8 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
      * 
      * @return an iterator that can be used to iterate over this LightList.
      */
-    public Iterator<Light> iterator() {
-        return new Iterator<Light>(){
+    public Iterator<ILight> iterator() {
+        return new Iterator<ILight>(){
 
             int index = 0;
 
@@ -273,7 +273,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
                 return index < size();
             }
 
-            public Light next() {
+            public ILight next() {
                 if (!hasNext())
                     throw new NoSuchElementException();
                 
@@ -306,7 +306,7 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
         OutputCapsule oc = ex.getCapsule(this);
 //        oc.write(owner, "owner", null);
 
-        ArrayList<Light> lights = new ArrayList<Light>();
+        ArrayList<ILight> lights = new ArrayList<ILight>();
         for (int i = 0; i < listSize; i++){
             lights.add(list[i]);
         }
@@ -317,12 +317,12 @@ public final class LightList implements Iterable<Light>, Savable, Cloneable {
         InputCapsule ic = im.getCapsule(this);
 //        owner = (Spatial) ic.readSavable("owner", null);
 
-        List<Light> lights = ic.readSavableArrayList("lights", null);
+        List<ILight> lights = ic.readSavableArrayList("lights", null);
         listSize = lights.size();
         
         // NOTE: make sure the array has a length of at least 1
         int arraySize = Math.max(DEFAULT_SIZE, listSize);
-        list = new Light[arraySize];
+        list = new ILight[arraySize];
         distToOwner = new float[arraySize];
 
         for (int i = 0; i < listSize; i++){

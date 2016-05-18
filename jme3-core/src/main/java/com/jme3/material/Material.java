@@ -698,7 +698,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
     private ColorRGBA getAmbientColor(LightList lightList, boolean removeLights) {
         ambientLightColor.set(0, 0, 0, 1);
         for (int j = 0; j < lightList.size(); j++) {
-            Light l = lightList.get(j);
+            ILight l = lightList.get(j);
             if (l instanceof AmbientLight) {
                 ambientLightColor.addLocal(l.getColor());
                 if(removeLights){
@@ -768,7 +768,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
         for (curIndex = startIndex; curIndex < endIndex && curIndex < lightList.size(); curIndex++) {
 
 
-                Light l = lightList.get(curIndex);
+                ILight l = lightList.get(curIndex);
                 if(l.getType() == Light.Type.Ambient){
                     endIndex++;
                     continue;
@@ -855,7 +855,7 @@ public class Material implements CloneableSmartAsset, Cloneable, Savable {
         boolean isSecondLight = false;
 
         for (int i = 0; i < lightList.size(); i++) {
-            Light l = lightList.get(i);
+            ILight l = lightList.get(i);
             if (l instanceof AmbientLight) {
                 continue;
             }

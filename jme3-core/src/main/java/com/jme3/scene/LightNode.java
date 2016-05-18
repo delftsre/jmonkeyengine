@@ -34,6 +34,7 @@ package com.jme3.scene;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.light.Light;
+import com.jme3.light.ILight;
 import com.jme3.scene.control.LightControl;
 import com.jme3.scene.control.LightControl.ControlDirection;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class LightNode extends Node {
     public LightNode() {
     }
 
-    public LightNode(String name, Light light) {
+    public LightNode(String name, ILight light) {
         this(name, new LightControl(light));
     }
 
@@ -82,7 +83,7 @@ public class LightNode extends Node {
         lightControl.setControlDir(controlDir);
     }
 
-    public void setLight(Light light) {
+    public void setLight(ILight light) {
         lightControl.setLight(light);
     }
 
@@ -90,7 +91,7 @@ public class LightNode extends Node {
         return lightControl.getControlDir();
     }
 
-    public Light getLight() {
+    public ILight getLight() {
         return lightControl.getLight();
     }
     

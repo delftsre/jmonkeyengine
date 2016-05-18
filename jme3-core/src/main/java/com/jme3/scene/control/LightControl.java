@@ -37,6 +37,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
+import com.jme3.light.ILight;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
 import com.jme3.math.Vector3f;
@@ -67,7 +68,7 @@ public class LightControl extends AbstractControl {
          */
         SpatialToLight;
     }
-    private Light light;
+    private ILight light;
     private ControlDirection controlDir = ControlDirection.SpatialToLight;
 
     /**
@@ -79,23 +80,23 @@ public class LightControl extends AbstractControl {
     /**
      * @param light The light to be synced.
      */
-    public LightControl(Light light) {
+    public LightControl(ILight light) {
         this.light = light;
     }
 
     /**
      * @param light The light to be synced.
      */
-    public LightControl(Light light, ControlDirection controlDir) {
+    public LightControl(ILight light, ControlDirection controlDir) {
         this.light = light;
         this.controlDir = controlDir;
     }
 
-    public Light getLight() {
+    public ILight getLight() {
         return light;
     }
 
-    public void setLight(Light light) {
+    public void setLight(ILight light) {
         this.light = light;
     }
 
@@ -122,7 +123,7 @@ public class LightControl extends AbstractControl {
         }
     }
 
-    private void spatialTolight(Light light) {
+    private void spatialTolight(ILight light) {
         if (light instanceof PointLight) {
             ((PointLight) light).setPosition(spatial.getWorldTranslation());
         }
@@ -140,7 +141,7 @@ public class LightControl extends AbstractControl {
 
     }
 
-    private void lightToSpatial(Light light) {
+    private void lightToSpatial(ILight light) {
         TempVars vars = TempVars.get();
         if (light instanceof PointLight) {
 
