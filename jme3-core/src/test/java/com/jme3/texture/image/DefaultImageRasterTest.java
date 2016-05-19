@@ -1,6 +1,7 @@
 package com.jme3.texture.image;
 
 import java.nio.ByteBuffer;
+import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Image;
 import com.jme3.texture.image.ImageRaster;
 import com.jme3.texture.Image.Format;
@@ -83,5 +84,37 @@ public class DefaultImageRasterTest extends CommonImageRasterTest {
         Image someImage = getMipMockImage();
         thrown.expect(IllegalStateException.class);
         ImageRasterFactory.create(someImage, 0, 4, false);
+    }
+    @Test
+    public void testDefaultGetPixelNoConvert(){
+        Image someImage = getMockImage();
+        ImageRaster testIR = ImageRasterFactory.create(someImage, 0, 0, false);
+        someImage.getData(0).put(0, (byte) -128);
+        ColorRGBA color = testIR.getPixel(0, 0);
+        assert Math.abs(color.r - 0.5f) < .05f;
+    }
+    @Test
+    public void testDefaultGetPixelDoConvert(){
+        Image someImage = getMockImage();
+        ImageRaster testIR = ImageRasterFactory.create(someImage, 0, 0, true);
+        someImage.getData(0).put(0, (byte) -128);
+        ColorRGBA color = testIR.getPixel(0, 0);
+        assert Math.abs(color.r - 0.5f) > .2f;
+    }
+    @Test
+    public void testDefaultSetPixelNoConvert(){
+        Image someImage = getMockImage();
+        ImageRaster testIR = ImageRasterFactory.create(someImage, 0, 0, false);
+        ColorRGBA color = ColorRGBA.Gray;
+        testIR.setPixel(0, 0, color);
+        assert someImage.getData(0).get(0) == -128;
+    }
+    @Test
+    public void testDefaultSetPixelDoConvert(){
+        Image someImage = getMockImage();
+        ImageRaster testIR = ImageRasterFactory.create(someImage, 0, 0, true);
+        ColorRGBA color = ColorRGBA.Gray;
+        testIR.setPixel(0, 0, color);
+        assert someImage.getData(0).get(0) != -128;
     }
 }

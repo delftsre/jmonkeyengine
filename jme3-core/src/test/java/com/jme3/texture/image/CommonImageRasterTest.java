@@ -1,6 +1,7 @@
 package com.jme3.texture.image;
 
 import java.nio.ByteBuffer;
+import com.jme3.texture.image.ColorSpace;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import org.mockito.Mockito;
@@ -20,6 +21,7 @@ public class CommonImageRasterTest {
         when(mockImage.getFormat()).thenReturn(someFormat);
         when(mockImage.getWidth()).thenReturn(4);
         when(mockImage.getHeight()).thenReturn(4);
+        when(mockImage.getColorSpace()).thenReturn(ColorSpace.sRGB);
 
         return mockImage;
     }
