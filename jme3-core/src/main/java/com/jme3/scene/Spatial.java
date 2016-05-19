@@ -37,6 +37,7 @@ import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
 import com.jme3.export.*;
 import com.jme3.light.Light;
+import com.jme3.light.ILight;
 import com.jme3.light.LightList;
 import com.jme3.material.Material;
 import com.jme3.math.*;
@@ -1060,7 +1061,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @param light The light to add.
      */
-    public void addLight(Light light) {
+    public void addLight(ILight light) {
         localLights.add(light);
         setLightListRefresh();
     }
@@ -1071,7 +1072,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * @param light The light to remove.
      * @see Spatial#addLight(com.jme3.light.Light) 
      */
-    public void removeLight(Light light) {
+    public void removeLight(ILight light) {
         localLights.remove(light);
         setLightListRefresh();
     }

@@ -297,7 +297,7 @@ public class SpotLight extends Light {
     }
     
     @Override
-    protected void computeLastDistance(Spatial owner) {
+    public void computeLastDistance(Spatial owner) {
         if (owner.getWorldBound() != null) {
             BoundingVolume bv = owner.getWorldBound();
             lastDistance = bv.distanceSquaredTo(position);
