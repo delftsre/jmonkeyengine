@@ -769,7 +769,10 @@ public class Mesh implements Savable, Cloneable {
         }
     }
 
-    protected int computeNumElements(int bufSize){
+    protected int computeNumElements(){
+        return this.computeNumElements(getVertexCount());
+    }
+    private int computeNumElements(int bufSize){
         return mode.computeNumElements(bufSize,  patchVertexCount);
     }
 

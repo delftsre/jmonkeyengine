@@ -53,13 +53,20 @@ public class MeshTest {
   @Test
   public void testComputeNumElements() {
     Mesh mesh = generateMesh(3);
-    assert mesh.computeNumElements(mesh.getVertexCount()) == 1;
+    assert mesh.computeNumElements() == 1;
     mesh = generateMesh(4);
     mesh.setMode(Mesh.Mode.Lines);
-    assert mesh.computeNumElements(mesh.getVertexCount()) == 2;
+    assert mesh.computeNumElements() == 2;
     mesh.setMode(Mesh.Mode.LineStrip);
-    assert mesh.computeNumElements(mesh.getVertexCount()) == 3;
+    assert mesh.computeNumElements() == 3;
     mesh.setMode(Mesh.Mode.TriangleFan);
-    assert mesh.computeNumElements(mesh.getVertexCount()) == 2;
+    assert mesh.computeNumElements() == 2;
+    mesh.setMode(Mesh.Mode.Patch);
+    mesh.setPatchVertexCount(1);
+    assert mesh.computeNumElements() == 4;
+    mesh.setPatchVertexCount(2);
+    assert mesh.computeNumElements() == 2;
+    mesh.setPatchVertexCount(3);
+    assert mesh.computeNumElements() == 1;
   }
 }
