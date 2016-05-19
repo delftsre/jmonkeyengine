@@ -173,18 +173,24 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
                             tempS0 = -(negativeDirectionDot * s1 + diffThisDot);
                             if (tempS0 < -extent) {
                                 s0 = -extent;
-                                squareDistance = s0 * (s0 - (2.0f) * tempS0)
-                                        + s1 * (s1 + (2.0f) * diffTestDot)
+                                squareDistance = s0 
+                                        * (s0 - (2.0f) * tempS0)
+                                        + s1 
+                                        * (s1 + (2.0f) * diffTestDot)
                                         + lengthOfDiff;
                             } else if (tempS0 <= extent) {
                                 s0 = tempS0;
-                                squareDistance = -s0 * s0 + s1
+                                squareDistance = -s0 
+                                        * s0
+                                        + s1
                                         * (s1 + (2.0f) * diffTestDot)
                                         + lengthOfDiff;
                             } else {
                                 s0 = extent;
-                                squareDistance = s0 * (s0 - (2.0f) * tempS0)
-                                        + s1 * (s1 + (2.0f) * diffTestDot)
+                                squareDistance = s0
+                                        * (s0 - (2.0f) * tempS0)
+                                        + s1
+                                        * (s1 + (2.0f) * diffTestDot)
                                         + lengthOfDiff;
                             }
                         }
@@ -194,17 +200,23 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
                         tempS0 = -(negativeDirectionDot * s1 + diffThisDot);
                         if (tempS0 < -extent) {
                             s0 = -extent;
-                            squareDistance = s0 * (s0 - (2.0f) * tempS0) + s1
+                            squareDistance = s0
+                                    * (s0 - (2.0f) * tempS0)
+                                    + s1
                                     * (s1 + (2.0f) * diffTestDot)
                                     + lengthOfDiff;
                         } else if (tempS0 <= extent) {
                             s0 = tempS0;
-                            squareDistance = -s0 * s0 + s1
+                            squareDistance = -s0
+                                    * s0
+                                    + s1
                                     * (s1 + (2.0f) * diffTestDot)
                                     + lengthOfDiff;
                         } else {
                             s0 = extent;
-                            squareDistance = s0 * (s0 - (2.0f) * tempS0) + s1
+                            squareDistance = s0
+                                    * (s0 - (2.0f) * tempS0)
+                                    + s1
                                     * (s1 + (2.0f) * diffTestDot)
                                     + lengthOfDiff;
                         }

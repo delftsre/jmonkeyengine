@@ -222,4 +222,12 @@ public class FastMathTest {
             0.4, 0.8, 0.4, 0.8) == 0;
     }
 
+    @Test
+    public void testClamp() {
+        assert FastMath.clamp(0f, 0f, 0f) == 0f;
+        assert FastMath.clamp(5f, -1f, 1f) == 1f;
+        assert FastMath.clamp(-5f, -1f, 1f) == -1f;
+        assert FastMath.clamp(0.5f, 0f, 1f) == 0.5f;
+    }
+
 }
