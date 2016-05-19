@@ -171,31 +171,31 @@ public enum VarType {
     TextureBuffer(false, true, "sampler1D|sampler1DShadow") {
         @Override
         public String getValueAsString(Object value) {
-            return getValueAsStringFromTexture(value);
+            return getValueAsStringFromTexture((Texture) value);
         }
     },
     Texture2D(false, true, "sampler2D|sampler2DShadow") {
         @Override
         public String getValueAsString(Object value) {
-            return getValueAsStringFromTexture(value);
+            return getValueAsStringFromTexture((Texture) value);
         }
     },
     Texture3D(false, true, "sampler3D") {
         @Override
         public String getValueAsString(Object value) {
-            return getValueAsStringFromTexture(value);
+            return getValueAsStringFromTexture((Texture) value);
         }
     },
     TextureArray(false, true, "sampler2DArray") {
         @Override
         public String getValueAsString(Object value) {
-            return getValueAsStringFromTexture(value);
+            return getValueAsStringFromTexture((Texture) value);
         }
     },
     TextureCubeMap(false, true, "samplerCube") {
         @Override
         public String getValueAsString(Object value) {
-            return getValueAsStringFromTexture(value);
+            return getValueAsStringFromTexture((Texture) value);
         }
     },
     Int("int") {
@@ -222,49 +222,47 @@ public enum VarType {
 
     private static String getWrapMode(Texture texVal, Texture.WrapAxis axis) {
         WrapMode mode = WrapMode.EdgeClamp;
-        try{
+        try {
             mode = texVal.getWrap(axis);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             //this axis doesn't exist on the texture
             return "";
         }
-        if(mode != WrapMode.EdgeClamp){
-            return "Wrap"+ mode.name() + "_" + axis.name() + " ";
+        if (mode != WrapMode.EdgeClamp) {
+            return "Wrap" + mode.name() + "_" + axis.name() + " ";
         }
         return "";
     }
 
-    private static String getValueAsStringFromTexture(Object value) {
-        Texture texVal = (Texture) value;
+    protected static String getValueAsStringFromTexture(Texture texVal) {
         TextureKey texKey = (TextureKey) texVal.getKey();
-        if (texKey == null){
+        if (texKey == null) {
             throw new UnsupportedOperationException("The specified MatParam cannot be represented in J3M");
         }
 
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         if (texKey.isFlipY()) {
-            ret += "Flip ";
+            ret.append("Flip ");
         }
-
-        //Wrap mode
-        ret += getWrapMode(texVal, Texture.WrapAxis.S);
-        ret += getWrapMode(texVal, Texture.WrapAxis.T);
-        ret += getWrapMode(texVal, Texture.WrapAxis.R);
+        // Wrap mode
+        ret.append(getWrapMode(texVal, Texture.WrapAxis.S));
+        ret.append(getWrapMode(texVal, Texture.WrapAxis.T));
+        ret.append(getWrapMode(texVal, Texture.WrapAxis.R));
 
         //Min and Mag filter
         Texture.MinFilter def =  Texture.MinFilter.BilinearNoMipMaps;
-        if(texVal.getImage().hasMipmaps() || texKey.isGenerateMips()){
+        if(texVal.getImage().hasMipmaps() || texKey.isGenerateMips()) {
             def = Texture.MinFilter.Trilinear;
         }
-        if(texVal.getMinFilter() != def){
-            ret += "Min" + texVal.getMinFilter().name()+ " ";
+        if(texVal.getMinFilter() != def) {
+            ret.append("Min").append(texVal.getMinFilter().name()).append(" ");
         }
 
-        if(texVal.getMagFilter() != Texture.MagFilter.Bilinear){
-            ret += "Mag" + texVal.getMagFilter().name()+ " ";
+        if(texVal.getMagFilter() != Texture.MagFilter.Bilinear) {
+            ret.append("Min").append(texVal.getMagFilter().name()).append(" ");
         }
-
-        return ret + "\"" + texKey.getName() + "\"";
+        ret.append("\"").append(texKey.getName()).append("\"");
+        return ret.toString();
     }
 
     public String getValueAsString(Object value) {
