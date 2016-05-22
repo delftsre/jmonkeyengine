@@ -63,7 +63,7 @@ public class Eigen3f implements java.io.Serializable {
         eigenVectors[2] = new Vector3f();
 
         Matrix3f scaledData = new Matrix3f(data);
-        float maxMagnitude = scaleMatrix(scaledData);
+        float maxMagnitude = FastMath.scaleMatrix(scaledData);
 
         // Compute the eigenvalues using double-precision arithmetic.
         double roots[] = new double[3];
@@ -135,45 +135,6 @@ public class Eigen3f implements java.io.Serializable {
             }
         }
 	}
-
-    /**
-     * Scale the matrix so its entries are in [-1,1]. The scaling is applied
-     * only when at least one matrix entry has magnitude larger than 1.
-     * 
-     * @return the max magnitude in this matrix
-     */
-    private float scaleMatrix(Matrix3f mat) {
-
-        float max = FastMath.abs(mat.m00);
-        float abs = FastMath.abs(mat.m01);
-
-        if (abs > max) {
-            max = abs;
-        }
-        abs = FastMath.abs(mat.m02);
-        if (abs > max) {
-            max = abs;
-        }
-        abs = FastMath.abs(mat.m11);
-        if (abs > max) {
-            max = abs;
-        }
-        abs = FastMath.abs(mat.m12);
-        if (abs > max) {
-            max = abs;
-        }
-        abs = FastMath.abs(mat.m22);
-        if (abs > max) {
-            max = abs;
-        }
-
-        if (max > 1f) {
-            float fInvMax = 1f / max;
-            mat.multLocal(fInvMax);
-        }
-
-        return max;
-    }
 
     /**
      * Compute the eigenvectors of the given Matrix, using the 
