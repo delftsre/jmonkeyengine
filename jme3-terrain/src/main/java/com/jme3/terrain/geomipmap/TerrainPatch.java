@@ -389,28 +389,28 @@ public class TerrainPatch extends Geometry {
         Vector3f normal = new Vector3f();
 
         
-        int s = this.getSize()-1;
+        int s = this.getSize() - 1;
         
         if (right != null) { // right side,    works its way down
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(s,i), 0);
-                leftPoint.set(-1, this.getHeightmapHeight(s-1,i), 0);
-                rightPoint.set(1, right.getHeightmapHeight(1,i), 0);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(s, i), 0);
+                leftPoint.set(-1, this.getHeightmapHeight(s - 1, i), 0);
+                rightPoint.set(1, right.getHeightmapHeight(1, i), 0);
 
                 if (i == 0) { // top point
-                    bottomPoint.set(0, this.getHeightmapHeight(s,i+1), 1);
+                    bottomPoint.set(0, this.getHeightmapHeight(s, i + 1), 1);
                     
                     if (top == null) {
                         averageNormalsTangents(null, rootPoint, leftPoint, bottomPoint, rightPoint,  normal, tangent, binormal);
                         setInBuffer(this.getMesh(), s, normal, tangent, binormal);
                         setInBuffer(right.getMesh(), 0, normal, tangent, binormal);
                     } else {
-                        topPoint.set(0, top.getHeightmapHeight(s,s-1), -1);
+                        topPoint.set(0, top.getHeightmapHeight(s, s - 1), -1);
                         
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint,normal, tangent, binormal);
                         setInBuffer(this.getMesh(), s, normal, tangent, binormal);
                         setInBuffer(right.getMesh(), 0, normal, tangent, binormal);
-                        setInBuffer(top.getMesh(), (s+1)*(s+1)-1, normal, tangent, binormal);
+                        setInBuffer(top.getMesh(), (s + 1) * (s + 1) - 1, normal, tangent, binormal);
                         
                         if (topRight != null) {
                     //        setInBuffer(topRight.getMesh(), (s+1)*s, normal, tangent, binormal);
@@ -445,10 +445,10 @@ public class TerrainPatch extends Geometry {
         }
 
         if (left != null) { // left side,    works its way down
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(0,i), 0);
-                leftPoint.set(-1, left.getHeightmapHeight(s-1,i), 0);
-                rightPoint.set(1, this.getHeightmapHeight(1,i), 0);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(0, i), 0);
+                leftPoint.set(-1, left.getHeightmapHeight(s - 1, i), 0);
+                rightPoint.set(1, this.getHeightmapHeight(1, i), 0);
                 
                 if (i == 0) { // top point
                     bottomPoint.set(0, this.getHeightmapHeight(0,i+1), 1);
@@ -463,21 +463,21 @@ public class TerrainPatch extends Geometry {
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                         setInBuffer(this.getMesh(), 0, normal, tangent, binormal);
                         setInBuffer(left.getMesh(), s, normal, tangent, binormal);
-                        setInBuffer(top.getMesh(), (s+1)*s, normal, tangent, binormal);
+                        setInBuffer(top.getMesh(), (s + 1) * s, normal, tangent, binormal);
                         
                         if (topLeft != null) {
                      //       setInBuffer(topLeft.getMesh(), (s+1)*(s+1)-1, normal, tangent, binormal);
                         }
                     }
                 } else if (i == s) { // bottom point
-                    topPoint.set(0, this.getHeightmapHeight(0,i-1), -1);
+                    topPoint.set(0, this.getHeightmapHeight(0,i - 1), -1);
                     
                     if (bottom == null) {
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, null, rightPoint, normal, tangent, binormal);
-                        setInBuffer(this.getMesh(), (s+1)*(s), normal, tangent, binormal);
-                        setInBuffer(left.getMesh(), (s+1)*(s+1)-1, normal, tangent, binormal);
+                        setInBuffer(this.getMesh(), (s + 1) * (s), normal, tangent, binormal);
+                        setInBuffer(left.getMesh(), (s + 1) * (s + 1) - 1, normal, tangent, binormal);
                     } else {
-                        bottomPoint.set(0, bottom.getHeightmapHeight(0,1), 1);
+                        bottomPoint.set(0, bottom.getHeightmapHeight(0, 1), 1);
                         
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                         setInBuffer(this.getMesh(), (s+1)*(s), normal, tangent, binormal);
@@ -500,10 +500,10 @@ public class TerrainPatch extends Geometry {
         }
 
         if (top != null) { // top side,    works its way right
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(i,0), 0);
-                topPoint.set(0, top.getHeightmapHeight(i,s-1), -1);
-                bottomPoint.set(0, this.getHeightmapHeight(i,1), 1);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(i, 0), 0);
+                topPoint.set(0, top.getHeightmapHeight(i, s - 1), -1);
+                bottomPoint.set(0, this.getHeightmapHeight(i, 1), 1);
                 
                 if (i == 0) { // left corner
                     // handled by left side pass
@@ -513,21 +513,21 @@ public class TerrainPatch extends Geometry {
                     // handled by this patch when it does its right side
                     
                 } else { // all in the middle
-                    leftPoint.set(-1, this.getHeightmapHeight(i-1,0), 0);
-                    rightPoint.set(1, this.getHeightmapHeight(i+1,0), 0);
+                    leftPoint.set(-1, this.getHeightmapHeight(i - 1, 0), 0);
+                    rightPoint.set(1, this.getHeightmapHeight(i + 1, 0), 0);
                     averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                     setInBuffer(this.getMesh(), i, normal, tangent, binormal);
-                    setInBuffer(top.getMesh(), (s+1)*(s)+i, normal, tangent, binormal);
+                    setInBuffer(top.getMesh(), (s + 1) * (s) + i, normal, tangent, binormal);
                 }
             }
             
         }
         
         if (bottom != null) { // bottom side,    works its way right
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(i,s), 0);
-                topPoint.set(0, this.getHeightmapHeight(i,s-1), -1);
-                bottomPoint.set(0, bottom.getHeightmapHeight(i,1), 1);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(i, s), 0);
+                topPoint.set(0, this.getHeightmapHeight(i, s - 1), -1);
+                bottomPoint.set(0, bottom.getHeightmapHeight(i, 1), 1);
 
                 if (i == 0) { // left
                     // handled by the left side pass
@@ -537,8 +537,8 @@ public class TerrainPatch extends Geometry {
                     // handled by the right side pass
                     
                 } else { // all in the middle
-                    leftPoint.set(-1, this.getHeightmapHeight(i-1,s), 0);
-                    rightPoint.set(1, this.getHeightmapHeight(i+1,s), 0);
+                    leftPoint.set(-1, this.getHeightmapHeight(i - 1, s), 0);
+                    rightPoint.set(1, this.getHeightmapHeight(i + 1, s), 0);
                     averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                     setInBuffer(this.getMesh(), (s+1)*(s)+i, normal, tangent, binormal);
                     setInBuffer(bottom.getMesh(), i, normal, tangent, binormal);

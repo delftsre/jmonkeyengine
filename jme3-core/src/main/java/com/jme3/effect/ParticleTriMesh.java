@@ -34,6 +34,7 @@ package com.jme3.effect;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
@@ -210,7 +211,7 @@ public class ParticleTriMesh extends ParticleMesh {
                 if (p.angle != 0) {
                     TempVars vars = TempVars.get();
                     vars.vect1.set(faceNormal).normalizeLocal();
-                    vars.quat1.fromAngleNormalAxis(p.angle, vars.vect1);
+                    vars.quat1.set(QuaternionFactory.createFromAngleNormalAxis(p.angle, vars.vect1));
                     vars.quat1.multLocal(left);
                     vars.quat1.multLocal(up);
                     vars.release();

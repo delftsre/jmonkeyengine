@@ -53,6 +53,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -103,7 +104,7 @@ public class TestBoneRagdoll extends SimpleApplication implements RagdollCollisi
 
         model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
 
-        //  model.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X));
+        //  model.setLocalRotation(QuaternionFactory.createFromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X));
 
         //debug view
         AnimControl control = model.getControl(AnimControl.class);
@@ -153,7 +154,7 @@ public class TestBoneRagdoll extends SimpleApplication implements RagdollCollisi
                     Quaternion q = new Quaternion();
                     float[] angles = new float[3];
                     model.getLocalRotation().toAngles(angles);
-                    q.fromAngleAxis(angles[1], Vector3f.UNIT_Y);
+                    q.set(QuaternionFactory.createFromAngleAxis(angles[1], Vector3f.UNIT_Y));
                     model.setLocalRotation(q);
                     if (angles[0] < 0) {
                         animChannel.setAnim("StandUpBack");
@@ -293,7 +294,7 @@ public class TestBoneRagdoll extends SimpleApplication implements RagdollCollisi
     AnimControl animControl;
     AnimChannel animChannel;
     Vector3f direction = new Vector3f(0, 0, 1);
-    Quaternion rotate = new Quaternion().fromAngleAxis(FastMath.PI / 8, Vector3f.UNIT_Y);
+    Quaternion rotate = QuaternionFactory.createFromAngleAxis(FastMath.PI / 8, Vector3f.UNIT_Y);
     boolean dance = true;
 
     @Override

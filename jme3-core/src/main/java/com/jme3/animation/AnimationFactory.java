@@ -33,6 +33,7 @@ package com.jme3.animation;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 
@@ -98,7 +99,7 @@ public class AnimationFactory {
 
         void set(float x, float y, float z) {
             float[] a = {x, y, z};
-            rotation.fromAngles(a);
+            rotation.set(QuaternionFactory.createFromAngles(a));
             eulerAngles.set(x, y, z);
         }
     }

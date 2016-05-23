@@ -39,6 +39,7 @@ import com.jme3.export.Savable;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
@@ -143,7 +144,8 @@ public class InstancedGeometry extends Geometry {
         // NOTE: No need to take the transpose in order to encode
         // into quaternion, the multiplication in the shader is vec * quat
         // apparently...
-        tempQuat.fromRotationMatrix(tempMat3);
+
+        tempQuat = QuaternionFactory.createFromRotationMatrix(tempMat3);
 
         // Column-major encoding. The "W" field in each of the encoded
         // vectors represents the quaternion.

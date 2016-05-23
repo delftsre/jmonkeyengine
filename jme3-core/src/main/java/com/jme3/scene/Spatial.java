@@ -491,7 +491,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         Vector3f rotAxis = upY.crossLocal(newUp).normalizeLocal();
 
         // Build a rotation quat and apply current local rotation.
-        q.fromAngleNormalAxis(angle, rotAxis);
+        q.set(QuaternionFactory.createFromAngleNormalAxis(angle, rotAxis));
         q.mult(rot, rot);
 
         vars.release();
@@ -941,7 +941,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *            the new local rotation.
      */
     public void setLocalRotation(Matrix3f rotation) {
-        localTransform.getRotation().fromRotationMatrix(rotation);
+        localTransform.setRotation(QuaternionFactory.createFromRotationMatrix(rotation));
         setTransformRefresh();
     }
 
@@ -1142,8 +1142,8 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      */
     public Spatial rotate(float xAngle, float yAngle, float zAngle) {
         TempVars vars = TempVars.get();
+        vars.quat1.set(QuaternionFactory.createFromAngles(xAngle, yAngle, zAngle));
         Quaternion q = vars.quat1;
-        q.fromAngles(xAngle, yAngle, zAngle);
         rotate(q);
         vars.release();
 

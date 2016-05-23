@@ -35,6 +35,7 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.export.*;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public class VehicleWheel implements Savable {
     public void updatePhysicsState() {
         getWheelLocation(wheelId, wheelIndex, wheelWorldLocation);
         getWheelRotation(wheelId, wheelIndex, tmp_Matrix);
-        wheelWorldRotation.fromRotationMatrix(tmp_Matrix);
+        wheelWorldRotation.set(QuaternionFactory.createFromRotationMatrix(tmp_Matrix));
     }
 
     private native void getWheelLocation(long vehicleId, int wheelId, Vector3f location);

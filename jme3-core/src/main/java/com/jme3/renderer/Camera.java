@@ -707,7 +707,7 @@ public class Camera implements Savable, Cloneable {
      * @see Camera#setAxes(com.jme3.math.Quaternion) 
      */
     public void setAxes(Vector3f left, Vector3f up, Vector3f direction) {
-        this.rotation.fromAxes(left, up, direction);
+        this.rotation.set(QuaternionFactory.createFromAxes(left, up, direction));
         onFrameChange();
     }
 
@@ -800,7 +800,7 @@ public class Camera implements Savable, Cloneable {
             Vector3f direction) {
 
         this.location = location;
-        this.rotation.fromAxes(left, up, direction);
+        this.rotation.set(QuaternionFactory.createFromAxes(left, up, direction));
         onFrameChange();
     }
 
@@ -839,7 +839,7 @@ public class Camera implements Savable, Cloneable {
 
         newUp.set(newDirection).crossLocal(newLeft).normalizeLocal();
 
-        this.rotation.fromAxes(newLeft, newUp, newDirection);
+        this.rotation.set(QuaternionFactory.createFromAxes(newLeft, newUp, newDirection));
         this.rotation.normalizeLocal();
         vars.release();
 

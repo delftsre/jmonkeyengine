@@ -42,6 +42,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.SkeletonDebugger;
@@ -127,8 +128,7 @@ public class TestOgreComplexAnim extends SimpleApplication {
             rate = 1;
         }
 
-        Quaternion q = new Quaternion();
-        q.fromAngles(0, angle, 0);
+        Quaternion q = QuaternionFactory.createFromAngles(0, angle, 0);
 
         b.setUserControl(true);
         b.setUserTransforms(Vector3f.ZERO, q, Vector3f.UNIT_XYZ);

@@ -1714,13 +1714,11 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
     }
 
     public Quaternion toRotationQuat() {
-        Quaternion quat = new Quaternion();
-        quat.fromRotationMatrix(toRotationMatrix());
-        return quat;
+        return QuaternionFactory.createFromRotationMatrix(toRotationMatrix());
     }
 
     public void toRotationQuat(Quaternion q) {
-        q.fromRotationMatrix(toRotationMatrix());
+        q.set(QuaternionFactory.createFromRotationMatrix(toRotationMatrix()));
     }
 
     public Matrix3f toRotationMatrix() {

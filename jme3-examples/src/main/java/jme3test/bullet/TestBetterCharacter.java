@@ -37,6 +37,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.CameraNode;
@@ -150,10 +151,10 @@ public class TestBetterCharacter extends SimpleApplication implements ActionList
         // The final world rotation depends on the gravity and on the state of
         // setApplyPhysicsLocal()
         if (leftRotate) {
-            Quaternion rotateL = new Quaternion().fromAngleAxis(FastMath.PI * tpf, Vector3f.UNIT_Y);
+            Quaternion rotateL = QuaternionFactory.createFromAngleAxis(FastMath.PI * tpf, Vector3f.UNIT_Y);
             rotateL.multLocal(viewDirection);
         } else if (rightRotate) {
-            Quaternion rotateR = new Quaternion().fromAngleAxis(-FastMath.PI * tpf, Vector3f.UNIT_Y);
+            Quaternion rotateR = QuaternionFactory.createFromAngleAxis(-FastMath.PI * tpf, Vector3f.UNIT_Y);
             rotateR.multLocal(viewDirection);
         }
         physicsCharacter.setViewDirection(viewDirection);

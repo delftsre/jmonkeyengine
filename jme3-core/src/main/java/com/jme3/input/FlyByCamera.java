@@ -36,6 +36,7 @@ import com.jme3.input.controls.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 
@@ -312,7 +313,7 @@ public class FlyByCamera implements AnalogListener, ActionListener {
         }
 
         Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(rotationSpeed * value, axis);
+        mat.set(QuaternionFactory.createFromAngleNormalAxis(rotationSpeed * value, axis));
 
         Vector3f up = cam.getUp();
         Vector3f left = cam.getLeft();
@@ -322,8 +323,7 @@ public class FlyByCamera implements AnalogListener, ActionListener {
         mat.mult(left, left);
         mat.mult(dir, dir);
 
-        Quaternion q = new Quaternion();
-        q.fromAxes(left, up, dir);
+        Quaternion q = QuaternionFactory.createFromAxes(left, up, dir);
         q.normalizeLocal();
 
         cam.setAxes(q);

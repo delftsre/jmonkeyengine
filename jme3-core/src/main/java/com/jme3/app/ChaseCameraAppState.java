@@ -43,6 +43,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
@@ -184,8 +185,8 @@ public class ChaseCameraAppState extends AbstractAppState implements ActionListe
         TempVars vars = TempVars.get();
         Quaternion rot = vars.quat1;
         Quaternion rot2 = vars.quat2;
-        rot.fromAngleNormalAxis(verticalRotation, leftVector);
-        rot2.fromAngleNormalAxis(horizontalRotation, upVector);
+        rot.set(QuaternionFactory.createFromAngleNormalAxis(verticalRotation, leftVector));
+        rot2.set(QuaternionFactory.createFromAngleNormalAxis(horizontalRotation, upVector));
         rot2.multLocal(rot);
         target.setLocalRotation(rot2);
         vars.release();
