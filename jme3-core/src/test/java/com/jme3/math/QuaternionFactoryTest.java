@@ -59,4 +59,20 @@ public class QuaternionFactoryTest {
     assert q.getY() == 0.4447462f;
     assert q.getZ() == 0.22101063f;
   }
+  @Test
+  public void testFromAngle() {
+    Quaternion q;
+    q = QuaternionFactory.createFromAngles(0.5f * FastMath.PI, 0.1f * FastMath.PI, 1.5f * FastMath.PI);
+    assert q.getX() == -0.41562694f;
+    assert q.getY() == 0.41562694f;
+    assert q.getZ() == 0.5720614f;
+    q = QuaternionFactory.createFromAngles(0.35f * FastMath.PI, 0.15f * FastMath.PI, -1.5f * FastMath.PI);
+    assert q.getX() == -0.5f;
+    assert q.getY() == -0.5f;
+    assert q.getZ() == -0.49999997f;
+    q = QuaternionFactory.createFromAngles(5f * FastMath.PI, -0.1f * FastMath.PI, 0.33f * FastMath.PI);
+    assert q.getX() == 0.8579372f;
+    assert q.getY() == 0.48935884f;
+    assert q.getZ() == 0.13588375f;
+  }
 }
