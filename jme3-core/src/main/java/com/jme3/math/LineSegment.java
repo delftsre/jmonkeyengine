@@ -78,17 +78,6 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
         this.extent = extent;
     }
 
-    /**
-     * <p>Creates a new LineSegment with a given origin and end. This constructor will calculate the
-     * center, the direction and the extent.</p>
-     */
-    public LineSegment(Vector3f start, Vector3f end) {
-        this.origin = new Vector3f(0.5f * (start.x + end.x), 0.5f * (start.y + end.y), 0.5f * (start.z + end.z));
-        this.direction = end.subtract(start);
-        this.extent = direction.length() * 0.5f;
-        direction.normalizeLocal();
-    }
-
     public void set(LineSegment ls) {
         this.origin = new Vector3f(ls.getOrigin());
         this.direction = new Vector3f(ls.getDirection());
