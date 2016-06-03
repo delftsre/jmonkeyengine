@@ -105,7 +105,7 @@ import java.util.logging.Logger;
  * </pre>
  * @author Brent Owens
  */
-public class TerrainQuad extends Node implements Terrain {
+public class TerrainQuad extends Node implements Terrain, TerrainNode {
     protected Vector2f offset;
 
     protected int totalSize; // the size of this entire terrain tree (on one side)
@@ -276,13 +276,11 @@ public class TerrainQuad extends Node implements Terrain {
      * Caches the transforms (except rotation) so the LOD calculator,
      * which runs on a separate thread, can access them safely.
      */
-    protected void cacheTerrainTransforms() {
+    public void cacheTerrainTransforms() {
         for (int i = children.size(); --i >= 0;) {
             Spatial child = children.get(i);
-            if (child instanceof TerrainQuad) {
-                ((TerrainQuad) child).cacheTerrainTransforms();
-            } else if (child instanceof TerrainPatch) {
-                ((TerrainPatch) child).cacheTerrainTransforms();
+            if (child instanceof TerrainNode) {
+                ((TerrainNode) child).cacheTerrainTransforms();
             }
         }
     }
@@ -320,12 +318,8 @@ public class TerrainQuad extends Node implements Terrain {
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                        ((TerrainQuad) child).generateEntropy(progressMonitor);
-                } else if (child instanceof TerrainPatch) {
-                    ((TerrainPatch) child).generateLodEntropies();
-                    if (progressMonitor != null)
-                        progressMonitor.incrementProgress(1);
+                if (child instanceof TerrainNode) {
+                    ((TerrainNode) child).generateEntropy(progressMonitor);
                 }
             }
         }
@@ -349,10 +343,8 @@ public class TerrainQuad extends Node implements Terrain {
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                    return ((TerrainQuad)child).getMaterial(worldLocation);
-                } else if (child instanceof TerrainPatch) {
-                    return ((TerrainPatch)child).getMaterial();
+                if (child instanceof TerrainNode) {
+                    return ((TerrainNode)child).getMaterial(worldLocation);
                 }
             }
         }
@@ -364,19 +356,15 @@ public class TerrainQuad extends Node implements Terrain {
     }
     
 
-    protected boolean calculateLod(List<Vector3f> location, HashMap<String,UpdatedTerrainPatch> updates, LodCalculator lodCalculator) {
+    public boolean calculateLod(List<Vector3f> location, HashMap<String,UpdatedTerrainPatch> updates, LodCalculator lodCalculator) {
 
         boolean lodChanged = false;
 
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                    boolean b = ((TerrainQuad) child).calculateLod(location, updates, lodCalculator);
-                    if (b)
-                        lodChanged = true;
-                } else if (child instanceof TerrainPatch) {
-                    boolean b = lodCalculator.calculateLod((TerrainPatch) child, location, updates);
+                if (child instanceof TerrainNode) {
+                    boolean b = ((TerrainNode) child).calculateLod(location, updates, lodCalculator);
                     if (b)
                         lodChanged = true;
                 }
@@ -469,11 +457,8 @@ public class TerrainQuad extends Node implements Terrain {
         if (children != null) {
             for (int x = children.size(); --x >= 0;) {
                 Spatial child = children.get(x);
-                if (child instanceof TerrainQuad) {
-                    ((TerrainQuad) child).resetCachedNeighbours();
-                } else if (child instanceof TerrainPatch) {
-                    TerrainPatch patch = (TerrainPatch) child;
-                    patch.searchedForNeighboursAlready = false;
+                if (child instanceof TerrainNode) {
+                    ((TerrainNode) child).resetCachedNeighbours();
                 }
             }
         }
@@ -552,14 +537,12 @@ public class TerrainQuad extends Node implements Terrain {
         }
     }
 
-    protected synchronized void reIndexPages(HashMap<String,UpdatedTerrainPatch> updated, boolean usesVariableLod) {
+    public synchronized void reIndexPages(HashMap<String,UpdatedTerrainPatch> updated, boolean usesVariableLod) {
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                    ((TerrainQuad) child).reIndexPages(updated, usesVariableLod);
-                } else if (child instanceof TerrainPatch) {
-                    ((TerrainPatch) child).reIndexGeometry(updated, usesVariableLod);
+                if (child instanceof TerrainNode) {
+                    ((TerrainNode) child).reIndexPages(updated, usesVariableLod);
                 }
             }
         }
@@ -834,10 +817,11 @@ public class TerrainQuad extends Node implements Terrain {
      */
     public void attachBoundChildren(Node parent) {
         for (int i = 0; i < this.getQuantity(); i++) {
-            if (this.getChild(i) instanceof TerrainQuad) {
-                ((TerrainQuad) getChild(i)).attachBoundChildren(parent);
-            } else if (this.getChild(i) instanceof TerrainPatch) {
-                BoundingVolume bv = getChild(i).getWorldBound();
+            Spatial child = this.getChild(i);
+            if (child instanceof TerrainQuad) {
+                ((TerrainQuad) child).attachBoundChildren(parent);
+            } else if (child instanceof TerrainPatch) {
+                BoundingVolume bv = child.getWorldBound();
                 if (bv instanceof BoundingBox) {
                     attachBoundingBox((BoundingBox)bv, parent);
                 }
@@ -915,7 +899,7 @@ public class TerrainQuad extends Node implements Terrain {
      * This will just get the heightmap value at the supplied point,
      * not an interpolated (actual) height value.
      */
-    protected float getHeightmapHeight(int x, int z) {
+    public float getHeightmapHeight(int x, int z) {
         int quad = findQuadrant(x, z);
         int split = (size + 1) >> 1;
         if (children != null) {
@@ -927,10 +911,8 @@ public class TerrainQuad extends Node implements Terrain {
 
                 // get the childs quadrant
                 int childQuadrant = 0;
-                if (spat instanceof TerrainQuad) {
-                    childQuadrant = ((TerrainQuad) spat).getQuadrant();
-                } else if (spat instanceof TerrainPatch) {
-                    childQuadrant = ((TerrainPatch) spat).getQuadrant();
+                if (spat instanceof TerrainNode) {
+                    childQuadrant = ((TerrainNode) spat).getQuadrant();
                 }
 
                 if (childQuadrant == 1 && (quad & 1) != 0) {
@@ -948,10 +930,8 @@ public class TerrainQuad extends Node implements Terrain {
                 }
 
                 if (match) {
-                    if (spat instanceof TerrainQuad) {
-                        return ((TerrainQuad) spat).getHeightmapHeight(col, row);
-                    } else if (spat instanceof TerrainPatch) {
-                        return ((TerrainPatch) spat).getHeightmapHeight(col, row);
+                    if (spat instanceof TerrainNode) {
+                        return ((TerrainNode) spat).getHeightmapHeight(col, row);
                     }
                 }
 
@@ -960,7 +940,7 @@ public class TerrainQuad extends Node implements Terrain {
         return Float.NaN;
     }
 
-    protected Vector3f getMeshNormal(int x, int z) {
+    public Vector3f getMeshNormal(int x, int z) {
         int quad = findQuadrant(x, z);
         int split = (size + 1) >> 1;
         if (children != null) {
@@ -972,10 +952,8 @@ public class TerrainQuad extends Node implements Terrain {
 
                 // get the childs quadrant
                 int childQuadrant = 0;
-                if (spat instanceof TerrainQuad) {
-                    childQuadrant = ((TerrainQuad) spat).getQuadrant();
-                } else if (spat instanceof TerrainPatch) {
-                    childQuadrant = ((TerrainPatch) spat).getQuadrant();
+                if (spat instanceof TerrainNode) {
+                    childQuadrant = ((TerrainNode) spat).getQuadrant();
                 }
 
                 if (childQuadrant == 1 && (quad & 1) != 0) {
@@ -993,10 +971,8 @@ public class TerrainQuad extends Node implements Terrain {
                 }
 
                 if (match) {
-                    if (spat instanceof TerrainQuad) {
-                        return ((TerrainQuad) spat).getMeshNormal(col, row);
-                    } else if (spat instanceof TerrainPatch) {
-                        return ((TerrainPatch) spat).getMeshNormal(col, row);
+                    if (spat instanceof TerrainNode) {
+                        return ((TerrainNode) spat).getMeshNormal(col, row);
                     }
                 }
 
@@ -1044,10 +1020,8 @@ public class TerrainQuad extends Node implements Terrain {
 
                 // get the childs quadrant
                 int childQuadrant = 0;
-                if (spat instanceof TerrainQuad) {
-                    childQuadrant = ((TerrainQuad) spat).getQuadrant();
-                } else if (spat instanceof TerrainPatch) {
-                    childQuadrant = ((TerrainPatch) spat).getQuadrant();
+                if (spat instanceof TerrainNode) {
+                    childQuadrant = ((TerrainNode) spat).getQuadrant();
                 }
 
                 if (childQuadrant == 1 && (quad & 1) != 0) {
@@ -1089,14 +1063,12 @@ public class TerrainQuad extends Node implements Terrain {
     /*
      * gets an interpolated value at the specified point
      */
-    protected float getHeight(int x, int z, float xm, float zm) {
+    public float getHeight(int x, int z, float xm, float zm) {
         
         QuadrantChild match = findMatchingChild(x,z);
         if (match != null) {
-            if (match.child instanceof TerrainQuad) {
-                return ((TerrainQuad) match.child).getHeight(match.col, match.row, xm, zm);
-            } else if (match.child instanceof TerrainPatch) {
-                return ((TerrainPatch) match.child).getHeight(match.col, match.row, xm, zm);
+            if (match.child instanceof TerrainNode) {
+                return ((TerrainNode) match.child).getHeight(match.col, match.row, xm, zm);
             }
         }
         return Float.NaN;
@@ -1198,7 +1170,7 @@ public class TerrainQuad extends Node implements Terrain {
         }
     }
 
-    protected void setHeight(List<LocationHeight> locations, boolean overrideHeight) {
+    public void setHeight(List<LocationHeight> locations, boolean overrideHeight) {
         if (children == null)
             return;
 
@@ -1215,10 +1187,8 @@ public class TerrainQuad extends Node implements Terrain {
         for (int i = children.size(); --i >= 0;) {
             Spatial spat = children.get(i);
             int childQuadrant = 0;
-            if (spat instanceof TerrainQuad) {
-                childQuadrant = ((TerrainQuad) spat).getQuadrant();
-            } else if (spat instanceof TerrainPatch) {
-                childQuadrant = ((TerrainPatch) spat).getQuadrant();
+            if (spat instanceof TerrainNode) {
+                childQuadrant = ((TerrainNode) spat).getQuadrant();
             }
 
             if (childQuadrant == 1)
@@ -1259,31 +1229,23 @@ public class TerrainQuad extends Node implements Terrain {
 
         // send the locations to the children
         if (!quadLH1.isEmpty()) {
-            if (quad1 instanceof TerrainQuad)
-                ((TerrainQuad)quad1).setHeight(quadLH1, overrideHeight);
-            else if(quad1 instanceof TerrainPatch)
-                ((TerrainPatch)quad1).setHeight(quadLH1, overrideHeight);
+            if (quad1 instanceof TerrainNode)
+                ((TerrainNode)quad1).setHeight(quadLH1, overrideHeight);
         }
 
         if (!quadLH2.isEmpty()) {
-            if (quad2 instanceof TerrainQuad)
-                ((TerrainQuad)quad2).setHeight(quadLH2, overrideHeight);
-            else if(quad2 instanceof TerrainPatch)
-                ((TerrainPatch)quad2).setHeight(quadLH2, overrideHeight);
+            if (quad2 instanceof TerrainNode)
+                ((TerrainNode)quad2).setHeight(quadLH2, overrideHeight);
         }
 
         if (!quadLH3.isEmpty()) {
-            if (quad3 instanceof TerrainQuad)
-                ((TerrainQuad)quad3).setHeight(quadLH3, overrideHeight);
-            else if(quad3 instanceof TerrainPatch)
-                ((TerrainPatch)quad3).setHeight(quadLH3, overrideHeight);
+            if (quad3 instanceof TerrainNode)
+                ((TerrainNode)quad3).setHeight(quadLH3, overrideHeight);
         }
 
         if (!quadLH4.isEmpty()) {
-            if (quad4 instanceof TerrainQuad)
-                ((TerrainQuad)quad4).setHeight(quadLH4, overrideHeight);
-            else if(quad4 instanceof TerrainPatch)
-                ((TerrainPatch)quad4).setHeight(quadLH4, overrideHeight);
+            if (quad4 instanceof TerrainNode)
+                ((TerrainNode)quad4).setHeight(quadLH4, overrideHeight);
         }
     }
 
@@ -1319,20 +1281,16 @@ public class TerrainQuad extends Node implements Terrain {
      */
     public void setLocked(boolean locked) {
         for (int i = 0; i < this.getQuantity(); i++) {
-            if (this.getChild(i) instanceof TerrainQuad) {
-                ((TerrainQuad) getChild(i)).setLocked(locked);
-            } else if (this.getChild(i) instanceof TerrainPatch) {
-                if (locked)
-                    ((TerrainPatch) getChild(i)).lockMesh();
-                else
-                    ((TerrainPatch) getChild(i)).unlockMesh();
+            Spatial child = this.getChild(i);
+            if (child instanceof TerrainNode) {
+                ((TerrainNode) child).setLocked(locked);
             }
         }
     }
 
 
-    public int getQuadrant() {
-        return quadrant;
+    public short getQuadrant() {
+        return (short)quadrant;
     }
 
     public void setQuadrant(short quadrant) {
@@ -1594,7 +1552,7 @@ public class TerrainQuad extends Node implements Terrain {
      * Find what terrain patches need normal recalculations and update
      * their normals;
      */
-    protected void fixNormals(BoundingBox affectedArea) {
+    public void fixNormals(BoundingBox affectedArea) {
         if (children == null)
             return;
 
@@ -1602,12 +1560,10 @@ public class TerrainQuad extends Node implements Terrain {
         // if they do, then update their normals
         for (int x = children.size(); --x >= 0;) {
             Spatial child = children.get(x);
-            if (child instanceof TerrainQuad) {
-                if (affectedArea != null && affectedArea.intersects(((TerrainQuad) child).getWorldBound()) )
-                    ((TerrainQuad) child).fixNormals(affectedArea);
-            } else if (child instanceof TerrainPatch) {
-                if (affectedArea != null && affectedArea.intersects(((TerrainPatch) child).getWorldBound()) )
-                    ((TerrainPatch) child).updateNormals(); // recalculate the patch's normals
+            if (child instanceof TerrainNode) {
+                TerrainNode node = (TerrainNode) child;
+                if (affectedArea != null && affectedArea.intersects(node.getWorldBound()) )
+                    node.fixNormals(affectedArea);
             }
         }
     }
@@ -1715,10 +1671,8 @@ public class TerrainQuad extends Node implements Terrain {
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                    ((TerrainQuad) child).getAllTerrainPatches(holder);
-                } else if (child instanceof TerrainPatch) {
-                    holder.add((TerrainPatch)child);
+                if (child instanceof TerrainNode) {
+                    ((TerrainNode) child).getAllTerrainPatches(holder);
                 }
             }
         }
@@ -1728,11 +1682,8 @@ public class TerrainQuad extends Node implements Terrain {
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                    ((TerrainQuad) child).getAllTerrainPatchesWithTranslation(holder, translation.clone().add(child.getLocalTranslation()));
-                } else if (child instanceof TerrainPatch) {
-                    //if (holder.size() < 4)
-                    holder.put((TerrainPatch)child, translation.clone().add(child.getLocalTranslation()));
+                if (child instanceof TerrainNode) {
+                    ((TerrainNode) child).getAllTerrainPatchesWithTranslation(holder, translation.clone().add(child.getLocalTranslation()));
                 }
             }
         }
@@ -1826,10 +1777,8 @@ public class TerrainQuad extends Node implements Terrain {
         if (children != null) {
             for (int i = children.size(); --i >= 0;) {
                 Spatial child = children.get(i);
-                if (child instanceof TerrainQuad) {
-                    ((TerrainQuad) child).clearCaches();
-                } else if (child instanceof TerrainPatch) {
-                    ((TerrainPatch) child).clearCaches();
+                if (child instanceof TerrainNode) {
+                    ((TerrainNode) child).clearCaches();
                 }
             }
         }
