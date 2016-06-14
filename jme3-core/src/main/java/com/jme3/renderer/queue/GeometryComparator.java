@@ -31,9 +31,10 @@
  */
 package com.jme3.renderer.queue;
 
+import java.util.Comparator;
+
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
-import java.util.Comparator;
 
 /**
  * <code>GeometryComparator</code> is a special version of {@link Comparator}

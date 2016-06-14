@@ -31,16 +31,16 @@
  */
 package com.jme3.renderer.opengl;
 
-import com.jme3.renderer.Caps;
-import com.jme3.renderer.RenderContext;
-import com.jme3.renderer.RendererException;
-import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
-import com.jme3.texture.image.ColorSpace;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.renderer.Caps;
+import com.jme3.renderer.RendererException;
+import com.jme3.texture.Image;
+import com.jme3.texture.Image.Format;
+import com.jme3.texture.image.ColorSpace;
 
 /**
  * Internal utility class used by {@link GLRenderer} to manage textures.

@@ -2,6 +2,8 @@ package jme3tools.navigation;
 
 import org.junit.Test;
 
+import jme3tools.navigation.StringUtil;
+
 /**
  * Check if the {@link StringUtil} class is working correctly.
  * 

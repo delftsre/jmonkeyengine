@@ -32,6 +32,10 @@
 // $Id: Sphere.java 4163 2009-03-25 01:14:55Z matt.yellen $
 package com.jme3.scene.shape;
 
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -42,9 +46,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * <code>Sphere</code> represents a 3D object with all points equidistance

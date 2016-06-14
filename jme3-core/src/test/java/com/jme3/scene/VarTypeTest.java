@@ -1,14 +1,14 @@
-package com.jme3.shader;
+package com.jme3.scene;
 
-import com.jme3.texture.Image;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
-import com.jme3.asset.TextureKey;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
+import com.jme3.asset.TextureKey;
+import com.jme3.shader.VarType;
+import com.jme3.texture.Image;
+import com.jme3.texture.Texture;
 
 public class VarTypeTest {
   @Test

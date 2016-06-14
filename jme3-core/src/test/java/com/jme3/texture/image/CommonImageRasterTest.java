@@ -1,14 +1,13 @@
 package com.jme3.texture.image;
 
+import static org.mockito.Mockito.when;
+
 import java.nio.ByteBuffer;
-import com.jme3.texture.image.ColorSpace;
-import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
+
 import org.mockito.Mockito;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.jme3.texture.Image;
+import com.jme3.texture.Image.Format;
 
 public class CommonImageRasterTest {
     protected Image getMockImage(){

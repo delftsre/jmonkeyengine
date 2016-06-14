@@ -5,11 +5,12 @@
  */
 package com.jme3.util.mikktspace;
 
+import java.nio.FloatBuffer;
+
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
-import java.nio.FloatBuffer;
 
 /**
  *

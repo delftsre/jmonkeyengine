@@ -1,18 +1,11 @@
-package com.jme3.material.plugins;
+package com.jme3.material;
 
-import com.jme3.asset.AssetInfo;
-import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetManager;
-import com.jme3.asset.TextureKey;
-import com.jme3.math.*;
-import com.jme3.material.MatParam;
-import com.jme3.material.MatParamTexture;
-import com.jme3.material.Material;
-import com.jme3.material.MaterialDef;
-import com.jme3.shader.VarType;
-import com.jme3.texture.Texture;
-import org.junit.Before;
 import org.junit.Test;
+
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
+import com.jme3.shader.VarType;
 
 /**
  * @author Enrique Correa

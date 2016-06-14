@@ -31,12 +31,17 @@
  */
 package com.jme3.material;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.shader.VarType;
 import com.jme3.texture.image.ColorSpace;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Describes a J3MD (Material definition).

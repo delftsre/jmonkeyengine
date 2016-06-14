@@ -1,6 +1,11 @@
 package com.jme3.audio.openal;
 
-import static com.jme3.audio.openal.AL.*;
+import static com.jme3.audio.openal.AL.AL_INVALID_ENUM;
+import static com.jme3.audio.openal.AL.AL_INVALID_NAME;
+import static com.jme3.audio.openal.AL.AL_INVALID_OPERATION;
+import static com.jme3.audio.openal.AL.AL_INVALID_VALUE;
+import static com.jme3.audio.openal.AL.AL_NO_ERROR;
+import static com.jme3.audio.openal.AL.AL_OUT_OF_MEMORY;
 
 public final class ALUtil {
 

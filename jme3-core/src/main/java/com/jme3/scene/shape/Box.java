@@ -32,10 +32,11 @@
 // $Id: Box.java 4131 2009-03-19 20:15:28Z blaine.dev $
 package com.jme3.scene.shape;
 
+import java.nio.FloatBuffer;
+
 import com.jme3.math.Vector3f;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
-import java.nio.FloatBuffer;
 
 /**
  * A box with solid (filled) faces.

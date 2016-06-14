@@ -31,6 +31,8 @@
  */
 package com.jme3.renderer;
 
+import java.util.Collection;
+
 import com.jme3.shader.Shader;
 import com.jme3.shader.Shader.ShaderSource;
 import com.jme3.texture.FrameBuffer;
@@ -38,7 +40,6 @@ import com.jme3.texture.FrameBuffer.RenderBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
-import java.util.Collection;
 
 /**
  * <code>Caps</code> is an enum specifying a capability that the {@link Renderer}

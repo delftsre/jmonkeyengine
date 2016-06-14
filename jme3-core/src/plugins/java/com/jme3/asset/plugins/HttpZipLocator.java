@@ -31,10 +31,6 @@
  */
 package com.jme3.asset.plugins;
 
-import com.jme3.asset.AssetInfo;
-import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetLocator;
-import com.jme3.asset.AssetManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -51,6 +47,11 @@ import java.util.logging.Logger;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
+
+import com.jme3.asset.AssetInfo;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetLocator;
+import com.jme3.asset.AssetManager;
 
 /**
  * <code>HttpZipLocator</code> is similar to {@link ZipLocator}, except

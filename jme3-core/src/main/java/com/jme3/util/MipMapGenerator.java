@@ -31,14 +31,14 @@
  */
 package com.jme3.util;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
 import com.jme3.texture.image.ImageRaster;
 import com.jme3.texture.image.ImageRasterFactory;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 public class MipMapGenerator {
 

@@ -31,6 +31,9 @@
  */
 package com.jme3.scene.shape;
 
+import java.io.IOException;
+import java.nio.FloatBuffer;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -39,8 +42,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
-import java.io.IOException;
-import java.nio.FloatBuffer;
 
 /**
  * A simple line implementation with a start and an end.

@@ -31,11 +31,12 @@
  */
 package com.jme3.texture;
 
+import java.util.ArrayList;
+
 import com.jme3.renderer.Caps;
 import com.jme3.renderer.Renderer;
 import com.jme3.texture.Image.Format;
 import com.jme3.util.NativeObject;
-import java.util.ArrayList;
 
 /**
  * <p>

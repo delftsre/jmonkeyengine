@@ -31,6 +31,10 @@
  */
 package com.jme3.animation;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -44,9 +48,6 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * EffectTrack is a track to add to an existing animation, to emmit particles

@@ -1,16 +1,13 @@
 package com.jme3.scene;
 
+import java.util.Random;
+
 import org.junit.Test;
+
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.VertexBuffer.Usage;
-import com.jme3.scene.mesh.*;
 import com.jme3.util.BufferUtils;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import java.util.Random;
 
 /**
  * Verifies that the class Mesh is working correctly

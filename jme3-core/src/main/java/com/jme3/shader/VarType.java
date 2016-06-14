@@ -31,10 +31,14 @@
  */
 package com.jme3.shader;
 
+import com.jme3.asset.TextureKey;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.asset.TextureKey;
-import com.jme3.math.*;
 
 public enum VarType {
 
@@ -234,7 +238,7 @@ public enum VarType {
         return "";
     }
 
-    protected static String getValueAsStringFromTexture(Texture texVal) {
+    public static String getValueAsStringFromTexture(Texture texVal) {
         TextureKey texKey = (TextureKey) texVal.getKey();
         if (texKey == null) {
             throw new UnsupportedOperationException("The specified MatParam cannot be represented in J3M");

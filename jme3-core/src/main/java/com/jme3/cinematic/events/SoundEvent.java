@@ -31,6 +31,8 @@
  */
 package com.jme3.cinematic.events;
 
+import java.io.IOException;
+
 import com.jme3.animation.LoopMode;
 import com.jme3.app.Application;
 import com.jme3.audio.AudioNode;
@@ -40,7 +42,6 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import java.io.IOException;
 
 /**
  * A sound track to be played in a cinematic.

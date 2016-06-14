@@ -32,9 +32,14 @@
 
 package com.jme3.math;
 
-import com.jme3.export.*;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 
 /*
  * -- Added *Local methods to cut down on object creation - JS

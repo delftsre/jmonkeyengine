@@ -31,6 +31,8 @@
  */
 package com.jme3.shadow;
 
+import java.io.IOException;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -46,7 +48,6 @@ import com.jme3.renderer.queue.GeometryList;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.io.IOException;
 
 /**
  * DirectionalLightShadowRenderer renderer use Parrallel Split Shadow Mapping

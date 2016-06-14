@@ -31,7 +31,6 @@
  */
 package com.jme3.util;
 
-import com.jme3.renderer.Renderer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -40,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.renderer.Renderer;
 
 /**
  * GLObjectManager tracks all GLObjects used by the Renderer. Using a

@@ -31,11 +31,6 @@
  */
 package jme3tools.savegame;
 
-import com.jme3.asset.AssetManager;
-import com.jme3.export.Savable;
-import com.jme3.export.binary.BinaryExporter;
-import com.jme3.export.binary.BinaryImporter;
-import com.jme3.system.JmeSystem;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,6 +43,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.export.Savable;
+import com.jme3.export.binary.BinaryExporter;
+import com.jme3.export.binary.BinaryImporter;
+import com.jme3.system.JmeSystem;
 
 /**
  * Tool for saving Savables as SaveGame entries in a system-dependent way.

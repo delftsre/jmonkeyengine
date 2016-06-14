@@ -1,20 +1,16 @@
 package com.jme3.texture.image;
 
-import java.nio.ByteBuffer;
-import com.jme3.math.ColorRGBA;
-import com.jme3.texture.Image;
-import com.jme3.texture.image.ImageRaster;
-import com.jme3.texture.Image.Format;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import com.jme3.math.ColorRGBA;
+import com.jme3.texture.Image;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultImageRasterTest extends CommonImageRasterTest {

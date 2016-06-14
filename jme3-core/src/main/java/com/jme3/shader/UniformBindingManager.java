@@ -31,12 +31,17 @@
  */
 package com.jme3.shader;
 
+import java.util.List;
+
 import com.jme3.material.Material;
-import com.jme3.math.*;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.Timer;
-import java.util.List;
 
 /**
  * <code>UniformBindingManager</code> helps {@link RenderManager} to manage

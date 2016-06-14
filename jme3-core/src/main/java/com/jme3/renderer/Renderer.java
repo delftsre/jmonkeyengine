@@ -31,6 +31,9 @@
  */
 package com.jme3.renderer;
 
+import java.nio.ByteBuffer;
+import java.util.EnumSet;
+
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Mesh;
@@ -42,8 +45,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.util.NativeObject;
-import java.nio.ByteBuffer;
-import java.util.EnumSet;
 
 /**
  * The <code>Renderer</code> is responsible for taking rendering commands and

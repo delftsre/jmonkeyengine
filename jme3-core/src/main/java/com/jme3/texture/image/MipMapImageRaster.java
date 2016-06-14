@@ -32,7 +32,6 @@
 package com.jme3.texture.image;
 
 import com.jme3.texture.Image;
-import java.nio.ByteBuffer;
 
 public class MipMapImageRaster extends CommonImageRaster {
 

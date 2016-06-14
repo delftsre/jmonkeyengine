@@ -31,6 +31,12 @@
  */
 package com.jme3.scene.instancing;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -41,11 +47,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.UserData;
 import com.jme3.scene.control.Control;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.material.MatParam;
-import java.io.IOException;
-import java.util.HashMap;
 
 public class InstancedNode extends GeometryGroupNode {
     

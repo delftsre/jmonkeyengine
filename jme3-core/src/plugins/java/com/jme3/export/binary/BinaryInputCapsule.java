@@ -31,11 +31,6 @@
  */
 package com.jme3.export.binary;
 
-import com.jme3.export.InputCapsule;
-import com.jme3.export.Savable;
-import com.jme3.export.SavableClassUtil;
-import com.jme3.util.BufferUtils;
-import com.jme3.util.IntMap;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -48,6 +43,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.export.InputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.export.SavableClassUtil;
+import com.jme3.util.BufferUtils;
+import com.jme3.util.IntMap;
 
 /**
  * @author Joshua Slack

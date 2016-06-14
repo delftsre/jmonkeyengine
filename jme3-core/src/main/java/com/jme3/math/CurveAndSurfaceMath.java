@@ -31,8 +31,9 @@
  */
 package com.jme3.math;
 
-import com.jme3.math.Spline.SplineType;
 import java.util.List;
+
+import com.jme3.math.Spline.SplineType;
 
 /**
  * This class offers methods to help with curves and surfaces calculations.

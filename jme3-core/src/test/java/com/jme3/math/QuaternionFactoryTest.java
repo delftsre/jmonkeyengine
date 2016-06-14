@@ -31,11 +31,7 @@
  */
 package com.jme3.math;
 
-import com.jme3.math.*;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Verifies that algorithms in {@link Quaternion} are working correctly.
