@@ -31,19 +31,36 @@
  */
 package com.jme3.input;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.app.Application;
 import com.jme3.cursors.plugins.JmeCursor;
-import com.jme3.input.controls.*;
-import com.jme3.input.event.*;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.InputListener;
+import com.jme3.input.controls.JoyAxisTrigger;
+import com.jme3.input.controls.JoyButtonTrigger;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.input.controls.TouchListener;
+import com.jme3.input.controls.TouchTrigger;
+import com.jme3.input.controls.Trigger;
+import com.jme3.input.event.InputEvent;
+import com.jme3.input.event.JoyAxisEvent;
+import com.jme3.input.event.JoyButtonEvent;
+import com.jme3.input.event.KeyInputEvent;
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.MouseMotionEvent;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.util.IntMap;
 import com.jme3.util.IntMap.Entry;
 import com.jme3.util.SafeArrayList;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The <code>InputManager</code> is responsible for converting input events

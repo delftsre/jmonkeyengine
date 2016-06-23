@@ -31,6 +31,13 @@
  */
 package com.jme3.audio.plugins;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetLoader;
 import com.jme3.audio.AudioBuffer;
@@ -40,12 +47,6 @@ import com.jme3.audio.AudioStream;
 import com.jme3.audio.SeekableStream;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.LittleEndien;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class WAVLoader implements AssetLoader {
 

@@ -31,6 +31,9 @@
  */
 package com.jme3.light;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -38,8 +41,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.util.TempVars;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test light filtering for various light types.

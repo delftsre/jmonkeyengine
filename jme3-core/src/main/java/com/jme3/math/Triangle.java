@@ -31,10 +31,11 @@
  */
 package com.jme3.math;
 
+import java.io.IOException;
+
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
-import java.io.IOException;
 
 /**
  * <code>Triangle</code> defines an object for containing triangle information.

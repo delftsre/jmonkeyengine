@@ -1,12 +1,13 @@
 package jme3tools.shadercheck;
 
-import com.jme3.shader.Shader;
-import com.jme3.shader.Shader.ShaderSource;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.shader.Shader;
+import com.jme3.shader.Shader.ShaderSource;
 
 public class CgcValidator implements Validator {
 

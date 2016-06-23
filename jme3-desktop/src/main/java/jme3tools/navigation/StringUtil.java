@@ -56,18 +56,31 @@ public class StringUtil {
     /**
      * Right aligns a long number with spaces for printing
      *
+     * @param string to be aligned
+     * @param totalLen the total length of the padded string
+     * @param padChar character used to pad
+     * @return the padded number
+     */
+    private String padNum(String string, int totalLen, char padChar) {
+        int len = totalLen - string.length();
+        StringBuilder pads = new StringBuilder();
+        for (int i = len - 1; i >= 0 ; i--) {
+            pads.append(padChar);
+        }
+        pads.append(string);
+        return pads.toString();
+    }
+
+    /**
+     * Right aligns a long number with spaces for printing
+     *
      * @param num the number to be aligned
      * @param totalLen the total length of the padded string
      * @return the padded number
      */
     public String padNum(long num, int totalLen) {
         String numStr = Long.toString(num);
-        int len = totalLen - numStr.length();
-        String pads = "";
-        for (int i = 0; i < len; i++) {
-            pads += " ";
-        }
-        return pads + numStr;
+        return padNum(numStr, totalLen, ' ');
     }
 
     /**
@@ -79,12 +92,7 @@ public class StringUtil {
      */
     public String padNumZero(long num, int totalLen) {
         String numStr = Long.toString(num);
-        int len = totalLen - numStr.length();
-        String pads = "";
-        for (int i = 0; i < len; i++) {
-            pads += "0";
-        }
-        return pads + numStr;
+        return padNum(numStr, totalLen, '0');
     }
 
     /**
@@ -96,12 +104,7 @@ public class StringUtil {
      */
     public String padNum(int num, int totalLen) {
         String numStr = Integer.toString(num);
-        int len = totalLen - numStr.length();
-        String pads = "";
-        for (int i = 0; i < len; i++) {
-            pads += " ";
-        }
-        return pads + numStr;
+        return padNum(numStr, totalLen, ' ');
     }
 
     /**
@@ -113,12 +116,7 @@ public class StringUtil {
      */
     public String padNumZero(int num, int totalLen) {
         String numStr = Integer.toString(num);
-        int len = totalLen - numStr.length();
-        String pads = "";
-        for (int i = 0; i < len; i++) {
-            pads += "0";
-        }
-        return pads + numStr;
+        return padNum(numStr, totalLen, '0');
     }
 
     /**
@@ -247,10 +245,11 @@ public class StringUtil {
      * @return the padded number
      */
     public String padStringRight(String input, int wholeLen) {
+        StringBuilder sb = new StringBuilder(input);
         for (int i = input.length(); i < wholeLen; i++) {
-            input += " ";
+            sb.append(' ');
         }
-        return input;
+        return sb.toString();
     }
 
     /**
@@ -258,16 +257,13 @@ public class StringUtil {
      * @return the array as a string
      */
     public String boolArrToStr(boolean[] arr) {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         for (int i = 0; i < arr.length; i++) {
-            if (arr[i]) {
-                output += "1";
-            } else {
-                output += "0";
-            }
+            output.append(arr[i] ? '1' : '0');
         }
-        return output;
+        return output.toString();
     }
+
 
     /**
      * Formats a double nicely for printing: THIS DOES NOT ROUND!!!!
@@ -275,13 +271,10 @@ public class StringUtil {
      * @return the pretty string
      */
     public String prettyNum(double num) {
-        String numStr = (new Double(num)).toString();
-
-        while (numStr.length() < 4) {
-            numStr += "0";
+        StringBuilder output = new StringBuilder(Double.toString(num));
+        while (output.length() < 4) {
+            output.append('0');
         }
-
-        numStr = numStr.substring(0, numStr.indexOf(".") + 3);
-        return numStr;
+        return output.substring(0, output.indexOf(".") + 3).toString();
     }
 }

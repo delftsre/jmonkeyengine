@@ -31,13 +31,18 @@
  */
 package com.jme3.asset.plugins;
 
-import com.jme3.asset.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import com.jme3.asset.AssetInfo;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetLoadException;
+import com.jme3.asset.AssetLocator;
+import com.jme3.asset.AssetManager;
 
 /**
  * <code>ZipLocator</code> is a locator that looks up resources in a 

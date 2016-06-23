@@ -31,13 +31,14 @@
  */
 package com.jme3.util;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
 import com.jme3.texture.image.ImageRaster;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import com.jme3.texture.image.ImageRasterFactory;
 
 public class MipMapGenerator {
 
@@ -53,8 +54,8 @@ public class MipMapGenerator {
                                       buffer, 
                                       inputImage.getColorSpace());
         
-        ImageRaster input = ImageRaster.create(inputImage, 0, 0, false);
-        ImageRaster output = ImageRaster.create(outputImage, 0, 0, false);
+        ImageRaster input = ImageRasterFactory.create(inputImage, 0, 0, false);
+        ImageRaster output = ImageRasterFactory.create(outputImage, 0, 0, false);
         
         float xRatio = ((float)(input.getWidth()  - 1)) / output.getWidth();
         float yRatio = ((float)(input.getHeight() - 1)) / output.getHeight();

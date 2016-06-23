@@ -537,7 +537,7 @@ public class SimpleWaterProcessor implements SceneProcessor {
     public Geometry createWaterGeometry(float width, float height) {
         Quad quad = new Quad(width, height);
         Geometry geom = new Geometry("WaterGeometry", quad);
-        geom.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+        geom.setLocalRotation(QuaternionFactory.createFromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
         geom.setMaterial(material);
         return geom;
     }

@@ -39,6 +39,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -109,7 +110,7 @@ public class TestCollisionShapeFactory extends SimpleApplication {
         for (int i = 0; i < boxes.length; i++) {
             Geometry geometry = boxes[i];
             geometry.setLocalTranslation((float) Math.random() * 10 -10, (float) Math.random() * 10 -10, (float) Math.random() * 10 -10);
-            geometry.setLocalRotation(new Quaternion().fromAngles((float) Math.random() * FastMath.PI, (float) Math.random() * FastMath.PI, (float) Math.random() * FastMath.PI));
+            geometry.setLocalRotation(QuaternionFactory.createFromAngles((float) Math.random() * FastMath.PI, (float) Math.random() * FastMath.PI, (float) Math.random() * FastMath.PI));
             geometry.setLocalScale((float) Math.random() * 10 -10, (float) Math.random() * 10 -10, (float) Math.random() * 10 -10);
             geometry.setMaterial(mat);
             node.attachChild(geometry);

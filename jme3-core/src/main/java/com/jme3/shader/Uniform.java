@@ -31,11 +31,18 @@
  */
 package com.jme3.shader;
 
-import com.jme3.math.*;
-import com.jme3.util.BufferUtils;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
+import com.jme3.util.BufferUtils;
 
 public class Uniform extends ShaderVariable {
 

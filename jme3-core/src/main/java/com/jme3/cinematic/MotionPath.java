@@ -31,9 +31,18 @@
  */
 package com.jme3.cinematic;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.export.*;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Spline;
@@ -45,10 +54,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Curve;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Motion path is used to create a path between way points.

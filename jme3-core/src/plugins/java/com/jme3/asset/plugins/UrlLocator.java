@@ -31,16 +31,17 @@
  */
 package com.jme3.asset.plugins;
 
-import com.jme3.asset.AssetInfo;
-import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetLocator;
-import com.jme3.asset.AssetManager;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetInfo;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetLocator;
+import com.jme3.asset.AssetManager;
 
 /**
  * <code>UrlLocator</code> is a locator that combines a root URL

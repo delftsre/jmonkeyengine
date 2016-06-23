@@ -473,7 +473,7 @@ public class TerrainGrid extends TerrainQuad {
     }
 
     @Override
-    protected float getHeightmapHeight(int x, int z) {
+    public float getHeightmapHeight(int x, int z) {
         return super.getHeightmapHeight(x - gridOffset[0], z - gridOffset[1]);
     }
     

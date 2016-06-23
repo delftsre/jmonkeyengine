@@ -1,23 +1,34 @@
 package jme3tools.optimize;
 
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.material.Material;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.*;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Mesh.Mode;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GeometryBatchFactory {
 

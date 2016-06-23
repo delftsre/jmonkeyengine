@@ -78,7 +78,7 @@ public class TestParallax extends SimpleApplication {
         Quad q = new Quad(100, 100);
         q.scaleTextureCoordinates(new Vector2f(10, 10));
         Geometry g = new Geometry("geom", q);
-        g.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+        g.setLocalRotation(QuaternionFactory.createFromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
         floorGeom.attachChild(g);
         
         

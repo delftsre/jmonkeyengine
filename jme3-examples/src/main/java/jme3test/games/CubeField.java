@@ -43,6 +43,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -154,8 +155,7 @@ public class CubeField extends SimpleApplication implements AnalogListener {
         cam.setLocation(player.getLocalTranslation().add(-8, 2, 0));
         cam.lookAt(player.getLocalTranslation(), Vector3f.UNIT_Y);
         
-        Quaternion rot = new Quaternion();
-        rot.fromAngleNormalAxis(camAngle, Vector3f.UNIT_Z);
+        Quaternion rot = QuaternionFactory.createFromAngleNormalAxis(camAngle, Vector3f.UNIT_Z);
         cam.setRotation(cam.getRotation().mult(rot));
         camAngle *= FastMath.pow(.99f, fpsRate * tpf);
     }

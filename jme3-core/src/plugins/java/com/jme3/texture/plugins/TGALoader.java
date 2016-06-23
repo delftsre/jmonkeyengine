@@ -31,6 +31,12 @@
  */
 package com.jme3.texture.plugins;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetLoader;
 import com.jme3.asset.TextureKey;
@@ -38,11 +44,6 @@ import com.jme3.math.FastMath;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
 import com.jme3.util.BufferUtils;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 
 /**
  * <code>TextureManager</code> provides static methods for building a

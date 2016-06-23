@@ -31,6 +31,14 @@
  */
 package com.jme3.texture.plugins;
 
+import java.io.DataInput;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetLoader;
 import com.jme3.asset.TextureKey;
@@ -40,13 +48,6 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.LittleEndien;
-import java.io.DataInput;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 

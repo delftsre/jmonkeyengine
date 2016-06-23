@@ -31,7 +31,6 @@
  */
 package com.jme3.export;
 
-import com.jme3.util.IntMap;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -40,6 +39,8 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Map;
+
+import com.jme3.util.IntMap;
 
 /**
  * @author Joshua Slack

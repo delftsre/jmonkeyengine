@@ -31,6 +31,13 @@
  */
 package com.jme3.effect.shapes;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -40,12 +47,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * This emiter shape emits the particles from the given shape's vertices

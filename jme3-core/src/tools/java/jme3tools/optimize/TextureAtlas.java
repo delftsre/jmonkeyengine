@@ -31,6 +31,17 @@
  */
 package jme3tools.optimize;
 
+import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.MatParamTexture;
@@ -47,16 +58,6 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * <b><code>TextureAtlas</code></b> allows combining multiple textures to one texture atlas.

@@ -35,6 +35,7 @@ import com.jme3.input.controls.*;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
@@ -76,7 +77,7 @@ public class TestCameraNode extends SimpleApplication implements AnalogListener,
     mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat.setTexture("ColorMap", assetManager.loadTexture("Interface/Logo/Monkey.jpg"));
     Geometry ground = new Geometry("ground", new Quad(50, 50));
-    ground.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+    ground.setLocalRotation(QuaternionFactory.createFromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
     ground.setLocalTranslation(-25, -1, 25);
     ground.setMaterial(mat);
     rootNode.attachChild(ground);

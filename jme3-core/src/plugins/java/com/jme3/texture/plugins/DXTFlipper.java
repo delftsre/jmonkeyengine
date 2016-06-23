@@ -31,11 +31,12 @@
  */
 package com.jme3.texture.plugins;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import com.jme3.math.FastMath;
 import com.jme3.texture.Image.Format;
 import com.jme3.util.BufferUtils;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * DXTFlipper is a utility class used to flip along Y axis DXT compressed textures.

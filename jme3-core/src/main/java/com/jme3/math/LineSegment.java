@@ -31,9 +31,14 @@
  */
 package com.jme3.math;
 
-import com.jme3.export.*;
-import com.jme3.util.TempVars;
 import java.io.IOException;
+
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.util.TempVars;
 
 /**
  * <p>LineSegment represents a segment in the space. This is a portion of a Line
@@ -76,17 +81,6 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
         this.origin = origin;
         this.direction = direction;
         this.extent = extent;
-    }
-
-    /**
-     * <p>Creates a new LineSegment with a given origin and end. This constructor will calculate the
-     * center, the direction and the extent.</p>
-     */
-    public LineSegment(Vector3f start, Vector3f end) {
-        this.origin = new Vector3f(0.5f * (start.x + end.x), 0.5f * (start.y + end.y), 0.5f * (start.z + end.z));
-        this.direction = end.subtract(start);
-        this.extent = direction.length() * 0.5f;
-        direction.normalizeLocal();
     }
 
     public void set(LineSegment ls) {
@@ -173,18 +167,24 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
                             tempS0 = -(negativeDirectionDot * s1 + diffThisDot);
                             if (tempS0 < -extent) {
                                 s0 = -extent;
-                                squareDistance = s0 * (s0 - (2.0f) * tempS0)
-                                        + s1 * (s1 + (2.0f) * diffTestDot)
+                                squareDistance = s0 
+                                        * (s0 - (2.0f) * tempS0)
+                                        + s1 
+                                        * (s1 + (2.0f) * diffTestDot)
                                         + lengthOfDiff;
                             } else if (tempS0 <= extent) {
                                 s0 = tempS0;
-                                squareDistance = -s0 * s0 + s1
+                                squareDistance = -s0 
+                                        * s0
+                                        + s1
                                         * (s1 + (2.0f) * diffTestDot)
                                         + lengthOfDiff;
                             } else {
                                 s0 = extent;
-                                squareDistance = s0 * (s0 - (2.0f) * tempS0)
-                                        + s1 * (s1 + (2.0f) * diffTestDot)
+                                squareDistance = s0
+                                        * (s0 - (2.0f) * tempS0)
+                                        + s1
+                                        * (s1 + (2.0f) * diffTestDot)
                                         + lengthOfDiff;
                             }
                         }
@@ -194,17 +194,23 @@ public class LineSegment implements Cloneable, Savable, java.io.Serializable {
                         tempS0 = -(negativeDirectionDot * s1 + diffThisDot);
                         if (tempS0 < -extent) {
                             s0 = -extent;
-                            squareDistance = s0 * (s0 - (2.0f) * tempS0) + s1
+                            squareDistance = s0
+                                    * (s0 - (2.0f) * tempS0)
+                                    + s1
                                     * (s1 + (2.0f) * diffTestDot)
                                     + lengthOfDiff;
                         } else if (tempS0 <= extent) {
                             s0 = tempS0;
-                            squareDistance = -s0 * s0 + s1
+                            squareDistance = -s0
+                                    * s0
+                                    + s1
                                     * (s1 + (2.0f) * diffTestDot)
                                     + lengthOfDiff;
                         } else {
                             s0 = extent;
-                            squareDistance = s0 * (s0 - (2.0f) * tempS0) + s1
+                            squareDistance = s0
+                                    * (s0 - (2.0f) * tempS0)
+                                    + s1
                                     * (s1 + (2.0f) * diffTestDot)
                                     + lengthOfDiff;
                         }

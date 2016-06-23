@@ -31,8 +31,17 @@
  */
 package com.jme3.post;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import com.jme3.asset.AssetManager;
-import com.jme3.export.*;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.renderer.Caps;
 import com.jme3.renderer.RenderManager;
@@ -43,10 +52,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Filters are 2D effects applied to the rendered scene.<br>

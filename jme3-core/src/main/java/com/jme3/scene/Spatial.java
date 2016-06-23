@@ -31,15 +31,33 @@
  */
 package com.jme3.scene;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.logging.Logger;
+
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.CloneableSmartAsset;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
-import com.jme3.export.*;
-import com.jme3.light.Light;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.light.ILight;
 import com.jme3.light.LightList;
 import com.jme3.material.Material;
-import com.jme3.math.*;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -49,9 +67,6 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.control.Control;
 import com.jme3.util.SafeArrayList;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * <code>Spatial</code> defines the base class for scene graph nodes. It
@@ -490,7 +505,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         Vector3f rotAxis = upY.crossLocal(newUp).normalizeLocal();
 
         // Build a rotation quat and apply current local rotation.
-        q.fromAngleNormalAxis(angle, rotAxis);
+        q.set(QuaternionFactory.createFromAngleNormalAxis(angle, rotAxis));
         q.mult(rot, rot);
 
         vars.release();
@@ -940,7 +955,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *            the new local rotation.
      */
     public void setLocalRotation(Matrix3f rotation) {
-        localTransform.getRotation().fromRotationMatrix(rotation);
+        localTransform.setRotation(QuaternionFactory.createFromRotationMatrix(rotation));
         setTransformRefresh();
     }
 
@@ -1060,7 +1075,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      *
      * @param light The light to add.
      */
-    public void addLight(Light light) {
+    public void addLight(ILight light) {
         localLights.add(light);
         setLightListRefresh();
     }
@@ -1071,7 +1086,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * @param light The light to remove.
      * @see Spatial#addLight(com.jme3.light.Light) 
      */
-    public void removeLight(Light light) {
+    public void removeLight(ILight light) {
         localLights.remove(light);
         setLightListRefresh();
     }
@@ -1141,8 +1156,8 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      */
     public Spatial rotate(float xAngle, float yAngle, float zAngle) {
         TempVars vars = TempVars.get();
+        vars.quat1.set(QuaternionFactory.createFromAngles(xAngle, yAngle, zAngle));
         Quaternion q = vars.quat1;
-        q.fromAngles(xAngle, yAngle, zAngle);
         rotate(q);
         vars.release();
 

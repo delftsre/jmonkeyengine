@@ -31,21 +31,20 @@
  */
 package com.jme3.scene;
 
-import com.jme3.bounding.BoundingVolume;
-import com.jme3.collision.Collidable;
-import com.jme3.collision.CollisionResults;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.Savable;
-import com.jme3.material.Material;
-import com.jme3.util.SafeArrayList;
-import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.bounding.BoundingVolume;
+import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResults;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.material.Material;
+import com.jme3.util.SafeArrayList;
 
 
 /**

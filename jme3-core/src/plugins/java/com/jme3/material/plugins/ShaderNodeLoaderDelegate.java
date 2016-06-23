@@ -31,6 +31,12 @@
  */
 package com.jme3.material.plugins;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ShaderNodeDefinitionKey;
@@ -46,11 +52,6 @@ import com.jme3.shader.ShaderUtils;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.jme3.util.blockparser.Statement;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class is here to be able to load shaderNodeDefinition from both the

@@ -39,6 +39,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -365,7 +366,7 @@ public class TestBatchNodeCluster extends SimpleApplication {
             Vector3f v = box.getLocalTranslation();
             box.setLocalTranslation(v.x + FastMath.sin(time * mult1) * 20, v.y + (FastMath.sin(time * mult1) * FastMath.cos(time * mult1) * 20), v.z + FastMath.cos(time * mult2) * 20);
         }
-        terrain.setLocalRotation(new Quaternion().fromAngleAxis(time, Vector3f.UNIT_Y));
+        terrain.setLocalRotation(QuaternionFactory.createFromAngleAxis(time, Vector3f.UNIT_Y));
 
 
     }

@@ -31,6 +31,9 @@
  */
 package com.jme3.shadow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -58,8 +61,6 @@ import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture.ShadowCompareMode;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * PssmShadow renderer use Parrallel Split Shadow Mapping technique (pssm)<br>

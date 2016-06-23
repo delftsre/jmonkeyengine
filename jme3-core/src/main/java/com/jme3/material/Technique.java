@@ -31,14 +31,20 @@
  */
 package com.jme3.material;
 
-import com.jme3.asset.AssetManager;
-import com.jme3.renderer.Caps;
-import com.jme3.renderer.RenderManager;
-import com.jme3.shader.*;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.renderer.Caps;
+import com.jme3.renderer.RenderManager;
+import com.jme3.shader.DefineList;
+import com.jme3.shader.Shader;
+import com.jme3.shader.ShaderKey;
+import com.jme3.shader.Uniform;
+import com.jme3.shader.UniformBinding;
+import com.jme3.shader.VarType;
 
 /**
  * Represents a technique instance.

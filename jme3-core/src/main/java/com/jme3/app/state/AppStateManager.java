@@ -31,11 +31,12 @@
  */
 package com.jme3.app.state;
  
+import java.util.Arrays;
+import java.util.List;
+
 import com.jme3.app.Application;
 import com.jme3.renderer.RenderManager;
 import com.jme3.util.SafeArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The <code>AppStateManager</code> holds a list of {@link AppState}s which
