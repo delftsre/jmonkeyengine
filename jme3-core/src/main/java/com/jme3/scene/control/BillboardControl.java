@@ -31,6 +31,8 @@
  */
 package com.jme3.scene.control;
 
+import java.io.IOException;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -38,13 +40,13 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.io.IOException;
 
 public class BillboardControl extends AbstractControl {
 
@@ -192,7 +194,7 @@ public class BillboardControl extends AbstractControl {
         left.set(camera.getLeft()).negateLocal();
         orient.fromAxes(left, camera.getUp(), look);
         Node parent = spatial.getParent();
-        Quaternion rot=new Quaternion().fromRotationMatrix(orient);
+        Quaternion rot = QuaternionFactory.createFromRotationMatrix(orient);
         if ( parent != null ) {
             rot =  parent.getWorldRotation().inverse().multLocal(rot);
             rot.normalizeLocal();

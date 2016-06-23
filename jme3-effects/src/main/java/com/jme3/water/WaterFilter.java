@@ -38,6 +38,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
+import com.jme3.light.ILight;
 import com.jme3.material.Material;
 import com.jme3.math.*;
 import com.jme3.post.Filter;
@@ -187,7 +188,7 @@ public class WaterFilter extends Filter {
     }
 
     private DirectionalLight findLight(Node node) {
-        for (Light light : node.getWorldLightList()) {
+        for (ILight light : node.getWorldLightList()) {
             if (light instanceof DirectionalLight) {
                 return (DirectionalLight) light;
             }

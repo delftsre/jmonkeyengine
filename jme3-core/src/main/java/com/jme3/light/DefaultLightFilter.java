@@ -31,24 +31,25 @@
  */
 package com.jme3.light;
 
+import java.util.HashSet;
+
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.util.TempVars;
-import java.util.HashSet;
 
 public final class DefaultLightFilter implements LightFilter {
 
     private Camera camera;
-    private final HashSet<Light> processedLights = new HashSet<Light>();
+    private final HashSet<ILight> processedLights = new HashSet<ILight>();
     
     @Override
     public void setCamera(Camera camera) {
         this.camera = camera;
-        for (Light light : processedLights) {
-            light.frustumCheckNeeded = true;
+        for (ILight light : processedLights) {
+            light.setFrustumCheckNeeded(true);
         }
     }
 
@@ -58,20 +59,20 @@ public final class DefaultLightFilter implements LightFilter {
         try {
             LightList worldLights = geometry.getWorldLightList();
             for (int i = 0; i < worldLights.size(); i++) {
-                Light light = worldLights.get(i);
+                ILight light = worldLights.get(i);
 
                 // If this light is not enabled it will be ignored.
                 if (!light.isEnabled()) {
                     continue;
                 }
 
-                if (light.frustumCheckNeeded) {
+                if (light.isFrustumCheckNeeded()) {
                     processedLights.add(light);
-                    light.frustumCheckNeeded = false;
-                    light.intersectsFrustum = light.intersectsFrustum(camera, vars);
+                    light.setFrustumCheckNeeded(false);
+                    light.setIntersectsFrustum(light.intersectsFrustum(camera, vars));
                 }
 
-                if (!light.intersectsFrustum) {
+                if (!light.isIntersectsFrustum()) {
                     continue;
                 }
 

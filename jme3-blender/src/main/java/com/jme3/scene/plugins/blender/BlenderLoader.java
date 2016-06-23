@@ -52,6 +52,7 @@ import com.jme3.asset.BlenderKey;
 import com.jme3.asset.ModelKey;
 import com.jme3.asset.StreamAssetInfo;
 import com.jme3.light.Light;
+import com.jme3.light.ILight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.post.Filter;
 import com.jme3.renderer.Camera;
@@ -155,7 +156,7 @@ public class BlenderLoader implements AssetLoader {
                         String worldName = worldStructure.getName();
                         if (blenderKey.getUsedWorld() == null || blenderKey.getUsedWorld().equals(worldName)) {
 
-                            Light ambientLight = landscapeHelper.toAmbientLight(worldStructure);
+                            ILight ambientLight = landscapeHelper.toAmbientLight(worldStructure);
                             if (ambientLight != null) {
                                 loadedFeatures.objects.add(new LightNode(null, ambientLight));
                                 loadedFeatures.lights.add(ambientLight);
@@ -357,7 +358,7 @@ public class BlenderLoader implements AssetLoader {
         /** All cameras from the file. */
         private List<Camera>          cameras         = new ArrayList<Camera>();
         /** All lights from the file. */
-        private List<Light>           lights          = new ArrayList<Light>();
+        private List<ILight>           lights          = new ArrayList<ILight>();
         /** Loaded sky. */
         private Spatial               sky;
         /** Scene filters (ie. FOG). */

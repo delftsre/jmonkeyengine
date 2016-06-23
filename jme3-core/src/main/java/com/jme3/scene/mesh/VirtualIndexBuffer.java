@@ -31,8 +31,9 @@
  */
 package com.jme3.scene.mesh;
 
-import com.jme3.scene.Mesh.Mode;
 import java.nio.Buffer;
+
+import com.jme3.scene.Mesh.Mode;
 
 /**
  * IndexBuffer implementation that generates vertex indices sequentially

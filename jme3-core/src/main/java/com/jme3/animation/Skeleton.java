@@ -31,12 +31,17 @@
  */
 package com.jme3.animation;
 
-import com.jme3.export.*;
-import com.jme3.math.Matrix4f;
-import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.math.Matrix4f;
+import com.jme3.util.TempVars;
 
 /**
  * <code>Skeleton</code> is a convenience class for managing a bone hierarchy.

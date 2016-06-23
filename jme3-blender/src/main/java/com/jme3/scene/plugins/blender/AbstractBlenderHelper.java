@@ -43,6 +43,7 @@ import com.jme3.asset.BlenderKey;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.blender.BlenderContext.LoadedDataType;
 import com.jme3.scene.plugins.blender.file.BlenderFileException;
@@ -80,7 +81,7 @@ public abstract class AbstractBlenderHelper {
         this.blenderContext = blenderContext;
         fixUpAxis = blenderContext.getBlenderKey().isFixUpAxis();
         if (fixUpAxis) {
-            upAxisRotationQuaternion = new Quaternion().fromAngles(-FastMath.HALF_PI, 0, 0);
+            upAxisRotationQuaternion = QuaternionFactory.createFromAngles(-FastMath.HALF_PI, 0, 0);
         }
     }
 

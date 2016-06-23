@@ -32,10 +32,11 @@
  
 package com.jme3.app.state;
 
-import com.jme3.app.Application;
-import com.jme3.renderer.RenderManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.app.Application;
+import com.jme3.renderer.RenderManager;
 
 
 

@@ -154,11 +154,11 @@ public class TestConeVSFrustum extends SimpleApplication {
                     if (shift) { 
                         if (name.equals("left")) {
                             tmp.set(cam.getDirection());
-                            s.rotate(tmpQuat.fromAngleAxis(value, tmp));
+                            s.rotate(tmpQuat.set(QuaternionFactory.createFromAngleAxis(value, tmp)));
                         }
                         if (name.equals("right")) {
                             tmp.set(cam.getDirection());
-                            s.rotate(tmpQuat.fromAngleAxis(-value, tmp));
+                            s.rotate(tmpQuat.set(QuaternionFactory.createFromAngleAxis(-value, tmp)));
                         }
                     } else {
                         value *= MOVE_SPEED * mult;

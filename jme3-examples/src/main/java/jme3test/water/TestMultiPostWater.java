@@ -6,6 +6,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.Camera;
@@ -68,9 +69,9 @@ public class TestMultiPostWater extends SimpleApplication {
         flyCam.setMoveSpeed(100);
 
         //cam.setLocation(new Vector3f(-700, 100, 300));
-        //cam.setRotation(new Quaternion().fromAngleAxis(0.5f, Vector3f.UNIT_Z));
+        //cam.setRotation(QuaternionFactory.createFromAngleAxis(0.5f, Vector3f.UNIT_Z));
         cam.setLocation(new Vector3f(-327.21957f, 251.6459f, 126.884346f));
-        cam.setRotation(new Quaternion().fromAngles(new float[]{FastMath.PI * 0.06f, FastMath.PI * 0.65f, 0}));
+        cam.setRotation(QuaternionFactory.createFromAngles(new float[]{FastMath.PI * 0.06f, FastMath.PI * 0.65f, 0}));
 
 
         Spatial sky = SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false);

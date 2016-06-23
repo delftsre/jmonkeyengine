@@ -31,6 +31,10 @@
  */
 package com.jme3.animation;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.audio.AudioNode;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -39,9 +43,6 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.util.TempVars;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * AudioTrack is a track to add to an existing animation, to paly a sound during

@@ -31,10 +31,11 @@
  */
 package com.jme3.renderer.opengl;
 
+import java.util.EnumSet;
+
 import com.jme3.renderer.Caps;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
-import java.util.EnumSet;
 
 /**
  * Generates a table of supported image formats for a given renderer caps.

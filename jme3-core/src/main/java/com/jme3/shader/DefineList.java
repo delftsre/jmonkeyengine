@@ -31,14 +31,18 @@
  */
 package com.jme3.shader;
 
-import com.jme3.export.*;
-import com.jme3.material.MatParam;
-import com.jme3.material.TechniqueDef;
-import com.jme3.util.ListMap;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.material.MatParam;
+import com.jme3.material.TechniqueDef;
+import com.jme3.util.ListMap;
 
 public final class DefineList implements Savable, Cloneable {
 

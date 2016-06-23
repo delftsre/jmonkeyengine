@@ -41,13 +41,16 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.material.Material;
 import com.jme3.math.*;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
+import com.jme3.terrain.ProgressMonitor;
 import com.jme3.terrain.geomipmap.TerrainQuad.LocationHeight;
+import com.jme3.terrain.geomipmap.lodcalc.LodCalculator;
 import com.jme3.terrain.geomipmap.lodcalc.util.EntropyComputeUtil;
 import com.jme3.util.BufferUtils;
 import java.io.IOException;
@@ -56,6 +59,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 
@@ -79,7 +83,7 @@ import java.util.List;
  * 
  * @author Brent Owens
  */
-public class TerrainPatch extends Geometry {
+public class TerrainPatch extends Geometry implements TerrainNode {
 
     protected LODGeomap geomap;
     protected int lod = 0; // this terrain patch's LOD
@@ -191,6 +195,12 @@ public class TerrainPatch extends Geometry {
 
     }
 
+    public void generateEntropy(ProgressMonitor progressMonitor){
+        this.generateLodEntropies();
+        if (progressMonitor != null)
+            progressMonitor.incrementProgress(1);
+    }
+
     /**
      * This calculation is slow, so don't use it often.
      */
@@ -240,6 +250,10 @@ public class TerrainPatch extends Geometry {
         return maxLod;
     }
 
+    public void reIndexPages(HashMap<String,UpdatedTerrainPatch> updated, boolean usesVariableLod){
+        this.reIndexGeometry(updated, usesVariableLod);
+    }
+
     protected void reIndexGeometry(HashMap<String,UpdatedTerrainPatch> updated, boolean useVariableLod) {
 
         UpdatedTerrainPatch utp = updated.get(getName());
@@ -277,7 +291,11 @@ public class TerrainPatch extends Geometry {
         return store.set(getMesh().getFloatBuffer(Type.TexCoord).get(idx*2),
                          getMesh().getFloatBuffer(Type.TexCoord).get(idx*2+1) );
     }
-    
+
+    public float getHeightmapHeight(int x, int z){
+        return getHeightmapHeight((float) x, (float) z);
+    }
+
     public float getHeightmapHeight(float x, float z) {
         if (x < 0 || z < 0 || x >= size || z >= size)
             return 0;
@@ -305,7 +323,7 @@ public class TerrainPatch extends Geometry {
         return geomap.getGridTrianglesAtPoint(x, z, getWorldScale() , getWorldTranslation());
     }
 
-    protected void setHeight(List<LocationHeight> locationHeights, boolean overrideHeight) {
+    public void setHeight(List<LocationHeight> locationHeights, boolean overrideHeight) {
         
         for (LocationHeight lh : locationHeights) {
             if (lh.x < 0 || lh.z < 0 || lh.x >= size || lh.z >= size)
@@ -323,6 +341,10 @@ public class TerrainPatch extends Geometry {
         FloatBuffer newVertexBuffer = geomap.writeVertexArray(null, stepScale, false);
         getMesh().clearBuffer(Type.Position);
         getMesh().setBuffer(Type.Position, 3, newVertexBuffer);
+    }
+
+    public void fixNormals(BoundingBox affectedArea){
+        this.updateNormals();
     }
 
     /**
@@ -389,28 +411,28 @@ public class TerrainPatch extends Geometry {
         Vector3f normal = new Vector3f();
 
         
-        int s = this.getSize()-1;
+        int s = this.getSize() - 1;
         
         if (right != null) { // right side,    works its way down
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(s,i), 0);
-                leftPoint.set(-1, this.getHeightmapHeight(s-1,i), 0);
-                rightPoint.set(1, right.getHeightmapHeight(1,i), 0);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(s, i), 0);
+                leftPoint.set(-1, this.getHeightmapHeight(s - 1, i), 0);
+                rightPoint.set(1, right.getHeightmapHeight(1, i), 0);
 
                 if (i == 0) { // top point
-                    bottomPoint.set(0, this.getHeightmapHeight(s,i+1), 1);
+                    bottomPoint.set(0, this.getHeightmapHeight(s, i + 1), 1);
                     
                     if (top == null) {
                         averageNormalsTangents(null, rootPoint, leftPoint, bottomPoint, rightPoint,  normal, tangent, binormal);
                         setInBuffer(this.getMesh(), s, normal, tangent, binormal);
                         setInBuffer(right.getMesh(), 0, normal, tangent, binormal);
                     } else {
-                        topPoint.set(0, top.getHeightmapHeight(s,s-1), -1);
+                        topPoint.set(0, top.getHeightmapHeight(s, s - 1), -1);
                         
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint,normal, tangent, binormal);
                         setInBuffer(this.getMesh(), s, normal, tangent, binormal);
                         setInBuffer(right.getMesh(), 0, normal, tangent, binormal);
-                        setInBuffer(top.getMesh(), (s+1)*(s+1)-1, normal, tangent, binormal);
+                        setInBuffer(top.getMesh(), (s + 1) * (s + 1) - 1, normal, tangent, binormal);
                         
                         if (topRight != null) {
                     //        setInBuffer(topRight.getMesh(), (s+1)*s, normal, tangent, binormal);
@@ -445,10 +467,10 @@ public class TerrainPatch extends Geometry {
         }
 
         if (left != null) { // left side,    works its way down
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(0,i), 0);
-                leftPoint.set(-1, left.getHeightmapHeight(s-1,i), 0);
-                rightPoint.set(1, this.getHeightmapHeight(1,i), 0);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(0, i), 0);
+                leftPoint.set(-1, left.getHeightmapHeight(s - 1, i), 0);
+                rightPoint.set(1, this.getHeightmapHeight(1, i), 0);
                 
                 if (i == 0) { // top point
                     bottomPoint.set(0, this.getHeightmapHeight(0,i+1), 1);
@@ -463,21 +485,21 @@ public class TerrainPatch extends Geometry {
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                         setInBuffer(this.getMesh(), 0, normal, tangent, binormal);
                         setInBuffer(left.getMesh(), s, normal, tangent, binormal);
-                        setInBuffer(top.getMesh(), (s+1)*s, normal, tangent, binormal);
+                        setInBuffer(top.getMesh(), (s + 1) * s, normal, tangent, binormal);
                         
                         if (topLeft != null) {
                      //       setInBuffer(topLeft.getMesh(), (s+1)*(s+1)-1, normal, tangent, binormal);
                         }
                     }
                 } else if (i == s) { // bottom point
-                    topPoint.set(0, this.getHeightmapHeight(0,i-1), -1);
+                    topPoint.set(0, this.getHeightmapHeight(0,i - 1), -1);
                     
                     if (bottom == null) {
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, null, rightPoint, normal, tangent, binormal);
-                        setInBuffer(this.getMesh(), (s+1)*(s), normal, tangent, binormal);
-                        setInBuffer(left.getMesh(), (s+1)*(s+1)-1, normal, tangent, binormal);
+                        setInBuffer(this.getMesh(), (s + 1) * (s), normal, tangent, binormal);
+                        setInBuffer(left.getMesh(), (s + 1) * (s + 1) - 1, normal, tangent, binormal);
                     } else {
-                        bottomPoint.set(0, bottom.getHeightmapHeight(0,1), 1);
+                        bottomPoint.set(0, bottom.getHeightmapHeight(0, 1), 1);
                         
                         averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                         setInBuffer(this.getMesh(), (s+1)*(s), normal, tangent, binormal);
@@ -500,10 +522,10 @@ public class TerrainPatch extends Geometry {
         }
 
         if (top != null) { // top side,    works its way right
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(i,0), 0);
-                topPoint.set(0, top.getHeightmapHeight(i,s-1), -1);
-                bottomPoint.set(0, this.getHeightmapHeight(i,1), 1);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(i, 0), 0);
+                topPoint.set(0, top.getHeightmapHeight(i, s - 1), -1);
+                bottomPoint.set(0, this.getHeightmapHeight(i, 1), 1);
                 
                 if (i == 0) { // left corner
                     // handled by left side pass
@@ -513,21 +535,21 @@ public class TerrainPatch extends Geometry {
                     // handled by this patch when it does its right side
                     
                 } else { // all in the middle
-                    leftPoint.set(-1, this.getHeightmapHeight(i-1,0), 0);
-                    rightPoint.set(1, this.getHeightmapHeight(i+1,0), 0);
+                    leftPoint.set(-1, this.getHeightmapHeight(i - 1, 0), 0);
+                    rightPoint.set(1, this.getHeightmapHeight(i + 1, 0), 0);
                     averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                     setInBuffer(this.getMesh(), i, normal, tangent, binormal);
-                    setInBuffer(top.getMesh(), (s+1)*(s)+i, normal, tangent, binormal);
+                    setInBuffer(top.getMesh(), (s + 1) * (s) + i, normal, tangent, binormal);
                 }
             }
             
         }
         
         if (bottom != null) { // bottom side,    works its way right
-            for (int i=0; i<s+1; i++) {
-                rootPoint.set(0, this.getHeightmapHeight(i,s), 0);
-                topPoint.set(0, this.getHeightmapHeight(i,s-1), -1);
-                bottomPoint.set(0, bottom.getHeightmapHeight(i,1), 1);
+            for (int i = 0; i < s + 1; i++) {
+                rootPoint.set(0, this.getHeightmapHeight(i, s), 0);
+                topPoint.set(0, this.getHeightmapHeight(i, s - 1), -1);
+                bottomPoint.set(0, bottom.getHeightmapHeight(i, 1), 1);
 
                 if (i == 0) { // left
                     // handled by the left side pass
@@ -537,8 +559,8 @@ public class TerrainPatch extends Geometry {
                     // handled by the right side pass
                     
                 } else { // all in the middle
-                    leftPoint.set(-1, this.getHeightmapHeight(i-1,s), 0);
-                    rightPoint.set(1, this.getHeightmapHeight(i+1,s), 0);
+                    leftPoint.set(-1, this.getHeightmapHeight(i - 1, s), 0);
+                    rightPoint.set(1, this.getHeightmapHeight(i + 1, s), 0);
                     averageNormalsTangents(topPoint, rootPoint, leftPoint, bottomPoint, rightPoint, normal, tangent, binormal);
                     setInBuffer(this.getMesh(), (s+1)*(s)+i, normal, tangent, binormal);
                     setInBuffer(bottom.getMesh(), i, normal, tangent, binormal);
@@ -593,7 +615,7 @@ public class TerrainPatch extends Geometry {
         return normal;
     }
     
-    protected Vector3f getMeshNormal(int x, int z) {
+    public Vector3f getMeshNormal(int x, int z) {
         if (x >= size || z >= size)
             return null; // out of range
         
@@ -606,7 +628,7 @@ public class TerrainPatch extends Geometry {
         return normal;
     }
 
-    protected float getHeight(int x, int z, float xm, float zm) {
+    public float getHeight(int x, int z, float xm, float zm) {
         return geomap.getHeight(x,z,xm,zm);
     }
     
@@ -625,6 +647,13 @@ public class TerrainPatch extends Geometry {
      */
     public void unlockMesh() {
         getMesh().setDynamic();
+    }
+
+    public void setLocked(boolean locked){
+        if (locked)
+            this.lockMesh();
+        else
+            this.unlockMesh();
     }
 	
     /**
@@ -969,7 +998,7 @@ public class TerrainPatch extends Geometry {
      * Caches the transforms (except rotation) so the LOD calculator,
      * which runs on a separate thread, can access them safely.
      */
-    protected void cacheTerrainTransforms() {
+    public void cacheTerrainTransforms() {
         this.worldScaleCached = getWorldScale().clone();
         this.worldTranslationCached = getWorldTranslation().clone();
     }
@@ -985,7 +1014,7 @@ public class TerrainPatch extends Geometry {
     /**
      * Removes any references when the terrain is being removed.
      */
-    protected void clearCaches() {
+    public void clearCaches() {
         if (leftNeighbour != null) {
             leftNeighbour.rightNeighbour = null;
             leftNeighbour = null;
@@ -1004,5 +1033,23 @@ public class TerrainPatch extends Geometry {
         }
     }
 
+    public Material getMaterial(Vector3f worldLocation) {
+        return this.getMaterial();
+    }
 
+    public boolean calculateLod(List<Vector3f> location, HashMap<String,UpdatedTerrainPatch> updates, LodCalculator lodCalculator){
+        return lodCalculator.calculateLod(this, location, updates);
+    }
+
+    public void resetCachedNeighbours(){
+        this.searchedForNeighboursAlready = false;
+    }
+
+    public void getAllTerrainPatches(List<TerrainPatch> holder){
+        holder.add(this);
+    }
+
+    public void getAllTerrainPatchesWithTranslation(Map<TerrainPatch,Vector3f> holder, Vector3f translation) {
+        holder.put(this, translation);
+    }
 }

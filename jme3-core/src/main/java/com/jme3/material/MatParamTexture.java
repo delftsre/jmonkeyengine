@@ -31,6 +31,8 @@
  */
 package com.jme3.material;
 
+import java.io.IOException;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -39,7 +41,6 @@ import com.jme3.renderer.Renderer;
 import com.jme3.shader.VarType;
 import com.jme3.texture.Texture;
 import com.jme3.texture.image.ColorSpace;
-import java.io.IOException;
 
 public class MatParamTexture extends MatParam {
 

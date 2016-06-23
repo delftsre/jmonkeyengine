@@ -41,6 +41,7 @@ import com.jme3.material.MaterialList;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
@@ -140,17 +141,13 @@ public class SceneLoader extends DefaultHandler implements AssetLoader {
             float axisX = parseFloat(attribs.getValue("axisX"));
             float axisY = parseFloat(attribs.getValue("axisY"));
             float axisZ = parseFloat(attribs.getValue("axisZ"));
-            Quaternion q = new Quaternion();
-            q.fromAngleAxis(angle, new Vector3f(axisX, axisY, axisZ));
-            return q;
+            return QuaternionFactory.createFromAngleAxis(angle, new Vector3f(axisX, axisY, axisZ));
         } else {
             // defines as 3 angles along XYZ axes
             float angleX = parseFloat(attribs.getValue("angleX"));
             float angleY = parseFloat(attribs.getValue("angleY"));
             float angleZ = parseFloat(attribs.getValue("angleZ"));
-            Quaternion q = new Quaternion();
-            q.fromAngles(angleX, angleY, angleZ);
-            return q;
+            return QuaternionFactory.createFromAngles(angleX, angleY, angleZ);
         }
     }
 

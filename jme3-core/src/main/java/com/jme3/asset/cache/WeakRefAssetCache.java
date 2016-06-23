@@ -31,13 +31,14 @@
  */
 package com.jme3.asset.cache;
 
-import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetProcessor;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetProcessor;
 
 /**
  * A garbage collector bound asset cache that handles non-clonable objects.

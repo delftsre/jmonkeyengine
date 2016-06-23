@@ -31,11 +31,12 @@
  */
 package com.jme3.scene.mesh;
 
-import com.jme3.util.BufferUtils;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+
+import com.jme3.util.BufferUtils;
 
 /**
  * <code>IndexBuffer</code> is an abstraction for integer index buffers,

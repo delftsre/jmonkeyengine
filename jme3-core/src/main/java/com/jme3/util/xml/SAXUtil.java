@@ -31,10 +31,11 @@
  */
 package com.jme3.util.xml;
 
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 
 /**
  * Utility methods for parsing XML data using SAX.

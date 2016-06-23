@@ -31,13 +31,19 @@
  */
 package com.jme3.asset.plugins;
 
-import com.jme3.asset.*;
-import com.jme3.system.JmeSystem;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Logger;
+
+import com.jme3.asset.AssetInfo;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetLoadException;
+import com.jme3.asset.AssetLocator;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.AssetNotFoundException;
+import com.jme3.system.JmeSystem;
 
 /**
  * The <code>ClasspathLocator</code> looks up an asset in the classpath.

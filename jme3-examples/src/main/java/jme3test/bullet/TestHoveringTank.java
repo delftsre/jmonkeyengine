@@ -144,7 +144,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
         CollisionShape colShape = CollisionShapeFactory.createDynamicMeshShape(spaceCraft);
         spaceCraft.setShadowMode(ShadowMode.CastAndReceive);
         spaceCraft.setLocalTranslation(new Vector3f(-140, 50, -23));
-        spaceCraft.setLocalRotation(new Quaternion(new float[]{0, 0.01f, 0}));
+        spaceCraft.setLocalRotation(QuaternionFactory.createFromAngles(new float[]{0, 0.01f, 0}));
 
         hoverControl = new PhysicsHoverControl(colShape, 500);
         hoverControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);

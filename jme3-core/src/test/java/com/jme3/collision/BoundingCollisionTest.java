@@ -31,7 +31,9 @@
  */
 package com.jme3.collision;
 
-import static com.jme3.collision.CollisionUtil.*;
+import static com.jme3.collision.CollisionUtil.checkCollision;
+
+import org.junit.Test;
 
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingSphere;
@@ -40,7 +42,6 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
-import org.junit.Test;
 
 /**
  * Tests collision detection between bounding volumes.

@@ -40,6 +40,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
+import com.jme3.light.ILight;
 import com.jme3.light.LightList;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
@@ -99,7 +100,7 @@ public class TestManyLightsSingle extends SimpleApplication {
         final Node cubeNodes = new Node();
         n.attachChild(cubeNodes);
         int nb = 0;
-        for (Light light : lightList) {
+        for (ILight light : lightList) {
             nb++;
             PointLight p = (PointLight) light;
             if (nb > 60) {
@@ -178,7 +179,7 @@ public class TestManyLightsSingle extends SimpleApplication {
                     helloText.setText("(Single pass) nb lights per batch : " + renderManager.getSinglePassLightBatchSize());
                 }
                 if (name.equals("toggleOnOff") && isPressed) {
-                    for (final Light light : lightList) {
+                    for (final ILight light : lightList) {
                         if (light instanceof AmbientLight) {
                             continue;
                         }

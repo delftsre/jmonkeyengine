@@ -39,6 +39,7 @@ import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetLoader;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.util.xml.SAXUtil;
 import java.io.IOException;
@@ -143,9 +144,8 @@ public class SkeletonLoader extends DefaultHandler implements AssetLoader {
         if (qName.equals("translate") || qName.equals("position") || qName.equals("scale")) {
         } else if (qName.equals("axis")) {
         } else if (qName.equals("rotate") || qName.equals("rotation")) {
-            rotation = new Quaternion();
             axis.normalizeLocal();
-            rotation.fromAngleNormalAxis(angle, axis);
+            rotation = QuaternionFactory.createFromAngleNormalAxis(angle, axis);
             angle = 0;
             axis = null;
         } else if (qName.equals("bone")) {

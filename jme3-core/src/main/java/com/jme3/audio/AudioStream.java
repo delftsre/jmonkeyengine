@@ -31,12 +31,12 @@
  */
 package com.jme3.audio;
 
-import com.jme3.util.NativeObject;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jme3.util.NativeObject;
 
 /**
  * <code>AudioStream</code> is an implementation of AudioData that acquires the

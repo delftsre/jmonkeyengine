@@ -31,15 +31,16 @@
  */
 package com.jme3.material;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.shader.ShaderNodeVariable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * this class is basically a struct that contains the ShaderNodes informations

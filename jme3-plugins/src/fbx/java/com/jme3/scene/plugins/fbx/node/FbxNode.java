@@ -40,6 +40,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
@@ -258,7 +259,7 @@ public class FbxNode extends FbxObject<Spatial> {
                 double x = (Double) e2.properties.get(4);
                 double y = (Double) e2.properties.get(5);
                 double z = (Double) e2.properties.get(6);
-                localRotation.fromAngles((float) x * FastMath.DEG_TO_RAD, (float) y * FastMath.DEG_TO_RAD, (float) z * FastMath.DEG_TO_RAD);
+                localRotation = QuaternionFactory.createFromAngles((float) x * FastMath.DEG_TO_RAD, (float) y * FastMath.DEG_TO_RAD, (float) z * FastMath.DEG_TO_RAD);
             } else if (propName.equals("Lcl Scaling")) {
                 double x = (Double) e2.properties.get(4);
                 double y = (Double) e2.properties.get(5);

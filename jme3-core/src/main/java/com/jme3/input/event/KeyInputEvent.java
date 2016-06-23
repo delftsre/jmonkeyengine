@@ -101,16 +101,17 @@ public class KeyInputEvent extends InputEvent {
 
     @Override
     public String toString(){
-        String str = "Key(CODE="+keyCode;
-        if (keyChar != '\0')
-            str = str + ", CHAR=" + keyChar;
-            
-        if (repeating){
-            return str + ", REPEATING)";
-        }else if (pressed){
-            return str + ", PRESSED)";
-        }else{
-            return str + ", RELEASED)";
+        StringBuilder str = new StringBuilder("Key(CODE=" + keyCode);
+        if (keyChar != '\0') {
+            str.append(", CHAR=" + keyChar);
         }
+        if (repeating) {
+            str.append(", REPEATING)");
+        } else if (pressed) {
+            str.append(", PRESSED)");
+        } else {
+            str.append(", RELEASED)");
+        }
+        return str.toString();
     }
 }

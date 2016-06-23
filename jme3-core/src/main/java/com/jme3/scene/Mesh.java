@@ -31,12 +31,25 @@
  */
 package com.jme3.scene;
 
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+import java.util.ArrayList;
+
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.collision.bih.BIHTree;
-import com.jme3.export.*;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.RenderState;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Triangle;
@@ -45,14 +58,15 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
-import com.jme3.scene.mesh.*;
+import com.jme3.scene.mesh.IndexBuffer;
+import com.jme3.scene.mesh.IndexIntBuffer;
+import com.jme3.scene.mesh.IndexShortBuffer;
+import com.jme3.scene.mesh.VirtualIndexBuffer;
+import com.jme3.scene.mesh.WrappedIndexBuffer;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.IntMap;
 import com.jme3.util.IntMap.Entry;
 import com.jme3.util.SafeArrayList;
-import java.io.IOException;
-import java.nio.*;
-import java.util.ArrayList;
 
 /**
  * <code>Mesh</code> is used to store rendering data.
@@ -82,14 +96,24 @@ public class Mesh implements Savable, Cloneable {
          * A primitive is a single point in space. The size of the points 
          * can be specified with {@link Mesh#setPointSize(float) }.
          */
-        Points(true),
+        Points(true) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize;
+            }
+        },
         
         /**
          * A primitive is a line segment. Every two vertices specify
          * a single line. {@link Mesh#setLineWidth(float) } can be used 
          * to set the width of the lines.
          */
-        Lines(true),
+        Lines(true) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize / 2;
+            }
+        },
         
         /**
          * A primitive is a line segment. The first two vertices specify
@@ -97,7 +121,12 @@ public class Mesh implements Savable, Cloneable {
          * previous vertex to make a line. {@link Mesh#setLineWidth(float) } can 
          * be used to set the width of the lines.
          */
-        LineStrip(false),
+        LineStrip(false) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize - 1;
+            }
+        },
         
         /**
          * Identical to {@link #LineStrip} except that at the end
@@ -105,27 +134,47 @@ public class Mesh implements Savable, Cloneable {
          * {@link Mesh#setLineWidth(float) } can be used 
          * to set the width of the lines.
          */
-        LineLoop(false),
+        LineLoop(false) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize;
+            }
+        },
         
         /**
          * A primitive is a triangle. Each 3 vertices specify a single
          * triangle.
          */
-        Triangles(true),
+        Triangles(true) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize / 3;
+            }
+        },
         
         /**
          * Similar to {@link #Triangles}, the first 3 vertices 
          * specify a triangle, while subsequent vertices are combined with
          * the previous two to form a triangle. 
          */
-        TriangleStrip(false),
+        TriangleStrip(false) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize - 2;
+            }
+        },
         
         /**
          * Similar to {@link #Triangles}, the first 3 vertices 
          * specify a triangle, each 2 subsequent vertices are combined
          * with the very first vertex to make a triangle.
          */
-        TriangleFan(false),
+        TriangleFan(false) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize - 2;
+            }
+        },
         
         /**
          * A combination of various triangle modes. It is best to avoid
@@ -134,12 +183,22 @@ public class Mesh implements Savable, Cloneable {
          * {@link Mesh#setElementLengths(int[]) element lengths} must 
          * be specified for this mode.
          */
-        Hybrid(false),
+        Hybrid(false) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                throw new UnsupportedOperationException();
+            }
+        },
         /**
          * Used for Tesselation only. Requires to set the number of vertices
          * for each patch (default is 3 for triangle tesselation)
          */
-        Patch(true);
+        Patch(true) {
+            @Override
+            int computeNumElements(int bufSize, int patchVertexCount){
+                return bufSize/patchVertexCount;
+            }
+        };
         private boolean listMode = false;
         
         private Mode(boolean listMode){
@@ -158,6 +217,12 @@ public class Mesh implements Savable, Cloneable {
         public boolean isListMode(){
             return listMode;
         }
+
+        /**
+         * Function that computes all the number of elements of each mode
+         * @return the number of elements
+         */
+        abstract int computeNumElements(int bufSize, int patchVertexCount);
     }
 
     /**
@@ -718,26 +783,11 @@ public class Mesh implements Savable, Cloneable {
         }
     }
 
+    protected int computeNumElements(){
+        return this.computeNumElements(getVertexCount());
+    }
     private int computeNumElements(int bufSize){
-        switch (mode){
-            case Triangles:
-                return bufSize / 3;
-            case TriangleFan:
-            case TriangleStrip:
-                return bufSize - 2;
-            case Points:
-                return bufSize;
-            case Lines:
-                return bufSize / 2;
-            case LineLoop:
-                return bufSize;
-            case LineStrip:
-                return bufSize - 1;
-            case Patch:
-                return bufSize/patchVertexCount;
-            default:
-                throw new UnsupportedOperationException();
-        }
+        return mode.computeNumElements(bufSize,  patchVertexCount);
     }
 
     private int computeInstanceCount() {

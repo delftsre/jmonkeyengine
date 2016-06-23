@@ -31,6 +31,10 @@
  */
 package com.jme3.audio;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.audio.AudioData.DataType;
@@ -41,9 +45,6 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.util.PlaceholderAssets;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An <code>AudioNode</code> is a scene Node which can play audio assets. 

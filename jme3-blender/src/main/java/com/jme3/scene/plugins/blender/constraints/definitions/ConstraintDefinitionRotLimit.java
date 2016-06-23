@@ -1,6 +1,7 @@
 package com.jme3.scene.plugins.blender.constraints.definitions;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.QuaternionFactory;
 import com.jme3.math.Transform;
 import com.jme3.scene.plugins.blender.BlenderContext;
 import com.jme3.scene.plugins.blender.constraints.ConstraintHelper.Space;
@@ -112,7 +113,7 @@ import com.jme3.scene.plugins.blender.file.Structure;
             }
             angles[2] -= difference;
         }
-        ownerTransform.getRotation().fromAngles(angles);
+        ownerTransform.getRotation().set(QuaternionFactory.createFromAngles(angles));
 
         this.applyOwnerTransform(ownerTransform, ownerSpace);
     }

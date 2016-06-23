@@ -31,6 +31,8 @@
  */
 package com.jme3.effect;
 
+import java.io.IOException;
+
 import com.jme3.bounding.BoundingBox;
 import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.effect.influencers.DefaultParticleInfluencer;
@@ -54,7 +56,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.util.TempVars;
-import java.io.IOException;
 
 /**
  * <code>ParticleEmitter</code> is a special kind of geometry which simulates
